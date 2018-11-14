@@ -1,6 +1,8 @@
 ﻿using Shell32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -202,8 +204,11 @@ namespace DWinOverlay
                 {
                     Content = button_content,
                     Background = Brushes.Transparent,
-                    BorderBrush = Brushes.Transparent
+                    BorderBrush = Brushes.Transparent,
+                    Name = "elementButton_"+i,
+                    Tag = elements[i]
                 };
+                button.Click += ElementClicked;
 
                 Grid grid = new Grid
                 {
@@ -223,6 +228,27 @@ namespace DWinOverlay
 
                 FilesList.ColumnDefinitions.Add(column);
                 FilesList.Children.Add(grid);
+            }
+        }
+
+        private void ElementClicked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start((string)(((Button)sender).Tag));
+            }
+            catch (Win32Exception ex)
+            {
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.ExceptionString = $"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf you will to open in File Explorer at Default you can change in Settings Menu.\r\nIf this issue appears too often, please add issue to github.";
+                ew.Show();
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.Show();
             }
         }
 
