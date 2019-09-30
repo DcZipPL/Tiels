@@ -24,13 +24,24 @@ namespace DWinOverlay
     public partial class MainWindow : Window
     {
         protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
+        System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            ni.Icon = new System.Drawing.Icon(@"C:\Users\DcZipPL\Desktop\Tiles\appicon.ico");
+            ni.Visible = false;
+            ni.Click +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                    this.WindowState = WindowState.Normal;
+                    ni.Visible = false;
+                };
         }
 
-        private void TileLoaded(object sender, RoutedEventArgs e)
+        private async void TileLoaded(object sender, RoutedEventArgs e)
         {
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
@@ -46,9 +57,9 @@ namespace DWinOverlay
                 //folderNameTB.Text = tiles[0];
             }
 
-            if (File.Exists(path + "\\PositionData.dat"))
+            /*if (File.Exists(path + "\\PositionData.dat"))
             {
-                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X*25}:{Y*25} ex. (Files X=120 Y=60) Files:3000:1500;
+                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X}:{Y} ex. (Files X=120 Y=60) Files:120:60;
                 string[] positions = posString.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(';');
                 foreach (string position in positions)
                 {
@@ -56,17 +67,37 @@ namespace DWinOverlay
                     if (position != "")
                     {
                         string name = splitedpos[0];
-                        string z = splitedpos[1];
+                        string x = splitedpos[1];
                         string y = splitedpos[2];
-                        Top = int.Parse(y) / 25;
-                        Left = int.Parse(y) / 25;
+                        Top = int.Parse(y);
+                        Left = int.Parse(x);
                     }
                 }
             }
             else
             {
-                File.WriteAllText(path + "\\PositionData.dat", tiles[0] + ":" + Left * 25 + ":" + Top * 25 + ";");
-            }
+                File.WriteAllText(path + "\\PositionData.dat", tiles[0] + ":" + Left + ":" + Top + ";");
+            }*/
+            await Task.Delay(1300);
+            loadingMessage.Text = "Tile Loaded Successfully!";
+            loadingGif.Visibility = Visibility.Collapsed;
+        }
+
+        private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private void HideWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void TaskbarWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+            this.Hide();
+            ni.Visible = true;
         }
     }
 }

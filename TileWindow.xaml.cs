@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json;
 
 namespace DWinOverlay
 {
@@ -27,13 +28,26 @@ namespace DWinOverlay
         protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private bool isMoving = false;
+
+        private int lastHeight = 0;
+        public bool isHidded = false;
         //private bool isResizing = false;
 
         #region DLL IMPORTS
 
         [DllImport("user32.dll")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
+           int Y, int cx, int cy, uint uFlags);
+
+        const UInt32 SWP_NOSIZE = 0x0001;
+        const UInt32 SWP_NOMOVE = 0x0002;
+        const UInt32 SWP_NOACTIVATE = 0x0010;
+
+        [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetCursorPos(ref Win32Point pt);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct Win32Point
@@ -85,6 +99,302 @@ namespace DWinOverlay
             public int AnimationId;
         }
 
+        [Flags]
+        enum SHGFI : uint
+        {
+            /// <summary>get icon</summary>
+            Icon = 0x000000100,
+            /// <summary>get display name</summary>
+            DisplayName = 0x000000200,
+            /// <summary>get type name</summary>
+            TypeName = 0x000000400,
+            /// <summary>get attributes</summary>
+            Attributes = 0x000000800,
+            /// <summary>get icon location</summary>
+            IconLocation = 0x000001000,
+            /// <summary>return exe type</summary>
+            ExeType = 0x000002000,
+            /// <summary>get system icon index</summary>
+            SysIconIndex = 0x000004000,
+            /// <summary>put a link overlay on icon</summary>
+            LinkOverlay = 0x000008000,
+            /// <summary>show icon in selected state</summary>
+            Selected = 0x000010000,
+            /// <summary>get only specified attributes</summary>
+            Attr_Specified = 0x000020000,
+            /// <summary>get large icon</summary>
+            LargeIcon = 0x000000000,
+            /// <summary>get small icon</summary>
+            SmallIcon = 0x000000001,
+            /// <summary>get open icon</summary>
+            OpenIcon = 0x000000002,
+            /// <summary>get shell size icon</summary>
+            ShellIconSize = 0x000000004,
+            /// <summary>pszPath is a pidl</summary>
+            PIDL = 0x000000008,
+            /// <summary>use passed dwFileAttribute</summary>
+            UseFileAttributes = 0x000000010,
+            /// <summary>apply the appropriate overlays</summary>
+            AddOverlays = 0x000000020,
+            /// <summary>Get the index of the overlay in the upper 8 bits of the iIcon</summary>
+            OverlayIndex = 0x000000040,
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SHFILEINFO
+        {
+            public const int NAMESIZE = 80;
+            public IntPtr hIcon;
+            public int iIcon;
+            public uint dwAttributes;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szDisplayName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+            public string szTypeName;
+        };
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int left, top, right, bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            int x;
+            int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct IMAGELISTDRAWPARAMS
+        {
+            public int cbSize;
+            public IntPtr himl;
+            public int i;
+            public IntPtr hdcDst;
+            public int x;
+            public int y;
+            public int cx;
+            public int cy;
+            public int xBitmap;    // x offest from the upperleft of bitmap
+            public int yBitmap;    // y offset from the upperleft of bitmap
+            public int rgbBk;
+            public int rgbFg;
+            public int fStyle;
+            public int dwRop;
+            public int fState;
+            public int Frame;
+            public int crEffect;
+        }
+
+        #region IMAGEINFO IImageList
+        [StructLayout(LayoutKind.Sequential)]
+        public struct IMAGEINFO
+        {
+            public IntPtr hbmImage;
+            public IntPtr hbmMask;
+            public int Unused1;
+            public int Unused2;
+            public RECT rcImage;
+        }
+        [ComImportAttribute()]
+        [GuidAttribute("46EB5926-582E-4017-9FDF-E8998DAA0950")]
+        [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IImageList
+        {
+            [PreserveSig]
+            int Add(
+            IntPtr hbmImage,
+            IntPtr hbmMask,
+            ref int pi);
+
+            [PreserveSig]
+            int ReplaceIcon(
+            int i,
+            IntPtr hicon,
+            ref int pi);
+
+            [PreserveSig]
+            int SetOverlayImage(
+            int iImage,
+            int iOverlay);
+
+            [PreserveSig]
+            int Replace(
+            int i,
+            IntPtr hbmImage,
+            IntPtr hbmMask);
+
+            [PreserveSig]
+            int AddMasked(
+            IntPtr hbmImage,
+            int crMask,
+            ref int pi);
+
+            [PreserveSig]
+            int Draw(
+            ref IMAGELISTDRAWPARAMS pimldp);
+
+            [PreserveSig]
+            int Remove(
+        int i);
+
+            [PreserveSig]
+            int GetIcon(
+            int i,
+            int flags,
+            ref IntPtr picon);
+
+            [PreserveSig]
+            int GetImageInfo(
+            int i,
+            ref IMAGEINFO pImageInfo);
+
+            [PreserveSig]
+            int Copy(
+            int iDst,
+            IImageList punkSrc,
+            int iSrc,
+            int uFlags);
+
+            [PreserveSig]
+            int Merge(
+            int i1,
+            IImageList punk2,
+            int i2,
+            int dx,
+            int dy,
+            ref Guid riid,
+            ref IntPtr ppv);
+
+            [PreserveSig]
+            int Clone(
+            ref Guid riid,
+            ref IntPtr ppv);
+
+            [PreserveSig]
+            int GetImageRect(
+            int i,
+            ref RECT prc);
+
+            [PreserveSig]
+            int GetIconSize(
+            ref int cx,
+            ref int cy);
+
+            [PreserveSig]
+            int SetIconSize(
+            int cx,
+            int cy);
+
+            [PreserveSig]
+            int GetImageCount(
+        ref int pi);
+
+            [PreserveSig]
+            int SetImageCount(
+            int uNewCount);
+
+            [PreserveSig]
+            int SetBkColor(
+            int clrBk,
+            ref int pclr);
+
+            [PreserveSig]
+            int GetBkColor(
+            ref int pclr);
+
+            [PreserveSig]
+            int BeginDrag(
+            int iTrack,
+            int dxHotspot,
+            int dyHotspot);
+
+            [PreserveSig]
+            int EndDrag();
+
+            [PreserveSig]
+            int DragEnter(
+            IntPtr hwndLock,
+            int x,
+            int y);
+
+            [PreserveSig]
+            int DragLeave(
+            IntPtr hwndLock);
+
+            [PreserveSig]
+            int DragMove(
+            int x,
+            int y);
+
+            [PreserveSig]
+            int SetDragCursorImage(
+            ref IImageList punk,
+            int iDrag,
+            int dxHotspot,
+            int dyHotspot);
+
+            [PreserveSig]
+            int DragShowNolock(
+            int fShow);
+
+            [PreserveSig]
+            int GetDragImage(
+            ref POINT ppt,
+            ref POINT pptHotspot,
+            ref Guid riid,
+            ref IntPtr ppv);
+
+            [PreserveSig]
+            int GetItemFlags(
+            int i,
+            ref int dwFlags);
+
+            [PreserveSig]
+            int GetOverlayImage(
+            int iOverlay,
+            ref int piIndex);
+        };
+        #endregion
+
+        const string IID_IImageList = "46EB5926-582E-4017-9FDF-E8998DAA0950";
+        const string IID_IImageList2 = "192B9D83-50FC-457B-90A0-2B82A8B5DAE1";
+
+        public static class Shell32
+        {
+
+            public const int SHIL_LARGE = 0x0;
+            public const int SHIL_SMALL = 0x1;
+            public const int SHIL_EXTRALARGE = 0x2;
+            public const int SHIL_SYSSMALL = 0x3;
+            public const int SHIL_JUMBO = 0x4;
+            public const int SHIL_LAST = 0x4;
+
+            public const int ILD_TRANSPARENT = 0x00000001;
+            public const int ILD_IMAGE = 0x00000020;
+
+            [DllImport("shell32.dll", EntryPoint = "#727")]
+            public extern static int SHGetImageList(int iImageList, ref Guid riid, ref IImageList ppv);
+
+            [DllImport("user32.dll", EntryPoint = "DestroyIcon", SetLastError = true)]
+            public static unsafe extern int DestroyIcon(IntPtr hIcon);
+
+            [DllImport("shell32.dll")]
+            public static extern uint SHGetIDListFromObject([MarshalAs(UnmanagedType.IUnknown)] object iUnknown, out IntPtr ppidl);
+
+            [DllImport("Shell32.dll")]
+            public static extern IntPtr SHGetFileInfo(
+                string pszPath,
+                uint dwFileAttributes,
+                ref SHFILEINFO psfi,
+                uint cbFileInfo,
+                uint uFlags
+            );
+        }
+
         internal void EnableBlur()
         {
             var windowHelper = new WindowInteropHelper(this);
@@ -111,9 +421,17 @@ namespace DWinOverlay
         public TileWindow()
         {
             InitializeComponent();
+
+            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += dispatcherTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Start();
         }
 
-        public static string GetShortcutTargetFile(string shortcutFilename)
+        private void MoveActionStart(object sender, MouseButtonEventArgs e) => isMoving = true;
+        private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
+
+        /*public static string GetShortcutTargetFile(string shortcutFilename)
         {
             Console.WriteLine(File.ReadAllText(shortcutFilename));
             string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
@@ -124,21 +442,27 @@ namespace DWinOverlay
             FolderItem folderItem = folder.ParseName(filenameOnly);
             if (folderItem != null)
             {
-                Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
+                ShellLinkObject link = (ShellLinkObject)folderItem.GetLink;
                 return link.Path;
             }
 
             return string.Empty;
+        }*/
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            SetBottom(this);
         }
 
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
             EnableBlur();
+            SetBottom(this);
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
 
             if (File.Exists(path + "\\PositionData.dat"))
             {
-                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X*25}:{Y*25} ex. (Files X=120 Y=60) Files:3000:1500;
+                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X}:{Y} ex. (Files X=120 Y=60) Files:120:60;
                 string[] positions = posString.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(';');
                 foreach (string position in positions)
                 {
@@ -146,35 +470,83 @@ namespace DWinOverlay
                     if (position != "")
                     {
                         //string name = splitedpos[0];
-                        string z = splitedpos[1];
+                        string x = splitedpos[1];
                         string y = splitedpos[2];
-                        Top = int.Parse(y) / 25;
-                        Left = int.Parse(y) / 25;
+                        Top = int.Parse(y);
+                        Left = int.Parse(x);
                     }
                 }
             }
             else
             {
-                File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left * 25 + ":" + Top * 25 + ";");
+                File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left + ":" + Top + ";");
             }
             ReadElements();
         }
 
+        static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+
+        public static void SetBottom(Window window)
+        {
+            /*IntPtr hWnd = new WindowInteropHelper(window).Handle;
+            SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);*/
+        }
+
         private void ReadElements()
         {
-            string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
+            //BitmapImage img = GetIcon(@"C:\Users\DcZipPL\Desktop\Tiles\Files\.gitattributes", false, false) as BitmapImage;
+            //.Save(path + "\\TMP_ICON_ON.ico");
+            if (!File.Exists(path + "\\iconcache.db"))
+                File.WriteAllText(path + "\\iconcache.db", "");
+            string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
+            Dictionary<string,string> iconcache = new Dictionary<string,string>();
+            string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray(); // Elements link
+
+            foreach (var cache in tmp_iconcache)
+            {
+                iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
+            }
 
             int ri = new Random().Next(0, 1000000);
 
+            int j = 3;
+            int n = 0;
+            int m = 0;
             for (int i = 0; i < elements.Length; i++)
             {
-                System.Drawing.Icon ico = null;
+                string num = "";
 
-                if (elements[i].Contains(".lnk")||elements[i].Contains(".url"))
+                if (!iconcache.ContainsKey(elements[i]))
                 {
-                    ico = ExtractIcon.GetIcon(GetShortcutTargetFile(elements[i]), false);
-                    ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i);
+                    IntPtr hIcon = GetJumboIcon(GetIconIndex(elements[i]));
+
+                    // from native to managed
+                    using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
+                    {
+                        // save to file (or show in a picture box)
+                        ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                        File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
+                        num = "\\TMP_ICON_" + ri + i;
+                    }
+
+                    Shell32.DestroyIcon(hIcon); // don't forget to cleanup
                 }
+                else
+                {
+                    num = iconcache[elements[i]];
+                }
+
+                /*if (!iconcache.ContainsKey(elements[i]))
+                {
+                    ico = ExtractIcon.GetIcon(GetJumboIcon(GetIconIndex(@"C:\Users\DcZipPL\Desktop\Tiles\Files\BlockCSS.png")), false);
+                    ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i);
+                    File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
+                    num = "\\TMP_ICON_" + ri + i;
+                }
+                else
+                {
+                    num = iconcache[elements[i]];
+                }*/
 
                 Image image = new Image
                 {
@@ -182,9 +554,8 @@ namespace DWinOverlay
                     Height = 44,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(0, 1, 0, 19),
-                    Source = new BitmapImage(new Uri(elements[i].Contains(".lnk")|| elements[i].Contains(".url")
-                    ? path + "\\TMP_ICON_" + ri + i : elements[i].Contains(".png")
-                    ? elements[i] : path + "//unknown.png"
+                    Source = new BitmapImage(new Uri(elements[i].Contains(".png") || elements[i].Contains(".jpg")
+                    ? elements[i] : path + num // ICON
                     ))
                 };
 
@@ -193,7 +564,7 @@ namespace DWinOverlay
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Foreground = Brushes.White,
-                    Text = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".png", "")
+                    Text = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "") // File Name
                 };
 
                 Grid button_content = new Grid();
@@ -216,15 +587,36 @@ namespace DWinOverlay
                     Height = 68,
                     VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(0, 10, 10, 10),
+                    Margin = new Thickness(0, 4, 10, 4),
                 };
-                Grid.SetColumn(grid, i);
+                Grid.SetColumn(grid, m);
                 grid.Children.Add(button);
+                m++;
 
                 ColumnDefinition column = new ColumnDefinition
                 {
-                    Width = new GridLength(110, GridUnitType.Pixel)
+                    Width = new GridLength(120, GridUnitType.Pixel)
                 };
+
+                Grid.SetRow(grid, n);
+                if (i == j)
+                {
+                    m = 0;
+                    j += 4;
+                    n++;
+                }
+                if (i == j - 4)
+                {
+                    this.Height += 80;
+                    FilesList.Height += 80;
+                    //this.rd.Height = new GridLength(this.rd.Height.Value+40);
+
+                    RowDefinition row = new RowDefinition
+                    {
+                        Height = new GridLength(1, GridUnitType.Star)
+                    };
+                    FilesList.RowDefinitions.Add(row);
+                }
 
                 FilesList.ColumnDefinitions.Add(column);
                 FilesList.Children.Add(grid);
@@ -241,7 +633,7 @@ namespace DWinOverlay
             {
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.ExceptionString = $"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf you will to open in File Explorer at Default you can change in Settings Menu.\r\nIf this issue appears too often, please add issue to github.";
+                ew.ExceptionString = ex.ToString()+$"\r\nWhile opening: {(string)(((Button)sender).Tag)} program caused an error.\r\nIf this issue appears too often, please add issue to github.";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
                 ew.Show();
             }
             catch (Exception ex)
@@ -251,8 +643,6 @@ namespace DWinOverlay
                 ew.Show();
             }
         }
-
-        private void MoveActionStart(object sender, MouseButtonEventArgs e) => isMoving = true;
 
         private void MoveAction(object sender, MouseEventArgs e)
         {
@@ -266,10 +656,117 @@ namespace DWinOverlay
         private void MoveActionStop(object sender, MouseButtonEventArgs e)
         {
             isMoving = false;
-            File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left * 25 + ":" + Top * 25 + ";");
+            File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left + ":" + Top + ";");
         }
 
-        private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
+        int GetIconIndex(string pszFile)
+        {
+            SHFILEINFO sfi = new SHFILEINFO();
+            Shell32.SHGetFileInfo(pszFile
+                , 0
+                , ref sfi
+                , (uint)System.Runtime.InteropServices.Marshal.SizeOf(sfi)
+                , (uint)(SHGFI.SysIconIndex | SHGFI.LargeIcon | SHGFI.UseFileAttributes));
+            return sfi.iIcon;
+        }
+
+        // 256*256
+        IntPtr GetJumboIcon(int iImage)
+        {
+            IImageList spiml = null;
+            Guid guil = new Guid(IID_IImageList);//or IID_IImageList
+
+            Shell32.SHGetImageList(Shell32.SHIL_JUMBO, ref guil, ref spiml);
+            IntPtr hIcon = IntPtr.Zero;
+            spiml.GetIcon(iImage, Shell32.ILD_TRANSPARENT | Shell32.ILD_IMAGE, ref hIcon); //
+
+            return hIcon;
+        }
+
+        IntPtr GetXLIcon(int iImage)
+        {
+            IImageList spiml = null;
+            Guid guil = new Guid(IID_IImageList);//or IID_IImageList
+
+            Shell32.SHGetImageList(Shell32.SHIL_EXTRALARGE, ref guil, ref spiml);
+            IntPtr hIcon = IntPtr.Zero;
+            spiml.GetIcon(iImage, Shell32.ILD_TRANSPARENT | Shell32.ILD_IMAGE, ref hIcon); //
+
+            return hIcon;
+        }
+
+        public static void Save(BitmapSource image, string filePath)
+        {
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+
+            using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+            {
+                encoder.Save(fileStream);
+            }
+        }
+
+        private void TestAddBtn_Click(object sender, RoutedEventArgs e)
+        {
+            /*int i = 0;
+            int j = 0;
+            int n = 1;
+            foreach (var child in FilesList.Children)
+            {
+                if (child is Grid)
+                {
+                    if (i == 2)
+                    {
+                        this.Height += 80;
+                        FilesList.Height += 80;
+                        //this.rd.Height = new GridLength(this.rd.Height.Value+40);
+
+                        RowDefinition row = new RowDefinition
+                        {
+                            Height = new GridLength(1, GridUnitType.Star)
+                        };
+                        FilesList.RowDefinitions.Add(row);
+                    }
+                    if (i >= 4)
+                    {
+                        Grid.SetRow((Grid)child, n);
+                        Grid.SetColumn((Grid)child, j);
+                        j++;
+                    }
+                    if (i >= 8)
+                    {
+                        i = 0;
+                        j = 0;
+                        n++;
+                    }
+                }
+                i++;
+            }*/
+            this.Height += 80;
+            FilesList.Height += 80;
+            //this.rd.Height = new GridLength(this.rd.Height.Value+40);
+
+            RowDefinition row = new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            };
+            FilesList.RowDefinitions.Add(row);
+        }
+
+        private void HideTileButton(object sender, RoutedEventArgs e)
+        {
+            if (isHidded)
+            {
+                this.Height = lastHeight;
+                isHidded = false;
+            }
+            else
+            {
+                lastHeight = (int)this.Height;
+                this.Height = 28;
+                isHidded = true;
+            }
+        }
 
         /*private void ResizeStart(object sender, MouseButtonEventArgs e) { isResizing = true; isMoving = false; }
 

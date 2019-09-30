@@ -99,5 +99,10 @@ namespace DWinOverlay
                 ErrorText.Text = ExceptionString;
             }
         }
+
+        private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
