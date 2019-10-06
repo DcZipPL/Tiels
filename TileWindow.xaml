@@ -18,7 +18,6 @@
                 <RowDefinition x:Name="trd" Height="28"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid x:Name="FilesList" Height="80">
-                <!--<Image Height="44" Width="44" Source="Assets/TileCPicon.png"></Image>-->
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>

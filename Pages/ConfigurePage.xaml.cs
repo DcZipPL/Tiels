@@ -60,8 +60,6 @@ namespace DWinOverlay.Pages
         {
             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
             mw.Load();
-            //NavigationService.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml"));
-            //INSTANCE.Source = new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml");
         }
     }
 }

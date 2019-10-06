@@ -495,25 +495,6 @@ namespace DWinOverlay
 
         private void MoveActionStart(object sender, MouseButtonEventArgs e) => isMoving = true;
         private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
-
-        /*public static string GetShortcutTargetFile(string shortcutFilename)
-        {
-            Console.WriteLine(File.ReadAllText(shortcutFilename));
-            string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
-            string filenameOnly = System.IO.Path.GetFileName(shortcutFilename);
-
-            Shell shell = new Shell();
-            Folder folder = shell.NameSpace(pathOnly);
-            FolderItem folderItem = folder.ParseName(filenameOnly);
-            if (folderItem != null)
-            {
-                ShellLinkObject link = (ShellLinkObject)folderItem.GetLink;
-                return link.Path;
-            }
-
-            return string.Empty;
-        }*/
-
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             CheckFileUpdates();
@@ -623,8 +604,6 @@ namespace DWinOverlay
             FilesList.RowDefinitions.Add(mainrow);
             FilesList.Height = 80;
             this.Height = 108;
-            //BitmapImage img = GetIcon(@"C:\Users\DcZipPL\Desktop\Tiles\Files\.gitattributes", false, false) as BitmapImage;
-            //.Save(path + "\\TMP_ICON_ON.ico");
             if (!File.Exists(path + "\\iconcache.db"))
                 File.WriteAllText(path + "\\iconcache.db", "");
             string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
@@ -669,18 +648,6 @@ namespace DWinOverlay
                 {
                     num = iconcache[elements[i]];
                 }
-
-                /*if (!iconcache.ContainsKey(elements[i]))
-                {
-                    ico = ExtractIcon.GetIcon(GetJumboIcon(GetIconIndex(@"C:\Users\DcZipPL\Desktop\Tiles\Files\BlockCSS.png")), false);
-                    ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i);
-                    File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
-                    num = "\\TMP_ICON_" + ri + i;
-                }
-                else
-                {
-                    num = iconcache[elements[i]];
-                }*/
 
                 Image image = new Image
                 {
@@ -743,7 +710,6 @@ namespace DWinOverlay
                 {
                     this.Height += 80;
                     FilesList.Height += 80;
-                    //this.rd.Height = new GridLength(this.rd.Height.Value+40);
 
                     RowDefinition row = new RowDefinition
                     {
@@ -867,36 +833,7 @@ namespace DWinOverlay
 
         private void OpenDirectoryBtn_Click(object sender, RoutedEventArgs e)
         {
-            //ReadElements();
             Process.Start(path+"\\"+name);
         }
-
-        /*private void ResizeStart(object sender, MouseButtonEventArgs e) { isResizing = true; isMoving = false; }
-
-        private void ResizeStop(object sender, MouseButtonEventArgs e)
-        {
-            isResizing = false;
-        }
-
-        private void ResizeAction(object sender, MouseEventArgs e)
-        {
-            double boxesSizeWidth = Width;
-            double boxesSizeHeight = Height;
-            double width = e.GetPosition(this).X;
-            double height = e.GetPosition(this).Y;
-            if (isResizing)
-            {
-                height += 100;
-                if (height > 0)
-                {
-                    boxesSizeHeight = height;
-                }
-                Width = boxesSizeWidth;
-                Height = boxesSizeHeight;
-                MainGrid.Height = height - 12;
-            }
-        }
-
-        private void ResizeCancel(object sender, MouseEventArgs e) => ResizeStop(this, null);*/
     }
 }

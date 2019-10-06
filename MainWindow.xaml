@@ -38,6 +38,5 @@
                 </Grid>
             </Border>
         </Grid>
-        <!--<Image Margin="0" Width="80" Height="80" HorizontalAlignment="Left" VerticalAlignment="Center"></Image>-->
     </Grid>
 </Window>
