@@ -25,13 +25,15 @@ namespace DWinOverlay
     /// </summary>
     public partial class TileWindow : Window
     {
-        protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
+        public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private bool isMoving = false;
 
+        int tries = 0;
         private int lastHeight = 0;
         public bool isHidded = false;
-        //private bool isResizing = false;
+
+        List<SoftFileData> filedata = new List<SoftFileData>();
 
         #region DLL IMPORTS
 
@@ -416,6 +418,69 @@ namespace DWinOverlay
             Marshal.FreeHGlobal(accentPtr);
         }
 
+        #region Window styles
+        [Flags]
+        public enum ExtendedWindowStyles
+        {
+            // ...
+            WS_EX_TOOLWINDOW = 0x00000080,
+            // ...
+        }
+
+        public enum GetWindowLongFields
+        {
+            // ...
+            GWL_EXSTYLE = (-20),
+            // ...
+        }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            int error = 0;
+            IntPtr result = IntPtr.Zero;
+            // Win32 SetWindowLong doesn't clear error on success
+            SetLastError(0);
+
+            if (IntPtr.Size == 4)
+            {
+                // use SetWindowLong
+                Int32 tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+                error = Marshal.GetLastWin32Error();
+                result = new IntPtr(tempResult);
+            }
+            else
+            {
+                // use SetWindowLongPtr
+                result = IntSetWindowLongPtr(hWnd, nIndex, dwNewLong);
+                error = Marshal.GetLastWin32Error();
+            }
+
+            if ((result == IntPtr.Zero) && (error != 0))
+            {
+                throw new System.ComponentModel.Win32Exception(error);
+            }
+
+            return result;
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
+        private static extern IntPtr IntSetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
+        private static extern Int32 IntSetWindowLong(IntPtr hWnd, int nIndex, Int32 dwNewLong);
+
+        private static int IntPtrToInt32(IntPtr intPtr)
+        {
+            return unchecked((int)intPtr.ToInt64());
+        }
+
+        [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
+        public static extern void SetLastError(int dwErrorCode);
+        #endregion
+
         #endregion
 
         public TileWindow()
@@ -451,11 +516,63 @@ namespace DWinOverlay
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            SetBottom(this);
+            CheckFileUpdates();
+            //SetBottom(this);
+        }
+
+        private void CheckFileUpdates()
+        {
+            if (File.Exists(path + "\\" + name + "_fileupdate.json") && Directory.Exists(path+"\\"+name))
+            {
+                try
+                {
+                    string json_out = File.ReadAllText(path + "\\" + name + "_fileupdate.json");
+                    SoftFileData[] data = JsonConvert.DeserializeObject<FileUpdateClass>(json_out).Data;
+                    string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        if (data.Length != elements.Length)
+                        {
+                            ReadElements();
+                        }
+                        else if (data[i].Name == elements[i])
+                        {
+                            if ((int)data[i].Size / 100 != (int)new System.IO.FileInfo(elements[i]).Length / 100)
+                            {
+                                ReadElements();
+                            }
+                        }
+                        else
+                        {
+                            ReadElements();
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    if (tries <= 3)
+                    {
+                        tries++;
+                    }
+                    else
+                    {
+                        ErrorWindow ew = new ErrorWindow();
+                        ew.ExceptionReason = ex;
+                        ew.Show();
+                    }
+                }
+            }
         }
 
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
+            WindowInteropHelper wndHelper = new WindowInteropHelper(this);
+
+            int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+
+            exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+            SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+
             EnableBlur();
             SetBottom(this);
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
@@ -494,6 +611,18 @@ namespace DWinOverlay
 
         private void ReadElements()
         {
+            filedata.Clear();
+
+            FilesList.Children.Clear();
+            FilesList.ColumnDefinitions.Clear();
+            FilesList.RowDefinitions.Clear();
+            RowDefinition mainrow = new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            };
+            FilesList.RowDefinitions.Add(mainrow);
+            FilesList.Height = 80;
+            this.Height = 108;
             //BitmapImage img = GetIcon(@"C:\Users\DcZipPL\Desktop\Tiles\Files\.gitattributes", false, false) as BitmapImage;
             //.Save(path + "\\TMP_ICON_ON.ico");
             if (!File.Exists(path + "\\iconcache.db"))
@@ -514,6 +643,11 @@ namespace DWinOverlay
             int m = 0;
             for (int i = 0; i < elements.Length; i++)
             {
+                SoftFileData sfd = new SoftFileData();
+                sfd.Name = elements[i];
+                sfd.Size = (int)new System.IO.FileInfo(elements[i]).Length;
+                filedata.Add(sfd);
+
                 string num = "";
 
                 if (!iconcache.ContainsKey(elements[i]))
@@ -621,6 +755,16 @@ namespace DWinOverlay
                 FilesList.ColumnDefinitions.Add(column);
                 FilesList.Children.Add(grid);
             }
+            if (File.Exists(path + "\\" + name + "_fileupdate.json"))
+                File.Delete(path + "\\" + name + "_fileupdate.json");
+
+            FileUpdateClass fileupdate = new FileUpdateClass
+            {
+                Data = filedata.ToArray()
+            };
+            string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
+            Console.WriteLine(json);
+            File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
         }
 
         private void ElementClicked(object sender, RoutedEventArgs e)
@@ -706,53 +850,6 @@ namespace DWinOverlay
             }
         }
 
-        private void TestAddBtn_Click(object sender, RoutedEventArgs e)
-        {
-            /*int i = 0;
-            int j = 0;
-            int n = 1;
-            foreach (var child in FilesList.Children)
-            {
-                if (child is Grid)
-                {
-                    if (i == 2)
-                    {
-                        this.Height += 80;
-                        FilesList.Height += 80;
-                        //this.rd.Height = new GridLength(this.rd.Height.Value+40);
-
-                        RowDefinition row = new RowDefinition
-                        {
-                            Height = new GridLength(1, GridUnitType.Star)
-                        };
-                        FilesList.RowDefinitions.Add(row);
-                    }
-                    if (i >= 4)
-                    {
-                        Grid.SetRow((Grid)child, n);
-                        Grid.SetColumn((Grid)child, j);
-                        j++;
-                    }
-                    if (i >= 8)
-                    {
-                        i = 0;
-                        j = 0;
-                        n++;
-                    }
-                }
-                i++;
-            }*/
-            this.Height += 80;
-            FilesList.Height += 80;
-            //this.rd.Height = new GridLength(this.rd.Height.Value+40);
-
-            RowDefinition row = new RowDefinition
-            {
-                Height = new GridLength(1, GridUnitType.Star)
-            };
-            FilesList.RowDefinitions.Add(row);
-        }
-
         private void HideTileButton(object sender, RoutedEventArgs e)
         {
             if (isHidded)
@@ -766,6 +863,12 @@ namespace DWinOverlay
                 this.Height = 28;
                 isHidded = true;
             }
+        }
+
+        private void OpenDirectoryBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //ReadElements();
+            Process.Start(path+"\\"+name);
         }
 
         /*private void ResizeStart(object sender, MouseButtonEventArgs e) { isResizing = true; isMoving = false; }

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:DWinOverlay"
         mc:Ignorable="d"
         Title="Tile Control Panel" Height="500" Width="900" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" WindowStartupLocation="CenterScreen" Icon="Assets/TileCPicon.png">
@@ -29,12 +28,12 @@
                             <Button x:Name="CloseWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseWindowBtn_Click" Grid.Column="3" Margin="0" FontSize="14"/>
                             <Button x:Name="TaskbarWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE0E5;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="TaskbarWindowBtn_Click" Grid.Column="2" Margin="0,0,1,0" FontSize="14"/>
                             <Button x:Name="HideWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE108;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="HideWindowBtn_Click" Grid.Column="1" Margin="0,0,1,0" FontSize="14"/>
-                            <TextBlock Text="DesktopTilesOverlay Status:" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16"/>
-                            <TextBlock x:Name="loadingMessage" Text="Loading..." Foreground="Black" HorizontalAlignment="Left" Margin="210,0,0,0" VerticalAlignment="Center" FontSize="16"/>
+                            <TextBlock Text="Tiels Status:" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16"/>
+                            <TextBlock x:Name="loadingMessage" Text="Loading..." Foreground="Black" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Center" FontSize="16"/>
                         </Grid>
                     </Border>
                     <Grid Grid.Row="1" Background="#FFF5F6F7">
-                        <Image x:Name="loadingGif" gif:ImageBehavior.AnimatedSource="Assets/LoadingAnimation.gif" Width="64" Height="64"></Image>
+                        <Frame x:Name="main" NavigationUIVisibility="Hidden"></Frame>
                     </Grid>
                 </Grid>
             </Border>

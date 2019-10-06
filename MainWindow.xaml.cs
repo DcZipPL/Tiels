@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,7 +26,8 @@ namespace DWinOverlay
     public partial class MainWindow : Window
     {
         protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
-        System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
+        public List<TileWindow> tilesw = new List<TileWindow>();
+        private System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
 
         public MainWindow()
         {
@@ -41,8 +44,21 @@ namespace DWinOverlay
                 };
         }
 
-        private async void TileLoaded(object sender, RoutedEventArgs e)
+        private void TileLoaded(object sender, RoutedEventArgs e)
         {
+            if (!Directory.Exists(path) || !File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
+            {
+                ConfigureFirstRun();
+            }
+            else
+            {
+                Load();
+            }
+        }
+
+        public async void Load()
+        {
+            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/LoadingPage.xaml"));
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
@@ -53,34 +69,41 @@ namespace DWinOverlay
                     tile.folderNameTB.Text = tiles[i];
                     tile.name = tiles[i];
                     tile.Show();
+                    tilesw.Add(tile);
                 }
-                //folderNameTB.Text = tiles[0];
             }
 
-            /*if (File.Exists(path + "\\PositionData.dat"))
-            {
-                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X}:{Y} ex. (Files X=120 Y=60) Files:120:60;
-                string[] positions = posString.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(';');
-                foreach (string position in positions)
-                {
-                    string[] splitedpos = position.Split(':');
-                    if (position != "")
-                    {
-                        string name = splitedpos[0];
-                        string x = splitedpos[1];
-                        string y = splitedpos[2];
-                        Top = int.Parse(y);
-                        Left = int.Parse(x);
-                    }
-                }
-            }
-            else
-            {
-                File.WriteAllText(path + "\\PositionData.dat", tiles[0] + ":" + Left + ":" + Top + ";");
-            }*/
             await Task.Delay(1300);
+            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
-            loadingGif.Visibility = Visibility.Collapsed;
+        }
+
+        public async void ConfigureFirstRun()
+        {
+            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/LoadingPage.xaml"));
+            Process.Start("TielsConsole.exe","createlostandfound");
+            await Task.Delay(1300);
+            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/ConfigurePage.xaml"));
+            loadingMessage.Text = "Configuration.";
+            WindowPosition pos0 = new WindowPosition();
+            WindowPosition pos1 = new WindowPosition();
+            WindowPosition[] positions = new WindowPosition[] { pos0, pos1 };
+            ConfigClass config = new ConfigClass
+            {
+                FirstRun = true,
+                Blur = true,
+                Transparency = 255,
+                Color = "#000000",
+                Positions = positions
+            };
+            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
+                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
+            Console.WriteLine(json);
+            if (!Directory.Exists(path + "\\Example"))
+                Directory.CreateDirectory(path + "\\Example");
+
+            File.WriteAllText(path + "\\Example\\ExampleContent.txt","Example Text.");
         }
 
         private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)
