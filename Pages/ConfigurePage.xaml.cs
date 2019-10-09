@@ -34,13 +34,13 @@ namespace DWinOverlay.Pages
 
         private void Mel_Loaded(object sender, RoutedEventArgs e)
         {
-            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\2019-10-04 21-18-51.mp4");
+            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\tutorial_fm.mp4");
             mel.Play();
         }
 
         private void TestPlay(object sender, RoutedEventArgs e)
         {
-            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\2019-10-04 21-18-51.mp4");
+            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\tutorial_fm.mp4");
             mel.Play();
         }
 

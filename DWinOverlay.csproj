@@ -166,7 +166,7 @@
     <Resource Include="Assets\LoadingAnimation.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\2019-10-04 21-18-51.mp4">
+    <Content Include="Assets\tutorial_fm.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
