@@ -77,7 +77,7 @@
                                     <ColumnDefinition Width="24"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded"/>
-                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="CreateNewTile"/>
+                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="SetNewColor"/>
                             </Grid>
                             <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" Padding="0" Foreground="#FF630000">HEX COLOR</TextBlock>
                         </Grid>

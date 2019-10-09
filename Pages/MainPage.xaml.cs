@@ -143,5 +143,27 @@ namespace DWinOverlay.Pages
                 Reconf(this, null);
             }
         }
+
+        private void SetNewColor(object sender, RoutedEventArgs e)
+        {
+            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
+            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+
+            if (colorTile.SelectedColor != null)
+            {
+                System.Windows.Media.Color color = (System.Windows.Media.Color)colorTile.SelectedColor;
+                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+                config.Color = HexConverter(newColor);
+            }
+
+            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
+                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
+        }
+
+        private static String HexConverter(System.Drawing.Color c)
+        {
+            return "#" + c.A.ToString("X2") + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
     }
 }
