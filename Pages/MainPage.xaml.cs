@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -127,6 +128,20 @@ namespace DWinOverlay.Pages
         {
             dialogBox.Visibility = Visibility.Collapsed;
             deleteDialogBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void ColorTile_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
+            {
+                string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
+                ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+                colorTile.SelectedColor = (Color)ColorConverter.ConvertFromString(config.Color);
+            }
+            else
+            {
+                Reconf(this, null);
+            }
         }
     }
 }

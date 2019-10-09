@@ -93,7 +93,7 @@ namespace DWinOverlay
                 FirstRun = true,
                 Blur = true,
                 Transparency = 255,
-                Color = "#000000",
+                Color = "#19000000",
                 Positions = positions
             };
             string json = JsonConvert.SerializeObject(config, Formatting.Indented);

@@ -562,6 +562,10 @@ namespace DWinOverlay
             SetBottom(this);
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
 
+            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
+            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+            MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
+
             if (File.Exists(path + "\\PositionData.dat"))
             {
                 string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X}:{Y} ex. (Files X=120 Y=60) Files:120:60;

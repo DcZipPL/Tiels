@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,13 +35,13 @@ namespace DWinOverlay.Pages
 
         private void Mel_Loaded(object sender, RoutedEventArgs e)
         {
-            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\tutorial_fm.mp4");
+            mel.Source = new Uri(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Assets\tutorial_fm.mp4");
             mel.Play();
         }
 
         private void TestPlay(object sender, RoutedEventArgs e)
         {
-            mel.Source = new Uri(@"R:\DWinOverlay\DWinOverlay\bin\Debug\Assets\tutorial_fm.mp4");
+            mel.Source = new Uri(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Assets\tutorial_fm.mp4");
             mel.Play();
         }
 
