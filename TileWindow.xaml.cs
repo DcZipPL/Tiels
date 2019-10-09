@@ -510,22 +510,25 @@ namespace DWinOverlay
                     string json_out = File.ReadAllText(path + "\\" + name + "_fileupdate.json");
                     SoftFileData[] data = JsonConvert.DeserializeObject<FileUpdateClass>(json_out).Data;
                     string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
-                    for (int i = 0; i < data.Length; i++)
+                    if (elements.Length != data.Length)
                     {
-                        if (data.Length != elements.Length)
+                        ReadElements();
+                    }
+                    else
+                    {
+                        for (int i = 0; i < elements.Length; i++)
                         {
-                            ReadElements();
-                        }
-                        else if (data[i].Name == elements[i])
-                        {
-                            if ((int)data[i].Size / 100 != (int)new System.IO.FileInfo(elements[i]).Length / 100)
+                            if (data[i].Name == elements[i])
+                            {
+                                if ((int)data[i].Size / 100 != (int)new System.IO.FileInfo(elements[i]).Length / 100)
+                                {
+                                    ReadElements();
+                                }
+                            }
+                            else
                             {
                                 ReadElements();
                             }
-                        }
-                        else
-                        {
-                            ReadElements();
                         }
                     }
                 }
@@ -533,6 +536,7 @@ namespace DWinOverlay
                 {
                     if (tries <= 3)
                     {
+                        ReadElements();
                         tries++;
                     }
                     else

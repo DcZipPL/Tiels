@@ -110,5 +110,23 @@ namespace DWinOverlay.Pages
             Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location);
             System.Windows.Application.Current.Shutdown();
         }
+
+        private void OpenCreateDialog(object sender, RoutedEventArgs e)
+        {
+            HideAllDialogs();
+            dialogBox.Visibility = Visibility.Visible;
+        }
+
+        private void OpenDeleteDialog(object sender, RoutedEventArgs e)
+        {
+            HideAllDialogs();
+            dialogBox.Visibility = Visibility.Visible;
+        }
+
+        private void HideAllDialogs()
+        {
+            dialogBox.Visibility = Visibility.Collapsed;
+            deleteDialogBox.Visibility = Visibility.Collapsed;
+        }
     }
 }

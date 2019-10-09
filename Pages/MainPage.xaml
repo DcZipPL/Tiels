@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
     <Grid>
-        <Grid x:Name="dialogBox">
+        <Grid x:Name="dialogBox" Visibility="Collapsed">
             <Grid Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="500" Height="130">
                 <Border BorderBrush="#FF00B9FF" BorderThickness="1">
                     <Border.Effect>
@@ -46,7 +46,7 @@
                 </Border>
             </Grid>
         </Grid>
-        <Grid x:Name="deleteDialogBox">
+        <Grid x:Name="deleteDialogBox" Visibility="Collapsed">
             <Grid Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="500" Height="300">
                 <Border BorderBrush="#FF00B9FF" BorderThickness="1">
                     <Border.Effect>
@@ -85,8 +85,8 @@
                 </Border>
             </Grid>
         </Grid>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Create Tile" Padding="10,3"/>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0" Content="Delete Tile" Padding="10,3"/>
+        <Button x:Name="OpenCreateDialogBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Create Tile" Padding="10,3" Click="OpenCreateDialog"/>
+        <Button x:Name="OpenDeleteDialogBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0" Content="Delete Tile" Padding="10,3" Click="OpenDeleteDialog"/>
         <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Content="Reconfigurate" Padding="10,3" Click="Reconf"/>
     </Grid>
 </Page>
