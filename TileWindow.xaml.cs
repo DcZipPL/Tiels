@@ -28,6 +28,7 @@ namespace DWinOverlay
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private bool isMoving = false;
+        private Point MousePos;
 
         int tries = 0;
         private int lastHeight = 0;
@@ -493,7 +494,13 @@ namespace DWinOverlay
             dispatcherTimer.Start();
         }
 
-        private void MoveActionStart(object sender, MouseButtonEventArgs e) => isMoving = true;
+        private void MoveActionStart(object sender, MouseButtonEventArgs e)
+        {
+            isMoving = true;
+            MousePos = GetMousePosition();
+            MousePos.X = Convert.ToInt32(this.Left) - MousePos.X;
+            MousePos.Y = Convert.ToInt32(this.Top) - MousePos.Y;
+        }
         private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
@@ -598,6 +605,39 @@ namespace DWinOverlay
             SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);*/
         }
 
+        public bool IsSmallIcon(System.Drawing.Bitmap img)
+        {
+            int solidPixels = 0;
+            for (int i = 0; i < img.Width; i++)
+            {
+                for (int j = 0; j < img.Height; j++)
+                {
+                    if (i >= 48 && j >= 48)
+                    {
+                        System.Drawing.Color pixel = img.GetPixel(i, j);
+                        if (pixel.A != 0)
+                        {
+                            solidPixels++;
+                        }
+                    }
+                }
+            }
+            if (solidPixels <= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static System.Drawing.Image CropImage(System.Drawing.Image img, System.Drawing.Rectangle cropArea)
+        {
+            System.Drawing.Bitmap bmpImage = new System.Drawing.Bitmap(img);
+            return bmpImage.Clone(cropArea, bmpImage.PixelFormat);
+        }
+
         private void ReadElements()
         {
             filedata.Clear();
@@ -645,7 +685,16 @@ namespace DWinOverlay
                     using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
                     {
                         // save to file (or show in a picture box)
-                        ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                        if (!IsSmallIcon(ico.ToBitmap()))
+                        {
+                            ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                        else
+                        {
+                            System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
+                            System.Drawing.Image img = ico.ToBitmap();
+                            CropImage(img,cropRect).Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                        }
                         File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
                         num = "\\TMP_ICON_" + ri + i;
                     }
@@ -766,8 +815,8 @@ namespace DWinOverlay
         {
             if (isMoving)
             {
-                Top = GetMousePosition().Y - Height + 10;
-                Left = GetMousePosition().X - 400;
+                Left = (GetMousePosition().X + MousePos.X);
+                Top = (GetMousePosition().Y + MousePos.Y);
             }
         }
 
