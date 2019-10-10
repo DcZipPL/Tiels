@@ -811,12 +811,27 @@ namespace DWinOverlay
             }
         }
 
+        public static bool IsEven(int value)
+        {
+            return value % 4 == 0;
+        }
+
         private void MoveAction(object sender, MouseEventArgs e)
         {
             if (isMoving)
             {
-                Left = (GetMousePosition().X + MousePos.X);
-                Top = (GetMousePosition().Y + MousePos.Y);
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    Left = (GetMousePosition().X + MousePos.X);
+                    Top = (GetMousePosition().Y + MousePos.Y);
+                }
+                else
+                {
+                    if (IsEven((int)(GetMousePosition().X + MousePos.X)))
+                        Left = (int)(GetMousePosition().X + MousePos.X);
+                    if (IsEven((int)(GetMousePosition().Y + MousePos.Y)))
+                        Top = (int)(GetMousePosition().Y + MousePos.Y);
+                }
             }
         }
 
