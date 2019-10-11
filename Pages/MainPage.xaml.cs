@@ -35,7 +35,6 @@ namespace DWinOverlay.Pages
 
         private void CreateNewTile(object sender, RoutedEventArgs e)
         {
-            //TODO: Creating Folder as Tile
             if (!newTileName.Text.Contains("\\"))
                 if (!newTileName.Text.Contains("/"))
                     if (!newTileName.Text.Contains("*"))
@@ -46,6 +45,12 @@ namespace DWinOverlay.Pages
                                         if (!newTileName.Text.Contains("|"))
                                         {
                                             Directory.CreateDirectory(path + "\\" + newTileName.Text);
+                                            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                                            foreach (TileWindow tile in mw.tilesw)
+                                            {
+                                                tile.Close();
+                                            }
+                                            mw.Load();
                                         }
         }
 
@@ -121,7 +126,7 @@ namespace DWinOverlay.Pages
         private void OpenDeleteDialog(object sender, RoutedEventArgs e)
         {
             HideAllDialogs();
-            dialogBox.Visibility = Visibility.Visible;
+            deleteDialogBox.Visibility = Visibility.Visible;
         }
 
         private void HideAllDialogs()
@@ -130,40 +135,16 @@ namespace DWinOverlay.Pages
             deleteDialogBox.Visibility = Visibility.Collapsed;
         }
 
-        private void ColorTile_Loaded(object sender, RoutedEventArgs e)
+        private void ShowSettings(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
-            {
-                string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-                ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
-                colorTile.SelectedColor = (Color)ColorConverter.ConvertFromString(config.Color);
-            }
-            else
-            {
-                Reconf(this, null);
-            }
-        }
-
-        private void SetNewColor(object sender, RoutedEventArgs e)
-        {
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
-
-            if (colorTile.SelectedColor != null)
-            {
-                System.Windows.Media.Color color = (System.Windows.Media.Color)colorTile.SelectedColor;
-                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
-                config.Color = HexConverter(newColor);
-            }
-
-            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
-            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
-        }
-
-        private static String HexConverter(System.Drawing.Color c)
-        {
-            return "#" + c.A.ToString("X2") + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            mw.Visibility = Visibility.Hidden;
+            mw.main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/SettingsPage.xaml"));
+            mw.Width = 500;
+            mw.Height = 800;
+            mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;
+            mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
+            mw.Visibility = Visibility.Visible;
         }
     }
 }

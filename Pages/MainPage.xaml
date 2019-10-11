@@ -30,7 +30,7 @@
                                 <TextBlock x:Name="dialogBoxTile" Text="Dialog Box" Foreground="Black" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16"/>
                             </Grid>
                         </Border>
-                        
+
                         <Grid Grid.Row="1" Background="#FFF5F6F7">
                             <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">New Tile Name:</TextBlock>
                             <Grid VerticalAlignment="Top" Margin="10,40,10,0">
@@ -42,44 +42,6 @@
                                 <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="CreateNewTile"/>
                             </Grid>
                             <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" Padding="0" Foreground="#FF630000">Name can't contain (\ / : * ? &lt; &gt; |)</TextBlock>
-                        </Grid>
-                    </Grid>
-                </Border>
-            </Grid>
-        </Grid>
-        <Grid x:Name="colorDialogBox">
-            <Grid Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="500" Height="130">
-                <Border BorderBrush="#FF00B9FF" BorderThickness="1">
-                    <Border.Effect>
-                        <DropShadowEffect ShadowDepth="0" Opacity="0.5" Direction="15" BlurRadius="10"/>
-                    </Border.Effect>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Border BorderBrush="#FFDADBDC" BorderThickness="0,0,0,1">
-                            <Grid Background="White">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition Width="30"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Button x:Name="CloseColorDialogBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseDialogBtn_Click" Grid.Column="1" Margin="0" FontSize="14"/>
-                                <TextBlock x:Name="colorDialogBoxTile" Text="Dialog Box" Foreground="Black" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16"/>
-                            </Grid>
-                        </Border>
-
-                        <Grid Grid.Row="1" Background="#FFF5F6F7">
-                            <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">New Tile Name:</TextBlock>
-                            <Grid VerticalAlignment="Top" Margin="10,40,10,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition Width="24"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded"/>
-                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="SetNewColor"/>
-                            </Grid>
-                            <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" Padding="0" Foreground="#FF630000">HEX COLOR</TextBlock>
                         </Grid>
                     </Grid>
                 </Border>
@@ -127,5 +89,6 @@
         <Button x:Name="OpenCreateDialogBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Create Tile" Padding="10,3" Click="OpenCreateDialog"/>
         <Button x:Name="OpenDeleteDialogBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0" Content="Delete Tile" Padding="10,3" Click="OpenDeleteDialog"/>
         <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Content="Reconfigurate" Padding="10,3" Click="Reconf"/>
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Content="&#xE713;" Padding="5" Click="ShowSettings" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
     </Grid>
 </Page>
