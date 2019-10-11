@@ -46,10 +46,12 @@ namespace DWinOverlay.Pages
                                         {
                                             Directory.CreateDirectory(path + "\\" + newTileName.Text);
                                             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-                                            foreach (TileWindow tile in mw.tilesw)
+                                            for (int i = 0; i <= mw.tilesw.Count-1; i++)
                                             {
-                                                tile.Close();
+                                                mw.tilesw[i].Close();
                                             }
+                                            mw.tilesw.Clear();
+                                            tilelist.Items.Clear();
                                             mw.Load();
                                         }
         }
@@ -73,6 +75,7 @@ namespace DWinOverlay.Pages
 
         private void DeleteTile(object sender, RoutedEventArgs e)
         {
+            ListBoxItem tmp_item = null;
             foreach (ListBoxItem item in tilelist.Items)
             {
                 if (item.IsSelected)
@@ -89,8 +92,11 @@ namespace DWinOverlay.Pages
                             tile.Close();
                         }
                     }
+                    tmp_item = item;
                 }
             }
+            if (tmp_item != null)
+                tilelist.Items.Remove(tmp_item);
         }
 
         private void Reconf(object sender, RoutedEventArgs e)
