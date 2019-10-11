@@ -271,6 +271,7 @@ namespace DWinOverlay
             string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
             Dictionary<string,string> iconcache = new Dictionary<string,string>();
             string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray(); // Elements link
+            string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
 
             foreach (var cache in tmp_iconcache)
             {
@@ -336,7 +337,7 @@ namespace DWinOverlay
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Foreground = Brushes.White,
-                    Text = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "") // File Name
+                    Text = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "") // File Name
                 };
 
                 Grid button_content = new Grid();
@@ -392,6 +393,81 @@ namespace DWinOverlay
                 FilesList.ColumnDefinitions.Add(column);
                 FilesList.Children.Add(grid);
             }
+            if (directories.Length != 0)
+                for (int i = 0; i < directories.Length; i++)
+                {
+                    TextBlock image = new TextBlock
+                    {
+                        FontSize = 44,
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Width = 44,
+                        Height = 44,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 1, 0, 19),
+                        Text = ""
+                    };
+
+                    TextBlock filename = new TextBlock
+                    {
+                        VerticalAlignment = VerticalAlignment.Bottom,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Foreground = Brushes.White,
+                        Text = directories[i].Replace(path + "\\" + name + "\\", "")
+                    };
+
+                    Grid button_content = new Grid();
+                    button_content.Children.Add(image);
+                    button_content.Children.Add(filename);
+
+                    Button button = new Button
+                    {
+                        Content = button_content,
+                        Background = Brushes.Transparent,
+                        BorderBrush = Brushes.Transparent,
+                        Name = "elementButton_" + i,
+                        Tag = directories[i]
+                    };
+                    button.Click += ElementClicked;
+
+                    Grid grid = new Grid
+                    {
+                        Width = 110,
+                        Height = 68,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0, 4, 10, 4),
+                    };
+                    Grid.SetColumn(grid, m);
+                    grid.Children.Add(button);
+                    m++;
+
+                    ColumnDefinition column = new ColumnDefinition
+                    {
+                        Width = new GridLength(120, GridUnitType.Pixel)
+                    };
+
+                    Grid.SetRow(grid, n);
+                    if (i == j)
+                    {
+                        m = 0;
+                        j += 4;
+                        n++;
+                    }
+                    if (i == j - 4)
+                    {
+                        this.Height += 80;
+                        FilesList.Height += 80;
+
+                        RowDefinition row = new RowDefinition
+                        {
+                            Height = new GridLength(1, GridUnitType.Star)
+                        };
+                        FilesList.RowDefinitions.Add(row);
+                    }
+
+                    FilesList.ColumnDefinitions.Add(column);
+                    FilesList.Children.Add(grid);
+                }
             if (File.Exists(path + "\\" + name + "_fileupdate.json"))
                 File.Delete(path + "\\" + name + "_fileupdate.json");
 
