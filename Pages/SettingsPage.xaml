@@ -17,7 +17,7 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition Width="30"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded"/>
+                    <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded" SelectedColorChanged="ColorTile_SelectedColorChanged"/>
                     <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="SetNewColor"/>
                 </Grid>
             </Border>

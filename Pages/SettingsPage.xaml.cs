@@ -95,5 +95,14 @@ namespace DWinOverlay.Pages
             mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
             mw.Visibility = Visibility.Visible;
         }
+
+        private void ColorTile_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            foreach (TileWindow tile in mw.tilesw)
+            {
+                tile.MainGrid.Background = new SolidColorBrush((System.Windows.Media.Color)colorTile.SelectedColor);
+            }
+        }
     }
 }

@@ -46,9 +46,9 @@ namespace DWinOverlay.Pages
                                         {
                                             Directory.CreateDirectory(path + "\\" + newTileName.Text);
                                             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-                                            for (int i = 0; i <= mw.tilesw.Count-1; i++)
+                                            foreach (TileWindow tile in mw.tilesw)
                                             {
-                                                mw.tilesw[i].Close();
+                                                tile.Close();
                                             }
                                             mw.tilesw.Clear();
                                             tilelist.Items.Clear();
