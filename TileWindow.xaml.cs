@@ -350,7 +350,8 @@ namespace DWinOverlay
                     Background = Brushes.Transparent,
                     BorderBrush = Brushes.Transparent,
                     Name = "elementButton_"+i,
-                    Tag = elements[i]
+                    Tag = elements[i],
+                    ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
                 };
                 button.Click += ElementClicked;
 
@@ -425,7 +426,8 @@ namespace DWinOverlay
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         Name = "elementButton_" + i,
-                        Tag = directories[i]
+                        Tag = directories[i],
+                        ToolTip = directories[i].Replace(path + "\\" + name + "\\", "")+" - Directory"
                     };
                     button.Click += ElementClicked;
 
