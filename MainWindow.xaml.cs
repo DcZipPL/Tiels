@@ -92,7 +92,7 @@ namespace DWinOverlay
             {
                 FirstRun = true,
                 Blur = true,
-                Transparency = 255,
+                Theme = 0,
                 Color = "#19000000",
                 Positions = positions
             };

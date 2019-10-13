@@ -273,6 +273,9 @@ namespace DWinOverlay
             string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray(); // Elements link
             string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
 
+            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
+            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+
             foreach (var cache in tmp_iconcache)
             {
                 iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
@@ -332,12 +335,13 @@ namespace DWinOverlay
                     ))
                 };
 
+                string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
                 TextBlock filename = new TextBlock
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Foreground = Brushes.White,
-                    Text = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "") // File Name
+                    Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                    Text = filetext.Length > 14 ? filetext.Remove(filetext.Length - (filetext.Length - 14)) +"..." : filetext
                 };
 
                 Grid button_content = new Grid();
@@ -403,17 +407,19 @@ namespace DWinOverlay
                         FontFamily = new FontFamily("Segoe MDL2 Assets"),
                         Width = 44,
                         Height = 44,
+                        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(0, 1, 0, 19),
                         Text = ""
                     };
 
+                    string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
                     TextBlock filename = new TextBlock
                     {
                         VerticalAlignment = VerticalAlignment.Bottom,
                         HorizontalAlignment = HorizontalAlignment.Center,
-                        Foreground = Brushes.White,
-                        Text = directories[i].Replace(path + "\\" + name + "\\", "")
+                        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                        Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) +"..."
                     };
 
                     Grid button_content = new Grid();

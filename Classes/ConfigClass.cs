@@ -10,7 +10,7 @@ namespace DWinOverlay
     {
         public bool FirstRun;
         public bool Blur;
-        public int Transparency;
+        public int Theme;
         public string Color;
         public WindowPosition[] Positions;
     }
