@@ -214,6 +214,9 @@ namespace DWinOverlay
             {
                 File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left + ":" + Top + ";");
             }
+            folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+            hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+            gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             ReadElements();
         }
 
@@ -550,12 +553,14 @@ namespace DWinOverlay
             if (isHidded)
             {
                 this.Height = lastHeight;
+                hideBtn.Content = "";
                 isHidded = false;
             }
             else
             {
                 lastHeight = (int)this.Height;
                 this.Height = 28;
+                hideBtn.Content = "";
                 isHidded = true;
             }
         }

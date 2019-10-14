@@ -24,8 +24,9 @@
             </Grid>
             <Grid x:Name="ActionGrid" Background="#33000000" Grid.Row="1">
                 <TextBlock x:Name="folderNameTB" Text="Folder Name" Foreground="White" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" FontSize="16"/>
-                <Button HorizontalAlignment="Left" Margin="5,0,0,0" Width="20" FontFamily="Segoe MDL2 Assets" Content="&#xE70E;" Foreground="White" BorderThickness="0" BorderBrush="Black" Background="#00000000" Click="HideTileButton"/>
-                <Button x:Name="TestAddBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click"/>
+                <Button x:Name="hideBtn" HorizontalAlignment="Left" Margin="5,0,0,0" Width="20" FontFamily="Segoe MDL2 Assets" Content="&#xE70E;" Foreground="White" BorderThickness="0" BorderBrush="Black" Background="#00000000" Click="HideTileButton"/>
+                <Button x:Name="gotodirectoryBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click"/>
+                <Button x:Name="editBtn" HorizontalAlignment="Left" Margin="55,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE70F;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000"/>
                 <Path Fill="White" Stroke="White" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0">
                     <Path.Data>
                         <GeometryGroup>
@@ -35,7 +36,7 @@
                         </GeometryGroup>
                     </Path.Data>
                 </Path>
-                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="50,0,0,0"/>
+                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="80,0,0,0"/>
             </Grid>
         </Grid>
     </Grid>
