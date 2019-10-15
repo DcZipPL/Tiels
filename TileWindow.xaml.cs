@@ -34,6 +34,7 @@ namespace DWinOverlay
         int tries = 0;
         private int lastHeight = 0;
         public bool isHidded = false;
+        public bool isEditMode = false;
 
         List<SoftFileData> filedata = new List<SoftFileData>();
 
@@ -189,8 +190,7 @@ namespace DWinOverlay
             SetBottom(this);
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
 
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+            ConfigClass config = Config.GetConfig();
             MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
             if (File.Exists(path + "\\PositionData.dat"))
@@ -217,6 +217,9 @@ namespace DWinOverlay
             folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+            editBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+            rotateBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+            editBox.Text = name;
             ReadElements();
         }
 
@@ -276,8 +279,7 @@ namespace DWinOverlay
             string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray(); // Elements link
             string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
 
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+            ConfigClass config = Config.GetConfig();
 
             foreach (var cache in tmp_iconcache)
             {
@@ -534,7 +536,20 @@ namespace DWinOverlay
         private void MoveActionStop(object sender, MouseButtonEventArgs e)
         {
             isMoving = false;
-            File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left + ":" + Top + ";");
+            //Saving Window Position
+            ConfigClass config = Config.GetConfig();
+            foreach (var window in config.Windows)
+            {
+                if (window.Name == name)
+                {
+                    window.Position = new WindowPosition { X = this.Left, Y = this.Top };
+                }
+            }
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
         }
 
         public static void Save(BitmapSource image, string filePath)
@@ -568,6 +583,25 @@ namespace DWinOverlay
         private void OpenDirectoryBtn_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(path+"\\"+name);
+        }
+
+        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isEditMode)
+            {
+                MoveRectangle.Visibility = Visibility.Collapsed;
+                folderNameTB.Visibility = Visibility.Collapsed;
+                editBox.Visibility = Visibility.Visible;
+                isEditMode = true;
+            }
+            else
+            {
+                MoveRectangle.Visibility = Visibility.Visible;
+                folderNameTB.Visibility = Visibility.Visible;
+                editBox.Visibility = Visibility.Collapsed;
+                folderNameTB.Text = editBox.Text;
+                isEditMode = false;
+            }
         }
     }
 }

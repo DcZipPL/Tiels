@@ -88,13 +88,16 @@ namespace DWinOverlay
             WindowPosition pos0 = new WindowPosition();
             WindowPosition pos1 = new WindowPosition();
             WindowPosition[] positions = new WindowPosition[] { pos0, pos1 };
+            JsonWindow jwindow = new JsonWindow();
+            List<JsonWindow> jwindows = new List<JsonWindow>();
+            jwindows.Add(jwindow);
             ConfigClass config = new ConfigClass
             {
                 FirstRun = true,
                 Blur = true,
-                Theme = 0,
+                Theme = 1,
                 Color = "#19000000",
-                Positions = positions
+                Windows = jwindows
             };
             string json = JsonConvert.SerializeObject(config, Formatting.Indented);
             if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))

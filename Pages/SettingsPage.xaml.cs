@@ -31,8 +31,7 @@ namespace DWinOverlay.Pages
 
         private void SetNewColor(object sender, RoutedEventArgs e)
         {
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+            ConfigClass config = Config.GetConfig();
 
             if (colorTile.SelectedColor != null)
             {
@@ -41,47 +40,24 @@ namespace DWinOverlay.Pages
                 config.Color = Util.HexConverter(newColor);
             }
 
-            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
-            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
         }
 
         private void ColorTile_Loaded(object sender, RoutedEventArgs e)
         {
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
             {
-                string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-                ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+                ConfigClass config = Config.GetConfig();
                 colorTile.SelectedColor = (Color)ColorConverter.ConvertFromString(config.Color);
             }
             else
             {
-                Reconf();
+                Util.Reconfigurate();
             }
-        }
-
-        private void Reconf()
-        {
-            System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                foreach (FileInfo filei in dir.GetFiles())
-                {
-                    filei.Delete();
-                }
-                foreach (DirectoryInfo diri in dir.GetDirectories())
-                {
-                    diri.Delete(true);
-                }
-                dir.Delete(true);
-            }
-            Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location);
-            System.Windows.Application.Current.Shutdown();
         }
 
         private void BackHome(object sender, RoutedEventArgs e)
@@ -116,25 +92,19 @@ namespace DWinOverlay.Pages
         {
             if (ThemeCombobox.SelectedIndex != -1)
             {
-                if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
+                ConfigClass config = Config.GetConfig();
+                config.Theme = ThemeCombobox.SelectedIndex;
+                bool result = Config.SetConfig(config);
+                if (result == false)
                 {
-                    string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-                    ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
-                    config.Theme = ThemeCombobox.SelectedIndex;
-                    string json = JsonConvert.SerializeObject(config, Formatting.Indented);
-                    File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
-                }
-                else
-                {
-                    Reconf();
+                    Util.Reconfigurate();
                 }
             }
         }
 
         private void ThemeCombobox_Loaded(object sender, RoutedEventArgs e)
         {
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+            ConfigClass config = Config.GetConfig();
             ThemeCombobox.SelectedIndex = config.Theme;
         }
     }

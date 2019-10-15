@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,6 +21,30 @@ namespace DWinOverlay.Classes
         public static bool IsEvenFour(int value)
         {
             return value % 4 == 0;
+        }
+
+        public static void Reconfigurate()
+        {
+            System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                foreach (FileInfo filei in dir.GetFiles())
+                {
+                    filei.Delete();
+                }
+                foreach (DirectoryInfo diri in dir.GetDirectories())
+                {
+                    diri.Delete(true);
+                }
+                dir.Delete(true);
+            }
+            Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location);
+            System.Windows.Application.Current.Shutdown();
         }
 
         public static System.Drawing.Image CropImage(System.Drawing.Image img, System.Drawing.Rectangle cropArea)

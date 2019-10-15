@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DWinOverlay.Classes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -99,29 +100,7 @@ namespace DWinOverlay.Pages
                 tilelist.Items.Remove(tmp_item);
         }
 
-        private void Reconf(object sender, RoutedEventArgs e)
-        {
-            System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                foreach (FileInfo filei in dir.GetFiles())
-                {
-                    filei.Delete();
-                }
-                foreach (DirectoryInfo diri in dir.GetDirectories())
-                {
-                    diri.Delete(true);
-                }
-                dir.Delete(true);
-            }
-            Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location);
-            System.Windows.Application.Current.Shutdown();
-        }
+        private void Reconf(object sender, RoutedEventArgs e) => Util.Reconfigurate();
 
         private void OpenCreateDialog(object sender, RoutedEventArgs e)
         {
