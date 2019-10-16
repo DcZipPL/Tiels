@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DWinOverlay.Classes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,6 +63,7 @@ namespace DWinOverlay
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
+                ConfigClass config = Config.GetConfig();
                 for (int i = 0; i <= tiles.Length - 1; i++)
                 {
                     tiles[i] = tiles[i].Replace(path + "\\", "");
@@ -70,6 +72,28 @@ namespace DWinOverlay
                     tile.name = tiles[i];
                     tile.Show();
                     tilesw.Add(tile);
+                    bool windowexist = false;
+                    foreach (var window in config.Windows)
+                    {
+                        if (window.Name == tiles[i])
+                        {
+                            windowexist = true;
+                            tile.Left = window.Position.X;
+                            tile.Top = window.Position.Y;
+                        }
+                    }
+                    if (!windowexist)
+                    {
+                        JsonWindow jsonwindow = new JsonWindow();
+                        jsonwindow.Name = tiles[i];
+                        jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
+                        config.Windows.Add(jsonwindow);
+                    }
+                }
+                bool result = Config.SetConfig(config);
+                if (result == false)
+                {
+                    Util.Reconfigurate();
                 }
             }
 
