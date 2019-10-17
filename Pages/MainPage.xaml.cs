@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,27 +37,21 @@ namespace DWinOverlay.Pages
 
         private void CreateNewTile(object sender, RoutedEventArgs e)
         {
-            if (!newTileName.Text.Contains("\\"))
-                if (!newTileName.Text.Contains("/"))
-                    if (!newTileName.Text.Contains("*"))
-                        if (!newTileName.Text.Contains(":"))
-                            if (!newTileName.Text.Contains("?"))
-                                if (!newTileName.Text.Contains("<"))
-                                    if (!newTileName.Text.Contains(">"))
-                                        if (!newTileName.Text.Contains("|"))
-                                        {
-                                            Directory.CreateDirectory(path + "\\" + newTileName.Text);
-                                            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-                                            foreach (TileWindow tile in mw.tilesw)
-                                            {
-                                                tile.Close();
-                                            }
-                                            mw.tilesw.Clear();
-                                            tilelist.Items.Clear();
-                                            mw.Load();
-                                        }
+            //"/[<>/\\*:\?\|]/g
+            if (!Regex.IsMatch(newTileName.Text, @"\<|\>|\\|\/|\*|\?|\||:"))
+            {
+                Directory.CreateDirectory(path + "\\" + newTileName.Text);
+                MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                foreach (TileWindow tile in mw.tilesw)
+                {
+                    tile.Close();
+                }
+                mw.tilesw.Clear();
+                tilelist.Items.Clear();
+                mw.Load();
+            }
         }
-
+        
         private void CloseDeleteDialogBtn_Click(object sender, RoutedEventArgs e)
         {
             deleteDialogBox.Visibility = Visibility.Collapsed;

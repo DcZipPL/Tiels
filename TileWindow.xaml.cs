@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using DWinOverlay.Classes;
+using System.Text.RegularExpressions;
 
 namespace DWinOverlay
 {
@@ -28,6 +29,7 @@ namespace DWinOverlay
     {
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
+        private string newname = null;
         private bool isMoving = false;
         private Point MousePos;
 
@@ -193,27 +195,6 @@ namespace DWinOverlay
             ConfigClass config = Config.GetConfig();
             MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
-            if (File.Exists(path + "\\PositionData.dat"))
-            {
-                string posString = File.ReadAllText(path + "\\PositionData.dat"); // Input {FOLDERNAME}:{X}:{Y} ex. (Files X=120 Y=60) Files:120:60;
-                string[] positions = posString.Replace("\r", "").Replace("\n", "").Replace(" ", "").Split(';');
-                foreach (string position in positions)
-                {
-                    string[] splitedpos = position.Split(':');
-                    if (position != "")
-                    {
-                        //string name = splitedpos[0];
-                        string x = splitedpos[1];
-                        string y = splitedpos[2];
-                        Top = int.Parse(y);
-                        Left = int.Parse(x);
-                    }
-                }
-            }
-            else
-            {
-                File.WriteAllText(path + "\\PositionData.dat", folderNameTB.Text + ":" + Left + ":" + Top + ";");
-            }
             folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
@@ -599,9 +580,40 @@ namespace DWinOverlay
                 MoveRectangle.Visibility = Visibility.Visible;
                 folderNameTB.Visibility = Visibility.Visible;
                 editBox.Visibility = Visibility.Collapsed;
-                folderNameTB.Text = editBox.Text;
+                if (!Regex.IsMatch(editBox.Text, @"\<|\>|\\|\/|\*|\?|\||:") && name != editBox.Text)
+                {
+                    folderNameTB.Text = editBox.Text;
+                    ChangeTileName();
+                }
+                else
+                {
+                    editBox.Text = name;
+                    folderNameTB.Text = name;
+                }
                 isEditMode = false;
             }
+        }
+
+        private void ChangeTileName()
+        {
+            newname = editBox.Text;
+            Directory.Move(path + "\\" + name, path + "\\" + newname);
+            name = newname;
+        }
+
+        private void ResizeActionStart(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void ResizeAction(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void ResizeActionStop(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }
