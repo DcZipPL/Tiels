@@ -31,6 +31,7 @@ namespace DWinOverlay
     public class JsonWindow
     {
         public string Name;
+        public bool EditBar;
         public WindowPosition Position;
     }
 

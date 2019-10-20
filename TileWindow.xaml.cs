@@ -614,5 +614,37 @@ namespace DWinOverlay
         {
 
         }
+
+        private void RotateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            foreach (var window in config.Windows)
+            {
+                if (window.Name == name)
+                {
+                    if (window.EditBar)
+                    {
+                        window.EditBar = false;
+                        rd.Height = new GridLength(28);
+                        trd.Height = GridLength.Auto;
+                        Grid.SetRow(ActionGrid, 0);
+                        Grid.SetRow(FilesList, 1);
+                    }
+                    else
+                    {
+                        window.EditBar = true;
+                        rd.Height = GridLength.Auto;
+                        trd.Height = new GridLength(28);
+                        Grid.SetRow(ActionGrid, 1);
+                        Grid.SetRow(FilesList, 0);
+                    }
+                }
+            }
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
     }
 }

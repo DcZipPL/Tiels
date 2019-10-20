@@ -80,6 +80,20 @@ namespace DWinOverlay
                             windowexist = true;
                             tile.Left = window.Position.X;
                             tile.Top = window.Position.Y;
+                            if (!window.EditBar)
+                            {
+                                tile.rd.Height = new GridLength(28);
+                                tile.trd.Height = GridLength.Auto;
+                                Grid.SetRow(tile.ActionGrid, 0);
+                                Grid.SetRow(tile.FilesList, 1);
+                            }
+                            else
+                            {
+                                tile.rd.Height = GridLength.Auto;
+                                tile.trd.Height = new GridLength(28);
+                                Grid.SetRow(tile.ActionGrid, 1);
+                                Grid.SetRow(tile.FilesList, 0);
+                            }
                         }
                     }
                     if (!windowexist)
@@ -87,6 +101,7 @@ namespace DWinOverlay
                         JsonWindow jsonwindow = new JsonWindow();
                         jsonwindow.Name = tiles[i];
                         jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
+                        jsonwindow.EditBar = false;
                         config.Windows.Add(jsonwindow);
                     }
                 }
