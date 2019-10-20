@@ -34,6 +34,7 @@ namespace DWinOverlay
         {
             InitializeComponent();
 
+            //Notify Icon
             ni.Icon = new System.Drawing.Icon(@"C:\Users\DcZipPL\Desktop\Tiles\appicon.ico");
             ni.Visible = false;
             ni.Click +=
@@ -47,6 +48,7 @@ namespace DWinOverlay
 
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
+            //If exists config and main app directory
             if (!Directory.Exists(path) || !File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
             {
                 ConfigureFirstRun();
@@ -67,19 +69,28 @@ namespace DWinOverlay
                 for (int i = 0; i <= tiles.Length - 1; i++)
                 {
                     tiles[i] = tiles[i].Replace(path + "\\", "");
+
+                    //Creating tile
                     TileWindow tile = new TileWindow();
                     tile.folderNameTB.Text = tiles[i];
                     tile.name = tiles[i];
                     tile.Show();
                     tilesw.Add(tile);
                     bool windowexist = false;
+
+                    //Search for tile in config
                     foreach (var window in config.Windows)
                     {
                         if (window.Name == tiles[i])
                         {
+                            //Tile exists?
                             windowexist = true;
+
+                            //Setting tile rosition
                             tile.Left = window.Position.X;
                             tile.Top = window.Position.Y;
+
+                            //Rotating tile
                             if (!window.EditBar)
                             {
                                 tile.rd.Height = new GridLength(28);
@@ -96,6 +107,7 @@ namespace DWinOverlay
                             }
                         }
                     }
+                    //If tile not exists create default values
                     if (!windowexist)
                     {
                         JsonWindow jsonwindow = new JsonWindow();
@@ -105,6 +117,7 @@ namespace DWinOverlay
                         config.Windows.Add(jsonwindow);
                     }
                 }
+                //If Config File not Exists
                 bool result = Config.SetConfig(config);
                 if (result == false)
                 {
@@ -113,6 +126,7 @@ namespace DWinOverlay
             }
 
             await Task.Delay(1300);
+            //Load MainPage
             main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
         }
@@ -120,10 +134,14 @@ namespace DWinOverlay
         public async void ConfigureFirstRun()
         {
             main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/LoadingPage.xaml"));
+
+            //Starting Tiels Console that generate Main App Directory and temp
             Process.Start("TielsConsole.exe","createlostandfound");
-            await Task.Delay(1300);
+            await Task.Delay(2600);
             main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/ConfigurePage.xaml"));
             loadingMessage.Text = "Configuration.";
+
+            //Creating config and creating example tile
             WindowPosition pos0 = new WindowPosition();
             WindowPosition pos1 = new WindowPosition();
             WindowPosition[] positions = new WindowPosition[] { pos0, pos1 };
@@ -138,6 +156,8 @@ namespace DWinOverlay
                 Color = "#19000000",
                 Windows = jwindows
             };
+
+            //Creating directory and config file
             string json = JsonConvert.SerializeObject(config, Formatting.Indented);
             if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
                 File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
@@ -145,6 +165,7 @@ namespace DWinOverlay
             if (!Directory.Exists(path + "\\Example"))
                 Directory.CreateDirectory(path + "\\Example");
 
+            //Creating example text file in tile
             File.WriteAllText(path + "\\Example\\ExampleContent.txt","Example Text.");
         }
 

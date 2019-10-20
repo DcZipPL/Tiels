@@ -27,9 +27,10 @@
                 <TextBox x:Name="editBox" Margin="160,4" VerticalAlignment="Center" FontSize="14" Padding="0" VerticalContentAlignment="Center" Visibility="Collapsed" HorizontalContentAlignment="Center"/>
                 <Button x:Name="hideBtn" HorizontalAlignment="Left" Margin="5,0,0,0" Width="20" FontFamily="Segoe MDL2 Assets" Content="&#xE70E;" Foreground="White" BorderThickness="0" BorderBrush="Black" Background="#00000000" Click="HideTileButton"/>
                 <Button x:Name="gotodirectoryBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click"/>
-                <Button x:Name="rotateBtn" HorizontalAlignment="Left" Margin="55,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE7AD;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="RotateBtn_Click"/>
-                <Button x:Name="editBtn" HorizontalAlignment="Left" Margin="80,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE70F;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="EditBtn_Click"/>
-                <Path Fill="White" Stroke="White" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0">
+                <Button x:Name="rotateBtn" HorizontalAlignment="Left" Margin="55,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE7AD;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="RotateBtn_Click" Visibility="Hidden"/>
+                <Button x:Name="editBtn" HorizontalAlignment="Left" Margin="80,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE70F;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="EditBtn_Click" Visibility="Collapsed"/>
+                <Button x:Name="settingsBtn" HorizontalAlignment="Left" Margin="55,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE712;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="SettingsBtn_Click"/>
+                <Path x:Name="moveableinfo" Fill="White" Stroke="White" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0" Visibility="Collapsed">
                     <Path.Data>
                         <GeometryGroup>
                             <LineGeometry StartPoint="20,0" EndPoint="60,0"/>
@@ -38,7 +39,7 @@
                         </GeometryGroup>
                     </Path.Data>
                 </Path>
-                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="105,0,0,0"/>
+                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="130,0,0,0"/>
             </Grid>
             <Rectangle x:Name="ResizeLeftRectangle" Tag="left" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeAll" Fill="#02000000" Margin="0" HorizontalAlignment="Left" Width="4" Grid.RowSpan="2"/>
             <Rectangle x:Name="ResizeRightRectangle" Tag="right" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeAll" Fill="#02000000" Margin="0" HorizontalAlignment="Right" Width="4" Grid.RowSpan="2"/>

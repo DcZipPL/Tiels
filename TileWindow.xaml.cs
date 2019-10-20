@@ -194,6 +194,7 @@ namespace DWinOverlay
             ConfigClass config = Config.GetConfig();
             MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
+            //Set text color by theme
             folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
             gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
@@ -207,8 +208,9 @@ namespace DWinOverlay
 
         public static void SetBottom(Window window)
         {
-            /*IntPtr hWnd = new WindowInteropHelper(window).Handle;
-            SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);*/
+            //TODO: Move to bottom but with id
+            //IntPtr hWnd = new WindowInteropHelper(window).Handle;
+            //Util.SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, Util.SWP_NOSIZE | Util.SWP_NOMOVE | Util.SWP_NOACTIVATE);
         }
 
         public bool IsSmallIcon(System.Drawing.Bitmap img)
@@ -240,11 +242,14 @@ namespace DWinOverlay
 
         private void ReadElements()
         {
+            //Clear data
             filedata.Clear();
 
             FilesList.Children.Clear();
             FilesList.ColumnDefinitions.Clear();
             FilesList.RowDefinitions.Clear();
+
+            //Set default values
             RowDefinition mainrow = new RowDefinition
             {
                 Height = new GridLength(1, GridUnitType.Star)
@@ -252,11 +257,15 @@ namespace DWinOverlay
             FilesList.RowDefinitions.Add(mainrow);
             FilesList.Height = 80;
             this.Height = 108;
+
+            //Creating file with paths to icons
             if (!File.Exists(path + "\\iconcache.db"))
                 File.WriteAllText(path + "\\iconcache.db", "");
+            //Read icon paths
             string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
             Dictionary<string,string> iconcache = new Dictionary<string,string>();
-            string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray(); // Elements link
+
+            string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
             string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
 
             ConfigClass config = Config.GetConfig();
@@ -266,6 +275,7 @@ namespace DWinOverlay
                 iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
             }
 
+            //Pseudo-random icon id
             int ri = new Random().Next(0, 1000000);
 
             int j = 3;
@@ -516,7 +526,7 @@ namespace DWinOverlay
         private void MoveActionStop(object sender, MouseButtonEventArgs e)
         {
             isMoving = false;
-            //Saving Window Position
+            //Saving window position
             ConfigClass config = Config.GetConfig();
             foreach (var window in config.Windows)
             {
@@ -547,6 +557,7 @@ namespace DWinOverlay
         {
             if (isHidded)
             {
+                //TODO: Fix hide function
                 this.Height = lastHeight;
                 hideBtn.Content = "";
                 isHidded = false;
@@ -645,6 +656,14 @@ namespace DWinOverlay
             {
                 Util.Reconfigurate();
             }
+        }
+
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            editBtn.Visibility = Visibility.Visible;
+            rotateBtn.Visibility = Visibility.Visible;
+            moveableinfo.Visibility = Visibility.Visible;
+            settingsBtn.Visibility = Visibility.Collapsed;
         }
     }
 }

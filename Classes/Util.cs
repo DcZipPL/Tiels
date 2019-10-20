@@ -123,12 +123,12 @@ namespace DWinOverlay.Classes
         }
 
         [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,
    int Y, int cx, int cy, uint uFlags);
 
-        const UInt32 SWP_NOSIZE = 0x0001;
-        const UInt32 SWP_NOMOVE = 0x0002;
-        const UInt32 SWP_NOACTIVATE = 0x0010;
+        public const UInt32 SWP_NOSIZE = 0x0001;
+        public const UInt32 SWP_NOMOVE = 0x0002;
+        public const UInt32 SWP_NOACTIVATE = 0x0010;
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
