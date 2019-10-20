@@ -190,7 +190,6 @@ namespace DWinOverlay
 
             Util.EnableBlur(this);
             SetBottom(this);
-            string[] tiles = Directory.EnumerateDirectories(path).ToArray();
 
             ConfigClass config = Config.GetConfig();
             MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
@@ -316,7 +315,7 @@ namespace DWinOverlay
                     Height = 44,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(0, 1, 0, 19),
-                    Source = new BitmapImage(new Uri(elements[i].Contains(".png") || elements[i].Contains(".jpg")
+                    Source = Util.BitmapFromUri(new Uri(elements[i].Contains(".png") || elements[i].Contains(".jpg")
                     ? elements[i] : path + num // ICON
                     ))
                 };
