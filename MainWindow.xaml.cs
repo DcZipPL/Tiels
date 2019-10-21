@@ -17,6 +17,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Resources;
 using System.Windows.Shapes;
 
 namespace DWinOverlay
@@ -93,17 +94,17 @@ namespace DWinOverlay
                             //Rotating tile
                             if (!window.EditBar)
                             {
-                                tile.rd.Height = new GridLength(28);
-                                tile.trd.Height = GridLength.Auto;
-                                Grid.SetRow(tile.ActionGrid, 0);
-                                Grid.SetRow(tile.FilesList, 1);
-                            }
-                            else
-                            {
                                 tile.rd.Height = GridLength.Auto;
                                 tile.trd.Height = new GridLength(28);
                                 Grid.SetRow(tile.ActionGrid, 1);
                                 Grid.SetRow(tile.FilesList, 0);
+                            }
+                            else
+                            {
+                                tile.rd.Height = new GridLength(28);
+                                tile.trd.Height = GridLength.Auto;
+                                Grid.SetRow(tile.ActionGrid, 0);
+                                Grid.SetRow(tile.FilesList, 1);
                             }
                         }
                     }
@@ -165,8 +166,14 @@ namespace DWinOverlay
             if (!Directory.Exists(path + "\\Example"))
                 Directory.CreateDirectory(path + "\\Example");
 
+            string icoPath = "pack://application:,,,/DWinOverlay;component/Assets/TielsDirectory.ico";
+            StreamResourceInfo icoInfo = System.Windows.Application.GetResourceStream(new Uri(icoPath));
+            byte[] bytes = Util.ReadFully(icoInfo.Stream);
+            File.WriteAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico", bytes);
+
             //Creating example text file in tile
             File.WriteAllText(path + "\\Example\\ExampleContent.txt","Example Text.");
+            File.WriteAllText(path + "\\Example\\desktop.ini", "[.ShellClassInfo]\r\nIconResource="+ Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico,0");
         }
 
         private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)

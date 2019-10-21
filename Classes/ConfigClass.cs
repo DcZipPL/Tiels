@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DWinOverlay.Classes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,9 +46,22 @@ namespace DWinOverlay
     {
         public static ConfigClass GetConfig()
         {
-            string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-            ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
-            return config;
+            try
+            {
+                string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
+                ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+                return config;
+            }
+            catch (FileNotFoundException fex)
+            {
+                Util.Reconfigurate();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                //TODO: CREATE BETTER ERROR WINDOW
+                return null;
+            }
         }
         public static bool SetConfig(ConfigClass config)
         {

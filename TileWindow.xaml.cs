@@ -633,9 +633,9 @@ namespace DWinOverlay
             {
                 if (window.Name == name)
                 {
-                    if (window.EditBar)
+                    if (!window.EditBar)
                     {
-                        window.EditBar = false;
+                        window.EditBar = true;
                         rd.Height = new GridLength(28);
                         trd.Height = GridLength.Auto;
                         Grid.SetRow(ActionGrid, 0);
@@ -643,7 +643,7 @@ namespace DWinOverlay
                     }
                     else
                     {
-                        window.EditBar = true;
+                        window.EditBar = false;
                         rd.Height = GridLength.Auto;
                         trd.Height = new GridLength(28);
                         Grid.SetRow(ActionGrid, 1);

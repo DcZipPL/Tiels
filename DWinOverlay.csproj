@@ -188,6 +188,7 @@
     <Resource Include="Assets\LoadingAnimation.gif" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\TielsDirectory.ico" />
     <Content Include="Assets\tutorial_fm.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -41,6 +41,7 @@ namespace DWinOverlay.Pages
             if (!Regex.IsMatch(newTileName.Text, @"\<|\>|\\|\/|\*|\?|\||:"))
             {
                 Directory.CreateDirectory(path + "\\" + newTileName.Text);
+                File.WriteAllText(path + "\\"+ newTileName.Text + "\\desktop.ini", "[.ShellClassInfo]\r\nIconResource=" + Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico,0");
                 MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
                 foreach (TileWindow tile in mw.tilesw)
                 {
