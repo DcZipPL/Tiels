@@ -137,8 +137,33 @@ namespace Tiels
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
 
             //Starting Tiels Console that generate Main App Directory and temp
-            Process.Start("TielsConsole.exe","createlostandfound");
-            await Task.Delay(2600);
+            //Process.Start("TielsConsole.exe","createlostandfound");
+            Console.WriteLine("creating lostandfound directory...");
+            try
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                if (!Directory.Exists(path + "\\" + "temp"))
+                    Directory.CreateDirectory(path + "\\" + "temp");
+                Console.WriteLine("succesfully created lostandfound directory!");
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    ProcessStartInfo info = new ProcessStartInfo
+                    {
+                        Arguments = "createlostandfounda",
+                        Verb = "runas"
+                    };
+                    Console.WriteLine(ex.ToString());
+                }
+                catch (Exception iex)
+                {
+                    Application.Current.Shutdown();
+                }
+            }
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ConfigurePage.xaml"));
             loadingMessage.Text = "Configuration.";
 

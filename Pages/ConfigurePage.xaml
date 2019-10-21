@@ -5,11 +5,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Tiels.Pages"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="850"
       Title="ConfigurePage" Loaded="Page_Loaded">
     <Grid>
         <TextBlock Text="First Run Configuration" FontSize="18" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-        <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0">Before you use DesktopTileOverlay. We need make configuration.<LineBreak/><LineBreak/>First select Dicrectory where save all your Tiles and Configs</TextBlock>
+        <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0">Before you use Tiels. We need make configuration.<LineBreak/><LineBreak/>First select Dicrectory where save all your Tiles and Configs</TextBlock>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Width="420" Height="24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
