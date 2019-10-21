@@ -1,4 +1,4 @@
-﻿using DWinOverlay.Classes;
+﻿using Tiels.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Resources;
 using System.Windows.Shapes;
 
-namespace DWinOverlay
+namespace Tiels
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
@@ -62,7 +62,7 @@ namespace DWinOverlay
 
         public async void Load()
         {
-            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/LoadingPage.xaml"));
+            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
@@ -128,18 +128,18 @@ namespace DWinOverlay
 
             await Task.Delay(1300);
             //Load MainPage
-            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml"));
+            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
         }
 
         public async void ConfigureFirstRun()
         {
-            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/LoadingPage.xaml"));
+            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
 
             //Starting Tiels Console that generate Main App Directory and temp
             Process.Start("TielsConsole.exe","createlostandfound");
             await Task.Delay(2600);
-            main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/ConfigurePage.xaml"));
+            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ConfigurePage.xaml"));
             loadingMessage.Text = "Configuration.";
 
             //Creating config and creating example tile
@@ -166,7 +166,7 @@ namespace DWinOverlay
             if (!Directory.Exists(path + "\\Example"))
                 Directory.CreateDirectory(path + "\\Example");
 
-            string icoPath = "pack://application:,,,/DWinOverlay;component/Assets/TielsDirectory.ico";
+            string icoPath = "pack://application:,,,/Tiels;component/Assets/TielsDirectory.ico";
             StreamResourceInfo icoInfo = System.Windows.Application.GetResourceStream(new Uri(icoPath));
             byte[] bytes = Util.ReadFully(icoInfo.Stream);
             File.WriteAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico", bytes);

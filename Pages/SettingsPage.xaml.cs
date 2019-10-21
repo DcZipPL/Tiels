@@ -1,4 +1,4 @@
-﻿using DWinOverlay.Classes;
+﻿using Tiels.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DWinOverlay.Pages
+namespace Tiels.Pages
 {
     /// <summary>
     /// Logika interakcji dla klasy SettingsPage.xaml
@@ -65,7 +65,7 @@ namespace DWinOverlay.Pages
             SetNewColor(null, null);
             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
             mw.Visibility = Visibility.Hidden;
-            mw.main.Navigate(new Uri("pack://application:,,,/DWinOverlay;component/Pages/MainPage.xaml"));
+            mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             mw.Width = 900;
             mw.Height = 500;
             mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;

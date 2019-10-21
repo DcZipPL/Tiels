@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DWinOverlay.Properties
+namespace Tiels.Properties
 {
 
 

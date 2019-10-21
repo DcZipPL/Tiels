@@ -17,10 +17,10 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
-using DWinOverlay.Classes;
+using Tiels.Classes;
 using System.Text.RegularExpressions;
 
-namespace DWinOverlay
+namespace Tiels
 {
     /// <summary>
     /// Logika interakcji dla klasy TileWindow.xaml

@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DWinOverlay.Pages
+namespace Tiels.Pages
 {
     /// <summary>
     /// Logika interakcji dla klasy ConfigurePage.xaml
