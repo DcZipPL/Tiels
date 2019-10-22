@@ -22,7 +22,7 @@ namespace Tiels
     /// </summary>
     public partial class ErrorWindow : Window
     {
-        public Exception ExceptionReason = new NullReferenceException("Varable ExceptionReason is Null");
+        public Exception ExceptionReason = new NullReferenceException("Varable ExceptionReason is Empty");
         public string ExceptionString = "";
 
         public ErrorWindow()
@@ -32,7 +32,6 @@ namespace Tiels
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Util.EnableBlur(this);
             ErrorMessage.Text = ExceptionReason.Message;
             ErrorText.Text = ExceptionReason.ToString();
 
@@ -45,6 +44,11 @@ namespace Tiels
         private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void CopyWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(ErrorText.Text);
         }
     }
 }
