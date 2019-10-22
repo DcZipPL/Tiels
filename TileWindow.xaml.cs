@@ -692,5 +692,27 @@ namespace Tiels
                 }
             }
         }
+
+        private void AddrowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            foreach (var window in config.Windows)
+            {
+                if (window.Name == name)
+                {
+                    if (window.CollapsedRows > 0)
+                    {
+                        window.CollapsedRows--;
+                        ScrollFilesList.Height += 80;
+                        this.Height += 80;
+                    }
+                }
+            }
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
     }
 }
