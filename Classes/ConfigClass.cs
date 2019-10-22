@@ -32,6 +32,7 @@ namespace Tiels
     public class JsonWindow
     {
         public string Name;
+        public int CollapsedRows;
         public bool EditBar;
         public WindowPosition Position;
     }

@@ -159,6 +159,10 @@
     <Compile Include="TileWindow.xaml.cs">
       <DependentUpon>TileWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dictionaries\ScrollbarDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

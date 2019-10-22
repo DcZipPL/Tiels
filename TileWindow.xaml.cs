@@ -382,6 +382,7 @@ namespace Tiels
                 {
                     this.Height += 80;
                     FilesList.Height += 80;
+                    ScrollFilesList.Height += 80;
 
                     RowDefinition row = new RowDefinition
                     {
@@ -460,6 +461,7 @@ namespace Tiels
                     {
                         this.Height += 80;
                         FilesList.Height += 80;
+                        ScrollFilesList.Height += 80;
 
                         RowDefinition row = new RowDefinition
                         {
@@ -639,7 +641,7 @@ namespace Tiels
                         rd.Height = new GridLength(28);
                         trd.Height = GridLength.Auto;
                         Grid.SetRow(ActionGrid, 0);
-                        Grid.SetRow(FilesList, 1);
+                        Grid.SetRow(ScrollFilesList, 1);
                     }
                     else
                     {
@@ -647,7 +649,7 @@ namespace Tiels
                         rd.Height = GridLength.Auto;
                         trd.Height = new GridLength(28);
                         Grid.SetRow(ActionGrid, 1);
-                        Grid.SetRow(FilesList, 0);
+                        Grid.SetRow(ScrollFilesList, 0);
                     }
                 }
             }
@@ -660,10 +662,35 @@ namespace Tiels
 
         private void SettingsBtn_Click(object sender, RoutedEventArgs e)
         {
+            MoveRectangle.Margin = new Thickness(180,0,0,0);
             editBtn.Visibility = Visibility.Visible;
             rotateBtn.Visibility = Visibility.Visible;
             moveableinfo.Visibility = Visibility.Visible;
+            addrowBtn.Visibility = Visibility.Visible;
+            removerowBtn.Visibility = Visibility.Visible;
             settingsBtn.Visibility = Visibility.Collapsed;
+        }
+
+        private void RemoverowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (ScrollFilesList.Height > 80)
+            {
+                ScrollFilesList.Height -= 80;
+                this.Height -= 80;
+                ConfigClass config = Config.GetConfig();
+                foreach (var window in config.Windows)
+                {
+                    if (window.Name == name)
+                    {
+                        window.CollapsedRows++;
+                    }
+                }
+                bool result = Config.SetConfig(config);
+                if (result == false)
+                {
+                    Util.Reconfigurate();
+                }
+            }
         }
     }
 }
