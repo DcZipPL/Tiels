@@ -18,7 +18,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
-using System.Windows.Shapes;
 
 namespace Tiels
 {
@@ -36,7 +35,7 @@ namespace Tiels
             InitializeComponent();
 
             //Notify Icon
-            ni.Icon = new System.Drawing.Icon(@"C:\Users\DcZipPL\Desktop\Tiles\appicon.ico");
+            ni.Icon = File.Exists(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\" + "appicon.ico") ? new System.Drawing.Icon(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location)+"\\"+"appicon.ico") : null;
             ni.Visible = false;
             ni.Click +=
                 delegate (object sender, EventArgs args)
