@@ -31,13 +31,17 @@ namespace Tiels
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private string newname = null;
-        private bool isMoving = false;
-        private Point MousePos;
 
-        int tries = 0;
+        public int rows = 0;
+        private int tries = 0;
         private int lastHeight = 0;
+
+        private bool isLoading = false;
+        private bool isMoving = false;
         public bool isHidded = false;
         public bool isEditMode = false;
+
+        private Point MousePos;
 
         List<SoftFileData> filedata = new List<SoftFileData>();
 
@@ -116,6 +120,10 @@ namespace Tiels
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Start();
+            System.Windows.Threading.DispatcherTimer updateTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += UpdateTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(1);
+            dispatcherTimer.Start();
         }
 
         private void MoveActionStart(object sender, MouseButtonEventArgs e)
@@ -130,6 +138,29 @@ namespace Tiels
         {
             CheckFileUpdates();
             //SetBottom(this);
+            if (isLoading == false)
+            {
+                ConfigClass config = Config.GetConfig();
+                foreach (var window in config.Windows)
+                {
+                    if (window.Name == name)
+                    {
+                        window.CollapsedRows = (int)this.Height;
+                    }
+                }
+                bool result = Config.SetConfig(config);
+                if (result == false)
+                {
+                    Util.Reconfigurate();
+                }
+            }
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (isLoading == false)
+                if (this.Height >= this.Height - 28)
+                    ScrollFilesList.Height = this.Height - 28;
         }
 
         private void CheckFileUpdates()
@@ -243,12 +274,14 @@ namespace Tiels
 
         private void ReadElements()
         {
+            isLoading = true;
             //Clear data
             filedata.Clear();
 
             FilesList.Children.Clear();
             FilesList.ColumnDefinitions.Clear();
             FilesList.RowDefinitions.Clear();
+            rows = 0;
 
             //Set default values
             RowDefinition mainrow = new RowDefinition
@@ -257,6 +290,7 @@ namespace Tiels
             };
             FilesList.RowDefinitions.Add(mainrow);
             FilesList.Height = 80;
+            this.MaxHeight = 108;
             this.Height = 108;
 
             //Creating file with paths to icons
@@ -378,9 +412,11 @@ namespace Tiels
                     m = 0;
                     j += 4;
                     n++;
+                    rows++;
                 }
                 if (i == j - 4)
                 {
+                    this.MaxHeight += 80;
                     this.Height += 80;
                     FilesList.Height += 80;
                     ScrollFilesList.Height += 80;
@@ -457,9 +493,11 @@ namespace Tiels
                         m = 0;
                         j += 4;
                         n++;
+                        rows++;
                     }
                     if (i == j - 4)
                     {
+                        this.MaxHeight += 80;
                         this.Height += 80;
                         FilesList.Height += 80;
                         ScrollFilesList.Height += 80;
@@ -484,6 +522,18 @@ namespace Tiels
             string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
             Console.WriteLine(json);
             File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
+            foreach (var window in config.Windows)
+            {
+                if (window.Name == name)
+                {
+                    if (window.CollapsedRows > 0)
+                    {
+                        this.Height = window.CollapsedRows;
+                        this.ScrollFilesList.Height = window.CollapsedRows;
+                    }
+                }
+            }
+            isLoading = false;
         }
 
         private void ElementClicked(object sender, RoutedEventArgs e)

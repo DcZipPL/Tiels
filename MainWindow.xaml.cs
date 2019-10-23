@@ -105,10 +105,10 @@ namespace Tiels
                                 Grid.SetRow(tile.ActionGrid, 0);
                                 Grid.SetRow(tile.ScrollFilesList, 1);
                             }
-                            if (tile.Height - window.CollapsedRows * 80 > 0 && tile.ScrollFilesList.Height - window.CollapsedRows * 80 > 0)
+                            if (window.CollapsedRows > 0)
                             {
-                                tile.Height -= window.CollapsedRows * 80;
-                                tile.ScrollFilesList.Height -= window.CollapsedRows * 80;
+                                tile.Height = window.CollapsedRows;
+                                tile.ScrollFilesList.Height = window.CollapsedRows;
                             }
                             else
                             {
