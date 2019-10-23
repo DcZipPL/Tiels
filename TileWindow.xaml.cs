@@ -31,9 +31,7 @@ namespace Tiels
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private string newname = null;
-        private string resizeTag;
         private bool isMoving = false;
-        private bool isResizing = false;
         private Point MousePos;
 
         int tries = 0;
@@ -118,10 +116,6 @@ namespace Tiels
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Start();
-            System.Windows.Threading.DispatcherTimer resizeTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += ResizeTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(1);
-            dispatcherTimer.Start();
         }
 
         private void MoveActionStart(object sender, MouseButtonEventArgs e)
@@ -136,64 +130,6 @@ namespace Tiels
         {
             CheckFileUpdates();
             //SetBottom(this);
-        }
-        private void ResizeTimer_Tick(object sender, EventArgs e)
-        {
-            if (isResizing)
-            {
-                if (resizeTag == "bottom")
-                {
-                    //Down
-                    if (this.Height > 100)
-                    {
-                        if ((int)MousePos.Y - (int)Util.GetMousePosition().Y > 80)
-                        {
-                            MousePos = Util.GetMousePosition();
-                            ScrollFilesList.Height -= 80;
-                            this.Height -= 80;
-                            ConfigClass config = Config.GetConfig();
-                            foreach (var window in config.Windows)
-                            {
-                                if (window.Name == name)
-                                {
-                                    window.CollapsedRows++;
-                                }
-                            }
-                            bool result = Config.SetConfig(config);
-                            if (result == false)
-                            {
-                                Util.Reconfigurate();
-                            }
-                            Console.WriteLine("Inside Down");
-                        }
-                    }
-                    //Up
-                    if ((int)MousePos.Y - (int)Util.GetMousePosition().Y < -80)
-                    {
-                        ConfigClass config = Config.GetConfig();
-                        foreach (var window in config.Windows)
-                        {
-                            if (window.Name == name)
-                            {
-                                if (window.CollapsedRows > 0)
-                                {
-                                    MousePos = Util.GetMousePosition();
-                                    window.CollapsedRows--;
-                                    ScrollFilesList.Height += 80;
-                                    this.Height += 80;
-                                }
-                            }
-                        }
-                        bool result = Config.SetConfig(config);
-                        if (result == false)
-                        {
-                            Util.Reconfigurate();
-                        }
-                        Console.WriteLine("Inside Up");
-                    }
-                }
-                Console.WriteLine("Y Delta = " + ((int)MousePos.Y - (int)Util.GetMousePosition().Y));
-            }
         }
 
         private void CheckFileUpdates()
@@ -678,25 +614,6 @@ namespace Tiels
             name = newname;
         }
 
-        private void ResizeActionStart(object sender, MouseButtonEventArgs e)
-        {
-            isResizing = true;
-            MousePos = Util.GetMousePosition();
-        }
-
-        private void ResizeAction(object sender, MouseEventArgs e)
-        {
-            if (isResizing)
-            {
-                resizeTag = (string)((Rectangle)sender).Tag;
-            }
-        }
-
-        private void ResizeActionStop(object sender, MouseButtonEventArgs e)
-        {
-            isResizing = false;
-        }
-
         private void RotateBtn_Click(object sender, RoutedEventArgs e)
         {
             ConfigClass config = Config.GetConfig();
@@ -782,6 +699,12 @@ namespace Tiels
             {
                 Util.Reconfigurate();
             }
+        }
+
+        private void WindowChrome_Changed(object sender, EventArgs e)
+        {
+            if (ScrollFilesList != null)
+                ScrollFilesList.Height = this.Height - 28;
         }
     }
 }

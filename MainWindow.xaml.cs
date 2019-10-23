@@ -93,7 +93,7 @@ namespace Tiels
                             //Rotating tile
                             if (!window.EditBar)
                             {
-                                tile.rd.Height = GridLength.Auto;
+                                tile.rd.Height = new GridLength(1,GridUnitType.Star);
                                 tile.trd.Height = new GridLength(28);
                                 Grid.SetRow(tile.ActionGrid, 1);
                                 Grid.SetRow(tile.ScrollFilesList, 0);
@@ -101,7 +101,7 @@ namespace Tiels
                             else
                             {
                                 tile.rd.Height = new GridLength(28);
-                                tile.trd.Height = GridLength.Auto;
+                                tile.trd.Height = new GridLength(1, GridUnitType.Star);
                                 Grid.SetRow(tile.ActionGrid, 0);
                                 Grid.SetRow(tile.ScrollFilesList, 1);
                             }

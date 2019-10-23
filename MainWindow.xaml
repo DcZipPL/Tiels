@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:Tiels"
         mc:Ignorable="d"
         Title="Tile Control Panel" Height="500" Width="900" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" WindowStartupLocation="CenterScreen" Icon="Assets/TileCPicon.png">
+    <WindowChrome.WindowChrome>
+        <WindowChrome/>
+    </WindowChrome.WindowChrome>
     <Grid>
         <Grid Margin="5">
             <Border BorderBrush="#FF00B9FF" BorderThickness="1">
@@ -25,9 +28,9 @@
                                 <ColumnDefinition Width="30"></ColumnDefinition>
                                 <ColumnDefinition Width="30"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="CloseWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseWindowBtn_Click" Grid.Column="3" Margin="0" FontSize="14"/>
-                            <Button x:Name="TaskbarWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE0E5;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="TaskbarWindowBtn_Click" Grid.Column="2" Margin="0,0,1,0" FontSize="14"/>
-                            <Button x:Name="HideWindowBtn" FontFamily="Segoe MDL2 Assets" Content="&#xE108;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="HideWindowBtn_Click" Grid.Column="1" Margin="0,0,1,0" FontSize="14"/>
+                            <Button x:Name="CloseWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseWindowBtn_Click" Grid.Column="3" Margin="0" FontSize="14"/>
+                            <Button x:Name="TaskbarWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE0E5;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="TaskbarWindowBtn_Click" Grid.Column="2" Margin="0,0,1,0" FontSize="14"/>
+                            <Button x:Name="HideWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE108;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="HideWindowBtn_Click" Grid.Column="1" Margin="0,0,1,0" FontSize="14"/>
                             <TextBlock Text="Tiels Status:" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16"/>
                             <TextBlock x:Name="loadingMessage" Text="Loading..." Foreground="Black" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Center" FontSize="16"/>
                         </Grid>

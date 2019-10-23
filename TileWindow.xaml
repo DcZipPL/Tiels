@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:Tiels"
         mc:Ignorable="d"
         Title="Overlay" Height="108" Width="500" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded">
+    <WindowChrome.WindowChrome>
+        <WindowChrome Changed="WindowChrome_Changed" CornerRadius="0" CaptionHeight="0" GlassFrameThickness="0"/>
+    </WindowChrome.WindowChrome>
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,12 +17,12 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Grid x:Name="MainGrid" Background="#19000000" VerticalAlignment="Top">
+        <Grid x:Name="MainGrid" Background="#19000000">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="rd"></RowDefinition>
                 <RowDefinition x:Name="trd" Height="28"></RowDefinition>
             </Grid.RowDefinitions>
-            <ScrollViewer x:Name="ScrollFilesList" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="80" Margin="0,0,5,0">
+            <ScrollViewer x:Name="ScrollFilesList" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="80" Margin="0,0,5,0" VerticalAlignment="Top">
                 <Grid x:Name="FilesList" Height="80" ScrollViewer.CanContentScroll="True">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -47,10 +50,6 @@
                 </Path>
                 <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="80,0,0,0"/>
             </Grid>
-            <Rectangle x:Name="ResizeLeftRectangle" Tag="left" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeWE" Fill="#02000000" Margin="0" HorizontalAlignment="Left" Width="4" Grid.RowSpan="2"/>
-            <Rectangle x:Name="ResizeRightRectangle" Tag="right" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeWE" Fill="#02000000" Margin="0" HorizontalAlignment="Right" Width="4" Grid.RowSpan="2"/>
-            <Rectangle x:Name="ResizeBottomRectangle" Tag="bottom" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeNS" Fill="#02000000" Margin="0" Grid.RowSpan="2" VerticalAlignment="Bottom" Height="4"/>
-            <Rectangle x:Name="ResizeUpRectangle" Tag="up" MouseDown="ResizeActionStart" MouseUp="ResizeActionStop" MouseMove="ResizeAction" Cursor="SizeNS" Fill="#02000000" Margin="0" Height="4" Grid.RowSpan="2" VerticalAlignment="Top"/>
         </Grid>
     </Grid>
 </Window>
