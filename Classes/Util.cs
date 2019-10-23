@@ -20,9 +20,9 @@ namespace Tiels.Classes
             return "#" + c.A.ToString("X2") + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
-        public static bool IsEvenFour(int value)
+        public static bool IsEvenX(int value, int x)
         {
-            return value % 4 == 0;
+            return value % x == 0;
         }
 
         public static ImageSource BitmapFromUri(Uri source)

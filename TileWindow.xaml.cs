@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using Tiels.Classes;
 using System.Text.RegularExpressions;
+using System.Windows.Shapes;
 
 namespace Tiels
 {
@@ -30,7 +31,9 @@ namespace Tiels
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
         public string name = null;
         private string newname = null;
+        private string resizeTag;
         private bool isMoving = false;
+        private bool isResizing = false;
         private Point MousePos;
 
         int tries = 0;
@@ -112,8 +115,12 @@ namespace Tiels
             InitializeComponent();
 
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
+            dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Start();
+            System.Windows.Threading.DispatcherTimer resizeTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += ResizeTimer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(1);
             dispatcherTimer.Start();
         }
 
@@ -125,10 +132,68 @@ namespace Tiels
             MousePos.Y = Convert.ToInt32(this.Top) - MousePos.Y;
         }
         private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
             CheckFileUpdates();
             //SetBottom(this);
+        }
+        private void ResizeTimer_Tick(object sender, EventArgs e)
+        {
+            if (isResizing)
+            {
+                if (resizeTag == "bottom")
+                {
+                    //Down
+                    if (this.Height > 100)
+                    {
+                        if ((int)MousePos.Y - (int)Util.GetMousePosition().Y > 80)
+                        {
+                            MousePos = Util.GetMousePosition();
+                            ScrollFilesList.Height -= 80;
+                            this.Height -= 80;
+                            ConfigClass config = Config.GetConfig();
+                            foreach (var window in config.Windows)
+                            {
+                                if (window.Name == name)
+                                {
+                                    window.CollapsedRows++;
+                                }
+                            }
+                            bool result = Config.SetConfig(config);
+                            if (result == false)
+                            {
+                                Util.Reconfigurate();
+                            }
+                            Console.WriteLine("Inside Down");
+                        }
+                    }
+                    //Up
+                    if ((int)MousePos.Y - (int)Util.GetMousePosition().Y < -80)
+                    {
+                        ConfigClass config = Config.GetConfig();
+                        foreach (var window in config.Windows)
+                        {
+                            if (window.Name == name)
+                            {
+                                if (window.CollapsedRows > 0)
+                                {
+                                    MousePos = Util.GetMousePosition();
+                                    window.CollapsedRows--;
+                                    ScrollFilesList.Height += 80;
+                                    this.Height += 80;
+                                }
+                            }
+                        }
+                        bool result = Config.SetConfig(config);
+                        if (result == false)
+                        {
+                            Util.Reconfigurate();
+                        }
+                        Console.WriteLine("Inside Up");
+                    }
+                }
+                Console.WriteLine("Y Delta = " + ((int)MousePos.Y - (int)Util.GetMousePosition().Y));
+            }
         }
 
         private void CheckFileUpdates()
@@ -517,9 +582,9 @@ namespace Tiels
                 }
                 else
                 {
-                    if (Util.IsEvenFour((int)(Util.GetMousePosition().X + MousePos.X)))
+                    if (Util.IsEvenX((int)(Util.GetMousePosition().X + MousePos.X),4))
                         Left = (int)(Util.GetMousePosition().X + MousePos.X);
-                    if (Util.IsEvenFour((int)(Util.GetMousePosition().Y + MousePos.Y)))
+                    if (Util.IsEvenX((int)(Util.GetMousePosition().Y + MousePos.Y),4))
                         Top = (int)(Util.GetMousePosition().Y + MousePos.Y);
                 }
             }
@@ -615,17 +680,21 @@ namespace Tiels
 
         private void ResizeActionStart(object sender, MouseButtonEventArgs e)
         {
-
+            isResizing = true;
+            MousePos = Util.GetMousePosition();
         }
 
         private void ResizeAction(object sender, MouseEventArgs e)
         {
-
+            if (isResizing)
+            {
+                resizeTag = (string)((Rectangle)sender).Tag;
+            }
         }
 
         private void ResizeActionStop(object sender, MouseButtonEventArgs e)
         {
-
+            isResizing = false;
         }
 
         private void RotateBtn_Click(object sender, RoutedEventArgs e)
