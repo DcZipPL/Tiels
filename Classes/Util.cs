@@ -32,6 +32,7 @@ namespace Tiels.Classes
             bitmap.UriSource = source;
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.EndInit();
+            //Crash while using photoshop
             return bitmap;
         }
 

@@ -50,8 +50,16 @@ namespace Tiels
             try
             {
                 string json_out = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json");
-                ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
-                return config;
+                if (json_out != "")
+                {
+                    ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+                    return config;
+                }
+                else
+                {
+                    Util.Reconfigurate();
+                    return null;
+                }
             }
             catch (FileNotFoundException fex)
             {

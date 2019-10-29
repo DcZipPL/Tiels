@@ -27,6 +27,7 @@ namespace Tiels
     public partial class MainWindow : Window
     {
         protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
+        protected string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels";
         public List<TileWindow> tilesw = new List<TileWindow>();
         private System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
 
@@ -49,7 +50,7 @@ namespace Tiels
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
             //If exists config and main app directory
-            if (!Directory.Exists(path) || !File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
+            if (!Directory.Exists(path) || !File.Exists(config_path + "\\config.json"))
             {
                 ConfigureFirstRun();
             }
@@ -62,9 +63,11 @@ namespace Tiels
         public async void Load()
         {
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
+            await Task.Delay(200);
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
+                //TODO: Config isn't ""
                 ConfigClass config = Config.GetConfig();
                 for (int i = 0; i <= tiles.Length - 1; i++)
                 {
@@ -74,7 +77,6 @@ namespace Tiels
                     TileWindow tile = new TileWindow();
                     tile.folderNameTB.Text = tiles[i];
                     tile.name = tiles[i];
-                    tile.Show();
                     tilesw.Add(tile);
                     bool windowexist = false;
 
@@ -126,6 +128,7 @@ namespace Tiels
                         jsonwindow.EditBar = false;
                         config.Windows.Add(jsonwindow);
                     }
+                    tile.Show();
                 }
                 //If Config File not Exists
                 bool result = Config.SetConfig(config);
@@ -135,7 +138,6 @@ namespace Tiels
                 }
             }
 
-            await Task.Delay(1300);
             //Load MainPage
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
@@ -150,15 +152,15 @@ namespace Tiels
             Console.WriteLine("creating lostandfound directory...");
             try
             {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                if (!Directory.Exists(path + "\\" + "temp"))
-                    Directory.CreateDirectory(path + "\\" + "temp");
+                if (!Directory.Exists(config_path))
+                    Directory.CreateDirectory(config_path);
+                if (!Directory.Exists(config_path + "\\" + "temp"))
+                    Directory.CreateDirectory(config_path + "\\" + "temp");
                 Console.WriteLine("succesfully created lostandfound directory!");
             }
             catch (Exception ex)
             {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 try
                 {
                     ProcessStartInfo info = new ProcessStartInfo
@@ -170,6 +172,7 @@ namespace Tiels
                 }
                 catch (Exception iex)
                 {
+                    File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                     Application.Current.Shutdown();
                 }
             }
@@ -194,8 +197,8 @@ namespace Tiels
 
             //Creating directory and config file
             string json = JsonConvert.SerializeObject(config, Formatting.Indented);
-            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels"))
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", json);
+            if (Directory.Exists(config_path))
+                File.WriteAllText(config_path+"\\config.json", json);
             Console.WriteLine(json);
             if (!Directory.Exists(path + "\\Example"))
                 Directory.CreateDirectory(path + "\\Example");
@@ -203,11 +206,11 @@ namespace Tiels
             string icoPath = "pack://application:,,,/Tiels;component/Assets/TielsDirectory.ico";
             StreamResourceInfo icoInfo = System.Windows.Application.GetResourceStream(new Uri(icoPath));
             byte[] bytes = Util.ReadFully(icoInfo.Stream);
-            File.WriteAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico", bytes);
+            File.WriteAllBytes(config_path + "\\directoryicon.ico", bytes);
 
             //Creating example text file in tile
             File.WriteAllText(path + "\\Example\\ExampleContent.txt","Example Text.");
-            File.WriteAllText(path + "\\Example\\desktop.ini", "[.ShellClassInfo]\r\nIconResource="+ Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico,0");
+            File.WriteAllText(path + "\\Example\\desktop.ini", "[.ShellClassInfo]\r\nIconResource="+ config_path + "\\directoryicon.ico,0");
         }
 
         private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)

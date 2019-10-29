@@ -101,12 +101,20 @@ namespace Tiels.Pages
         private void OpenCreateDialog(object sender, RoutedEventArgs e)
         {
             HideAllDialogs();
+            OpenCreateDialogBtn.IsChecked = true;
+            OpenDeleteDialogBtn.IsChecked = false;
+            AppearanceBtn.IsChecked = false;
+            appearanceWindow.Visibility = Visibility.Collapsed;
             dialogBox.Visibility = Visibility.Visible;
         }
 
         private void OpenDeleteDialog(object sender, RoutedEventArgs e)
         {
             HideAllDialogs();
+            OpenCreateDialogBtn.IsChecked = false;
+            OpenDeleteDialogBtn.IsChecked = true;
+            AppearanceBtn.IsChecked = false;
+            appearanceWindow.Visibility = Visibility.Collapsed;
             deleteDialogBox.Visibility = Visibility.Visible;
         }
 
@@ -118,14 +126,102 @@ namespace Tiels.Pages
 
         private void ShowSettings(object sender, RoutedEventArgs e)
         {
+            //MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            //mw.Visibility = Visibility.Hidden;
+            //mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/SettingsPage.xaml"));
+            //mw.Width = 500;
+            //mw.Height = 800;
+            //mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;
+            //mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
+            //mw.Visibility = Visibility.Visible;
+        }
+
+        private void AppearanceBtn_Click(object sender, RoutedEventArgs e)
+        {
+            HideAllDialogs();
+            OpenCreateDialogBtn.IsChecked = false;
+            OpenDeleteDialogBtn.IsChecked = false;
+            AppearanceBtn.IsChecked = true;
+            appearanceWindow.Visibility = Visibility.Visible;
+        }
+
+        private void SetNewColor(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+
+            if (colorTile.SelectedColor != null)
+            {
+                System.Windows.Media.Color color = (System.Windows.Media.Color)colorTile.SelectedColor;
+                System.Drawing.Color newColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+                config.Color = Util.HexConverter(newColor);
+            }
+
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void ColorTile_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
+            {
+                ConfigClass config = Config.GetConfig();
+                colorTile.SelectedColor = (Color)ColorConverter.ConvertFromString(config.Color);
+            }
+            else
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void BackHome(object sender, RoutedEventArgs e)
+        {
+            SetNewColor(null, null);
             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
             mw.Visibility = Visibility.Hidden;
-            mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/SettingsPage.xaml"));
-            mw.Width = 500;
-            mw.Height = 800;
+            mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
+            mw.Width = 900;
+            mw.Height = 500;
             mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;
             mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
+            foreach (TileWindow tile in mw.tilesw)
+            {
+                tile.Close();
+            }
+            mw.tilesw.Clear();
+            mw.Load();
             mw.Visibility = Visibility.Visible;
+        }
+
+        private void ColorTile_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            foreach (TileWindow tile in mw.tilesw)
+            {
+                tile.MainGrid.Background = new SolidColorBrush((System.Windows.Media.Color)colorTile.SelectedColor);
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ThemeCombobox.SelectedIndex != -1)
+            {
+                ConfigClass config = Config.GetConfig();
+                config.Theme = ThemeCombobox.SelectedIndex;
+                bool result = Config.SetConfig(config);
+                if (result == false)
+                {
+                    Util.Reconfigurate();
+                }
+            }
+        }
+
+        private void ThemeCombobox_Loaded(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            ThemeCombobox.SelectedIndex = config.Theme;
         }
     }
 }

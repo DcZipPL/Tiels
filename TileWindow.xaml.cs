@@ -29,6 +29,7 @@ namespace Tiels
     public partial class TileWindow : Window
     {
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
+        public string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
         public string name = null;
         private string newname = null;
 
@@ -196,6 +197,7 @@ namespace Tiels
                 }
                 catch(Exception ex)
                 {
+                    File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                     if (tries <= 3)
                     {
                         ReadElements();
@@ -213,27 +215,35 @@ namespace Tiels
 
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
-            WindowInteropHelper wndHelper = new WindowInteropHelper(this);
+            try
+            {
+                //WindowInteropHelper wndHelper = new WindowInteropHelper(this);
 
-            int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+                //int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
 
-            exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
-            SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+                //exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+                //SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
 
-            Util.EnableBlur(this);
-            SetBottom(this);
+                Util.EnableBlur(this);
+                SetBottom(this);
 
-            ConfigClass config = Config.GetConfig();
-            MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
+                ConfigClass config = Config.GetConfig();
+                MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
-            //Set text color by theme
-            folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
-            hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
-            gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
-            editBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
-            rotateBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
-            editBox.Text = name;
-            ReadElements();
+                //Set text color by theme
+                //TODO: Add to settings
+                folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                editBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                rotateBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                editBox.Text = name;
+                ReadElements();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log",ex.ToString());
+            }
         }
 
         static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
@@ -274,185 +284,106 @@ namespace Tiels
 
         private void ReadElements()
         {
-            isLoading = true;
-            //Clear data
-            filedata.Clear();
-
-            FilesList.Children.Clear();
-            FilesList.ColumnDefinitions.Clear();
-            FilesList.RowDefinitions.Clear();
-            rows = 0;
-
-            //Set default values
-            RowDefinition mainrow = new RowDefinition
+            try
             {
-                Height = new GridLength(1, GridUnitType.Star)
-            };
-            FilesList.RowDefinitions.Add(mainrow);
-            FilesList.Height = 80;
-            this.MaxHeight = 108;
-            this.Height = 108;
+                isLoading = true;
+                //Clear data
+                filedata.Clear();
 
-            //Creating file with paths to icons
-            if (!File.Exists(path + "\\iconcache.db"))
-                File.WriteAllText(path + "\\iconcache.db", "");
-            //Read icon paths
-            string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
-            Dictionary<string,string> iconcache = new Dictionary<string,string>();
+                FilesList.Children.Clear();
+                FilesList.ColumnDefinitions.Clear();
+                FilesList.RowDefinitions.Clear();
+                rows = 0;
 
-            string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
-            string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
-
-            ConfigClass config = Config.GetConfig();
-
-            foreach (var cache in tmp_iconcache)
-            {
-                iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
-            }
-
-            //Pseudo-random icon id
-            int ri = new Random().Next(0, 1000000);
-
-            int j = 3;
-            int n = 0;
-            int m = 0;
-            for (int i = 0; i < elements.Length; i++)
-            {
-                SoftFileData sfd = new SoftFileData();
-                sfd.Name = elements[i];
-                sfd.Size = (int)new System.IO.FileInfo(elements[i]).Length;
-                filedata.Add(sfd);
-
-                string num = "";
-
-                if (!iconcache.ContainsKey(elements[i]))
+                //Set default values
+                RowDefinition mainrow = new RowDefinition
                 {
-                    IntPtr hIcon = Util.GetJumboIcon(Util.GetIconIndex(elements[i]));
+                    Height = new GridLength(1, GridUnitType.Star)
+                };
+                FilesList.RowDefinitions.Add(mainrow);
+                FilesList.Height = 80;
+                this.MaxHeight = 108;
+                this.Height = 108;
 
-                    // from native to managed
-                    using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
+                //Creating file with paths to icons
+                if (!File.Exists(path + "\\iconcache.db"))
+                    File.WriteAllText(path + "\\iconcache.db", "");
+                //Read icon paths
+                string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
+                Dictionary<string, string> iconcache = new Dictionary<string, string>();
+
+                string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
+                string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
+
+                ConfigClass config = Config.GetConfig();
+
+                foreach (var cache in tmp_iconcache)
+                {
+                    iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
+                }
+
+                //Pseudo-random icon id
+                int ri = new Random().Next(0, 1000000);
+
+                int j = 3;
+                int n = 0;
+                int m = 0;
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    SoftFileData sfd = new SoftFileData();
+                    sfd.Name = elements[i];
+                    sfd.Size = (int)new System.IO.FileInfo(elements[i]).Length;
+                    filedata.Add(sfd);
+
+                    string num = "";
+
+                    if (!iconcache.ContainsKey(elements[i]))
                     {
-                        // save to file (or show in a picture box)
-                        if (!IsSmallIcon(ico.ToBitmap()))
+                        IntPtr hIcon = Util.GetJumboIcon(Util.GetIconIndex(elements[i]));
+
+                        // from native to managed
+                        using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
                         {
-                            ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                            // save to file (or show in a picture box)
+                            if (!IsSmallIcon(ico.ToBitmap()))
+                            {
+                                ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                            else
+                            {
+                                System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
+                                System.Drawing.Image img = ico.ToBitmap();
+                                Util.CropImage(img, cropRect).Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                            File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
+                            num = "\\TMP_ICON_" + ri + i;
                         }
-                        else
-                        {
-                            System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
-                            System.Drawing.Image img = ico.ToBitmap();
-                            Util.CropImage(img,cropRect).Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
-                        }
-                        File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
-                        num = "\\TMP_ICON_" + ri + i;
+
+                        Util.Shell32.DestroyIcon(hIcon); // don't forget to cleanup
+                    }
+                    else
+                    {
+                        num = iconcache[elements[i]];
                     }
 
-                    Util.Shell32.DestroyIcon(hIcon); // don't forget to cleanup
-                }
-                else
-                {
-                    num = iconcache[elements[i]];
-                }
-
-                Image image = new Image
-                {
-                    Width = 44,
-                    Height = 44,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(0, 1, 0, 19),
-                    Source = Util.BitmapFromUri(new Uri(elements[i].Contains(".png") || elements[i].Contains(".jpg")
-                    ? elements[i] : path + num // ICON
-                    ))
-                };
-
-                string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
-                TextBlock filename = new TextBlock
-                {
-                    VerticalAlignment = VerticalAlignment.Bottom,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                    Text = filetext.Length > 14 ? filetext.Remove(filetext.Length - (filetext.Length - 14)) +"..." : filetext
-                };
-
-                Grid button_content = new Grid();
-                button_content.Children.Add(image);
-                button_content.Children.Add(filename);
-
-                Button button = new Button
-                {
-                    Content = button_content,
-                    Background = Brushes.Transparent,
-                    BorderBrush = Brushes.Transparent,
-                    Name = "elementButton_"+i,
-                    Tag = elements[i],
-                    ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
-                };
-                button.Click += ElementClicked;
-
-                Grid grid = new Grid
-                {
-                    Width = 110,
-                    Height = 68,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(0, 4, 10, 4),
-                };
-                Grid.SetColumn(grid, m);
-                grid.Children.Add(button);
-                m++;
-
-                ColumnDefinition column = new ColumnDefinition
-                {
-                    Width = new GridLength(120, GridUnitType.Pixel)
-                };
-
-                Grid.SetRow(grid, n);
-                if (i == j)
-                {
-                    m = 0;
-                    j += 4;
-                    n++;
-                    rows++;
-                }
-                if (i == j - 4)
-                {
-                    this.MaxHeight += 80;
-                    this.Height += 80;
-                    FilesList.Height += 80;
-                    ScrollFilesList.Height += 80;
-
-                    RowDefinition row = new RowDefinition
+                    Image image = new Image
                     {
-                        Height = new GridLength(1, GridUnitType.Star)
-                    };
-                    FilesList.RowDefinitions.Add(row);
-                }
-
-                FilesList.ColumnDefinitions.Add(column);
-                FilesList.Children.Add(grid);
-            }
-            if (directories.Length != 0)
-                for (int i = 0; i < directories.Length; i++)
-                {
-                    TextBlock image = new TextBlock
-                    {
-                        FontSize = 44,
-                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
                         Width = 44,
                         Height = 44,
-                        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(0, 1, 0, 19),
-                        Text = ""
+                        Source = Util.BitmapFromUri(new Uri(elements[i].Contains(".png") || elements[i].Contains(".jpg")
+                        ? elements[i] : path + num // ICON
+                        ))
                     };
 
-                    string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
+                    string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
                     TextBlock filename = new TextBlock
                     {
                         VerticalAlignment = VerticalAlignment.Bottom,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                        Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) +"..."
+                        Text = filetext.Length > 14 ? filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..." : filetext
                     };
 
                     Grid button_content = new Grid();
@@ -465,8 +396,8 @@ namespace Tiels
                         Background = Brushes.Transparent,
                         BorderBrush = Brushes.Transparent,
                         Name = "elementButton_" + i,
-                        Tag = directories[i],
-                        ToolTip = directories[i].Replace(path + "\\" + name + "\\", "")+" - Directory"
+                        Tag = elements[i],
+                        ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
                     };
                     button.Click += ElementClicked;
 
@@ -497,10 +428,10 @@ namespace Tiels
                     }
                     if (i == j - 4)
                     {
-                        this.MaxHeight += 80;
-                        this.Height += 80;
+                        //this.MaxHeight += 80;
+                        //this.Height += 80;
                         FilesList.Height += 80;
-                        ScrollFilesList.Height += 80;
+                        //ScrollFilesList.Height += 80;
 
                         RowDefinition row = new RowDefinition
                         {
@@ -512,28 +443,145 @@ namespace Tiels
                     FilesList.ColumnDefinitions.Add(column);
                     FilesList.Children.Add(grid);
                 }
-            if (File.Exists(path + "\\" + name + "_fileupdate.json"))
-                File.Delete(path + "\\" + name + "_fileupdate.json");
-
-            FileUpdateClass fileupdate = new FileUpdateClass
-            {
-                Data = filedata.ToArray()
-            };
-            string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
-            Console.WriteLine(json);
-            File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
-            foreach (var window in config.Windows)
-            {
-                if (window.Name == name)
-                {
-                    if (window.CollapsedRows > 0)
+                if (directories.Length != 0)
+                    for (int i = 0; i < directories.Length; i++)
                     {
-                        this.Height = window.CollapsedRows;
-                        this.ScrollFilesList.Height = window.CollapsedRows;
+                        TextBlock image = new TextBlock
+                        {
+                            FontSize = 44,
+                            FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                            Width = 44,
+                            Height = 44,
+                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Margin = new Thickness(0, 1, 0, 19),
+                            Text = ""
+                        };
+
+                        string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
+                        TextBlock filename = new TextBlock
+                        {
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                            Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..."
+                        };
+
+                        Grid button_content = new Grid();
+                        button_content.Children.Add(image);
+                        button_content.Children.Add(filename);
+
+                        Button button = new Button
+                        {
+                            Content = button_content,
+                            Background = Brushes.Transparent,
+                            BorderBrush = Brushes.Transparent,
+                            Name = "elementButton_" + i,
+                            Tag = directories[i],
+                            ToolTip = directories[i].Replace(path + "\\" + name + "\\", "") + " - Directory"
+                        };
+                        button.Click += ElementClicked;
+
+                        Grid grid = new Grid
+                        {
+                            Width = 110,
+                            Height = 68,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Margin = new Thickness(0, 4, 10, 4),
+                        };
+                        Grid.SetColumn(grid, m);
+                        grid.Children.Add(button);
+                        m++;
+
+                        ColumnDefinition column = new ColumnDefinition
+                        {
+                            Width = new GridLength(120, GridUnitType.Pixel)
+                        };
+
+                        Grid.SetRow(grid, n);
+                        if (i == j)
+                        {
+                            m = 0;
+                            j += 4;
+                            n++;
+                            rows++;
+                        }
+                        if (i == j - 4)
+                        {
+                            //this.MaxHeight += 80;
+                            //this.Height += 80;
+                            FilesList.Height += 80;
+                            //ScrollFilesList.Height += 80;
+
+                            RowDefinition row = new RowDefinition
+                            {
+                                Height = new GridLength(1, GridUnitType.Star)
+                            };
+                            FilesList.RowDefinitions.Add(row);
+                        }
+
+                        FilesList.ColumnDefinitions.Add(column);
+                        FilesList.Children.Add(grid);
+                    }
+                if (File.Exists(path + "\\" + name + "_fileupdate.json"))
+                    File.Delete(path + "\\" + name + "_fileupdate.json");
+
+                FileUpdateClass fileupdate = new FileUpdateClass
+                {
+                    Data = filedata.ToArray()
+                };
+                string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
+                Console.WriteLine(json);
+                File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
+                foreach (var window in config.Windows)
+                {
+                    if (window.Name == name)
+                    {
+                        if (window.CollapsedRows > 0)
+                        {
+                            this.MaxHeight = window.CollapsedRows;
+                            this.Height = window.CollapsedRows;
+                            this.ScrollFilesList.Height = window.CollapsedRows;
+                        }
                     }
                 }
+                if (this.Height >= System.Windows.SystemParameters.PrimaryScreenHeight - 20)
+                {
+                    this.Height = System.Windows.SystemParameters.PrimaryScreenHeight / 2;
+                    this.ScrollFilesList.Height = System.Windows.SystemParameters.PrimaryScreenHeight / 2;
+                }
+            }
+            catch (FileNotFoundException fnfex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", fnfex.ToString());
+                tries++;
+                ResetIconCache();
+                if (tries == 1)
+                    ReadElements();
+                else
+                    throw fnfex;
+
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                throw ex;
             }
             isLoading = false;
+            tries = 0;
+        }
+
+        private void ResetIconCache()
+        {
+            foreach (var file in Directory.EnumerateFiles(path))
+            {
+                if (file.Contains("TMP_ICON"))
+                {
+                    File.Delete(file);
+                }
+            }
+            File.Delete(path + "\\iconcache.db");
         }
 
         private void ElementClicked(object sender, RoutedEventArgs e)
@@ -544,6 +592,7 @@ namespace Tiels
             }
             catch (Win32Exception ex)
             {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString()+$"\r\nWhile opening: {(string)(((Button)sender).Tag)} program caused an error.\r\nIf this issue appears too often, please add issue to github.";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
@@ -551,6 +600,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.Show();
@@ -696,17 +746,6 @@ namespace Tiels
             }
         }
 
-        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
-        {
-            MoveRectangle.Margin = new Thickness(180,0,0,0);
-            editBtn.Visibility = Visibility.Visible;
-            rotateBtn.Visibility = Visibility.Visible;
-            moveableinfo.Visibility = Visibility.Visible;
-            addrowBtn.Visibility = Visibility.Visible;
-            removerowBtn.Visibility = Visibility.Visible;
-            settingsBtn.Visibility = Visibility.Collapsed;
-        }
-
         private void RemoverowBtn_Click(object sender, RoutedEventArgs e)
         {
             if (ScrollFilesList.Height > 80)
@@ -751,10 +790,22 @@ namespace Tiels
             }
         }
 
-        private void WindowChrome_Changed(object sender, EventArgs e)
+        private void ActionGrid_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (ScrollFilesList != null)
-                ScrollFilesList.Height = this.Height - 28;
+            hideBtn.Visibility = Visibility.Visible;
+            gotodirectoryBtn.Visibility = Visibility.Visible;
+            editBtn.Visibility = Visibility.Visible;
+            rotateBtn.Visibility = Visibility.Visible;
+            moveableinfo.Visibility = Visibility.Visible;
+        }
+
+        private void ActionGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            hideBtn.Visibility = Visibility.Collapsed;
+            gotodirectoryBtn.Visibility = Visibility.Collapsed;
+            editBtn.Visibility = Visibility.Collapsed;
+            rotateBtn.Visibility = Visibility.Collapsed;
+            moveableinfo.Visibility = Visibility.Collapsed;
         }
     }
 }
