@@ -217,12 +217,13 @@ namespace Tiels
         {
             try
             {
-                //WindowInteropHelper wndHelper = new WindowInteropHelper(this);
+                //Disable Alt-Tab
+                WindowInteropHelper wndHelper = new WindowInteropHelper(this);
 
-                //int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+                int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
 
-                //exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
-                //SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+                exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+                SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
 
                 Util.EnableBlur(this);
                 SetBottom(this);
@@ -430,8 +431,9 @@ namespace Tiels
                     {
                         //this.MaxHeight += 80;
                         //this.Height += 80;
-                        FilesList.Height += 80;
                         //ScrollFilesList.Height += 80;
+
+                        FilesList.Height += 80;
 
                         RowDefinition row = new RowDefinition
                         {
@@ -511,8 +513,9 @@ namespace Tiels
                         {
                             //this.MaxHeight += 80;
                             //this.Height += 80;
-                            FilesList.Height += 80;
                             //ScrollFilesList.Height += 80;
+
+                            FilesList.Height += 80;
 
                             RowDefinition row = new RowDefinition
                             {
@@ -534,13 +537,16 @@ namespace Tiels
                 string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
                 Console.WriteLine(json);
                 File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
+                this.MaxHeight += rows * 80;
+                this.Height += rows * 80;
+                this.ScrollFilesList.Height += rows * 80;
                 foreach (var window in config.Windows)
                 {
                     if (window.Name == name)
                     {
                         if (window.CollapsedRows > 0)
                         {
-                            this.MaxHeight = window.CollapsedRows;
+                            //this.MaxHeight = window.CollapsedRows;
                             this.Height = window.CollapsedRows;
                             this.ScrollFilesList.Height = window.CollapsedRows;
                         }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tiels"
         mc:Ignorable="d"
-        Title="Tile Control Panel" Height="500" Width="900" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" WindowStartupLocation="CenterScreen" Icon="Assets/TileCPicon.png">
+        Title="Tile Control Panel" Height="500" Width="900" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" WindowStartupLocation="CenterScreen" Icon="Assets/TileCPicon.png" MinWidth="600" MinHeight="400">
     <WindowChrome.WindowChrome>
         <WindowChrome/>
     </WindowChrome.WindowChrome>

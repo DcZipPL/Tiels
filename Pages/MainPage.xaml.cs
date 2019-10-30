@@ -30,11 +30,6 @@ namespace Tiels.Pages
             InitializeComponent();
         }
 
-        private void CloseDialogBtn_Click(object sender, RoutedEventArgs e)
-        {
-            dialogBox.Visibility = Visibility.Collapsed;
-        }
-
         private void CreateNewTile(object sender, RoutedEventArgs e)
         {
             //"/[<>/\\*:\?\|]/g
@@ -51,11 +46,6 @@ namespace Tiels.Pages
                 tilelist.Items.Clear();
                 mw.Load();
             }
-        }
-        
-        private void CloseDeleteDialogBtn_Click(object sender, RoutedEventArgs e)
-        {
-            deleteDialogBox.Visibility = Visibility.Collapsed;
         }
 
         private void Tilelist_Loaded(object sender, RoutedEventArgs e)
@@ -98,32 +88,6 @@ namespace Tiels.Pages
 
         private void Reconf(object sender, RoutedEventArgs e) => Util.Reconfigurate();
 
-        private void OpenCreateDialog(object sender, RoutedEventArgs e)
-        {
-            HideAllDialogs();
-            OpenCreateDialogBtn.IsChecked = true;
-            OpenDeleteDialogBtn.IsChecked = false;
-            AppearanceBtn.IsChecked = false;
-            appearanceWindow.Visibility = Visibility.Collapsed;
-            dialogBox.Visibility = Visibility.Visible;
-        }
-
-        private void OpenDeleteDialog(object sender, RoutedEventArgs e)
-        {
-            HideAllDialogs();
-            OpenCreateDialogBtn.IsChecked = false;
-            OpenDeleteDialogBtn.IsChecked = true;
-            AppearanceBtn.IsChecked = false;
-            appearanceWindow.Visibility = Visibility.Collapsed;
-            deleteDialogBox.Visibility = Visibility.Visible;
-        }
-
-        private void HideAllDialogs()
-        {
-            dialogBox.Visibility = Visibility.Collapsed;
-            deleteDialogBox.Visibility = Visibility.Collapsed;
-        }
-
         private void ShowSettings(object sender, RoutedEventArgs e)
         {
             //MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
@@ -134,15 +98,6 @@ namespace Tiels.Pages
             //mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;
             //mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
             //mw.Visibility = Visibility.Visible;
-        }
-
-        private void AppearanceBtn_Click(object sender, RoutedEventArgs e)
-        {
-            HideAllDialogs();
-            OpenCreateDialogBtn.IsChecked = false;
-            OpenDeleteDialogBtn.IsChecked = false;
-            AppearanceBtn.IsChecked = true;
-            appearanceWindow.Visibility = Visibility.Visible;
         }
 
         private void SetNewColor(object sender, RoutedEventArgs e)
@@ -222,6 +177,65 @@ namespace Tiels.Pages
         {
             ConfigClass config = Config.GetConfig();
             ThemeCombobox.SelectedIndex = config.Theme;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
+            if (File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk")))
+            {
+                AutostartCB.IsChecked = true;
+            }
+        }
+
+        private void AutostartCB_Checked(object sender, RoutedEventArgs e)
+        {
+            CreateShortcut(System.Reflection.Assembly.GetEntryAssembly().Location);
+        }
+
+        private void AutostartCB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+        }
+
+        private void CreateShortcut(string tpath)
+        {
+            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+            string shortcutAddress = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk");
+            IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            shortcut.Description = "Startup shortcut for Tiels";
+            shortcut.TargetPath = tpath;
+            shortcut.Save();
+        }
+
+        private void ShowGeneral(object sender, RoutedEventArgs e)
+        {
+            GeneralBtn.IsChecked = true;
+            AppearanceBtn.IsChecked = false;
+            WindowsBtn.IsChecked = false;
+            generalWindow.Visibility = Visibility.Visible;
+            appearanceWindow.Visibility = Visibility.Collapsed;
+            windowsWindow.Visibility = Visibility.Collapsed;
+        }
+
+        private void AppearanceBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralBtn.IsChecked = false;
+            AppearanceBtn.IsChecked = true;
+            WindowsBtn.IsChecked = false;
+            generalWindow.Visibility = Visibility.Collapsed;
+            appearanceWindow.Visibility = Visibility.Visible;
+            windowsWindow.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowWindows(object sender, RoutedEventArgs e)
+        {
+            GeneralBtn.IsChecked = false;
+            AppearanceBtn.IsChecked = false;
+            WindowsBtn.IsChecked = true;
+            generalWindow.Visibility = Visibility.Collapsed;
+            appearanceWindow.Visibility = Visibility.Collapsed;
+            windowsWindow.Visibility = Visibility.Visible;
         }
     }
 }
