@@ -36,6 +36,7 @@ namespace Tiels
         public int rows = 0;
         private int tries = 0;
         private int lastHeight = 0;
+        private static int id = 0;
 
         private bool isLoading = false;
         private bool isMoving = false;
@@ -233,7 +234,6 @@ namespace Tiels
                 MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
                 //Set text color by theme
-                //TODO: Add to settings
                 folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
                 hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
                 gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
@@ -259,8 +259,8 @@ namespace Tiels
         public static void SetBottom(Window window)
         {
             //TODO: Move to bottom but with id
-            //IntPtr hWnd = new WindowInteropHelper(window).Handle;
-            //Util.SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, Util.SWP_NOSIZE | Util.SWP_NOMOVE | Util.SWP_NOACTIVATE);
+            IntPtr hWnd = new WindowInteropHelper(window).Handle;
+            Util.SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, Util.SWP_NOSIZE | Util.SWP_NOMOVE | Util.SWP_NOACTIVATE);
         }
 
         public bool IsSmallIcon(System.Drawing.Bitmap img)
@@ -555,6 +555,7 @@ namespace Tiels
                 {
                     if (window.Name == name)
                     {
+                        id = window.Id;
                         if (window.CollapsedRows > 0)
                         {
                             //this.MaxHeight = window.CollapsedRows;

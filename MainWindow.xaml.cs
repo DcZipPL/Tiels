@@ -68,6 +68,8 @@ namespace Tiels
             ConfigClass config = Config.GetConfig();
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
+
+            string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             //Check config version
             if (App.Version != config.Version)
             {
@@ -75,6 +77,16 @@ namespace Tiels
                 if (config.Version == "v0.3.0-alpha")
                 {
                     config.HideFilesWhileLoading = true;
+                    if (tiles.Length != 0)
+                    {
+                        config = Config.GetConfig();
+                        int i = 0;
+                        foreach (var window in config.Windows)
+                        {
+                            window.Id = i;
+                            i++;
+                        }
+                    }
                     config.Version = App.Version;
                     bool result = Config.SetConfig(config);
                     if (result == false)
@@ -87,7 +99,6 @@ namespace Tiels
                     Util.Reconfigurate();
                 }
             }
-            string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
                 config = Config.GetConfig();
@@ -148,6 +159,7 @@ namespace Tiels
                         jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
                         jsonwindow.CollapsedRows = 0;
                         jsonwindow.EditBar = false;
+                        jsonwindow.Id = i;
                         config.Windows.Add(jsonwindow);
                     }
                     tile.Show();

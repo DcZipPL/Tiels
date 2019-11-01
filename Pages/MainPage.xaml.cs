@@ -170,6 +170,28 @@ namespace Tiels.Pages
                 {
                     Util.Reconfigurate();
                 }
+                MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                foreach (TileWindow tile in mw.tilesw)
+                {
+                    tile.folderNameTB.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                    tile.hideBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                    tile.gotodirectoryBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                    tile.editBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                    tile.rotateBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                    foreach (UIElement grid in tile.FilesList.Children)
+                    {
+                        if (grid is Grid)
+                        {
+                            foreach (UIElement element in ((Grid)(((Button)((Grid)grid).Children[0]).Content)).Children)
+                            {
+                                if (element is TextBlock)
+                                {
+                                    ((TextBlock)element).Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
