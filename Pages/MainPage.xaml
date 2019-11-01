@@ -95,6 +95,7 @@
                     <Grid x:Name="windowsWindow" Visibility="Collapsed">
                         <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
                         <CheckBox x:Name="HidewhileloadingCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Hide files while loading" Checked="HidewhileloadingCB_Checked" Unchecked="HidewhileloadingCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
                     </Grid>
                 </Grid>
             </Border>

@@ -46,6 +46,8 @@ namespace Tiels
         private Point MousePos;
 
         List<SoftFileData> filedata = new List<SoftFileData>();
+        //System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+        //System.Windows.Threading.DispatcherTimer updateTimer = new System.Windows.Threading.DispatcherTimer();
 
         #region DLL IMPORTS
 
@@ -118,14 +120,12 @@ namespace Tiels
         {
             InitializeComponent();
 
-            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += DispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
-            System.Windows.Threading.DispatcherTimer updateTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += UpdateTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(1);
-            dispatcherTimer.Start();
+            //dispatcherTimer.Tick += DispatcherTimer_Tick;
+            //dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
+            //dispatcherTimer.Start();
+            //dispatcherTimer.Tick += UpdateTimer_Tick;
+            //dispatcherTimer.Interval = new TimeSpan(10);
+            //dispatcherTimer.Start();
         }
 
         private void MoveActionStart(object sender, MouseButtonEventArgs e)
@@ -143,26 +143,29 @@ namespace Tiels
             if (isLoading == false)
             {
                 ConfigClass config = Config.GetConfig();
-                foreach (var window in config.Windows)
+                if (config != null)
                 {
-                    if (window.Name == name)
+                    foreach (var window in config.Windows)
                     {
-                        window.CollapsedRows = (int)this.Height;
+                        if (window.Name == name)
+                        {
+                            window.CollapsedRows = (int)this.Height;
+                        }
                     }
-                }
-                bool result = Config.SetConfig(config);
-                if (result == false)
-                {
-                    Util.Reconfigurate();
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
                 }
             }
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            if (isLoading == false)
-                if (this.Height >= this.Height - 28)
-                    ScrollFilesList.Height = this.Height - 28;
+            //if (isLoading == false)
+                //if (this.Height >= this.Height - 28)
+                    //ScrollFilesList.Height = this.Height - 28;
         }
 
         private void CheckFileUpdates()
@@ -214,11 +217,54 @@ namespace Tiels
             }
         }
 
-        private void TileLoaded(object sender, RoutedEventArgs e)
+        public async Task LateUpdate()
+        {
+            while (true)
+            {
+                await Task.Delay(500);
+                CheckFileUpdates();
+                //SetBottom(this);
+                if (isLoading == false)
+                {
+                    ConfigClass config = Config.GetConfig();
+                    if (config != null)
+                    {
+                        foreach (var window in config.Windows)
+                        {
+                            if (window.Name == name)
+                            {
+                                window.CollapsedRows = (int)this.Height;
+                            }
+                        }
+                        bool result = Config.SetConfig(config);
+                        if (result == false)
+                        {
+                            Util.Reconfigurate();
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task Update()
+        {
+            while (true)
+            {
+                await Task.Delay(10);
+                if (isLoading == false)
+                    if (this.Height >= this.Height - 28)
+                        ScrollFilesList.Height = this.Height - 28;
+            }
+        }
+
+        private async void TileLoaded(object sender, RoutedEventArgs e)
         {
             try
             {
+                _=LateUpdate();
+                _=Update();
                 ConfigClass config = Config.GetConfig();
+                //updateTimer.Interval = new TimeSpan(!config.SpecialEffects ? 400 : 2);
 
                 //Disable Alt-Tab
                 WindowInteropHelper wndHelper = new WindowInteropHelper(this);

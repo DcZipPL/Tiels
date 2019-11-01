@@ -30,6 +30,15 @@ namespace Tiels.Pages
             InitializeComponent();
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
+            AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+            HidewhileloadingCB.IsChecked = config.HideFilesWhileLoading;
+            EffectsCB.IsChecked = config.SpecialEffects;
+        }
+
         private void CreateNewTile(object sender, RoutedEventArgs e)
         {
             //"/[<>/\\*:\?\|]/g
@@ -201,14 +210,6 @@ namespace Tiels.Pages
             ThemeCombobox.SelectedIndex = config.Theme;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            ConfigClass config = Config.GetConfig();
-            dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
-            AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
-            HidewhileloadingCB.IsChecked = config.HideFilesWhileLoading;
-        }
-
         private void CreateShortcut(string tpath)
         {
             IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
@@ -304,6 +305,28 @@ namespace Tiels.Pages
         {
             ConfigClass config = Config.GetConfig();
             config.HideFilesWhileLoading = false;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void EffectsCB_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.SpecialEffects = true;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void EffectsCB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.SpecialEffects = false;
             bool result = Config.SetConfig(config);
             if (result == false)
             {

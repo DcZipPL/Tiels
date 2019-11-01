@@ -11,7 +11,7 @@
     </WindowChrome.WindowChrome>
     <Grid>
         <Grid Margin="5">
-            <Border BorderBrush="#FF00B9FF" BorderThickness="1">
+            <Border x:Name="mainborder" BorderBrush="#FF00B9FF" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="0" Opacity="0.5" Direction="15" BlurRadius="10"/>
                 </Border.Effect>

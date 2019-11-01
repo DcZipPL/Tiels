@@ -17,6 +17,7 @@ namespace Tiels
         public int Theme;
         public string Color;
         public bool HideFilesWhileLoading;
+        public bool SpecialEffects;
         public List<JsonWindow> Windows { get; set; }
     }
 

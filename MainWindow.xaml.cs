@@ -74,9 +74,20 @@ namespace Tiels
             if (App.Version != config.Version)
             {
                 //Update version and add default values
+                if (config.Version == "v0.3.1-alpha")
+                {
+                    config.SpecialEffects = true;
+                    config.Version = App.Version;
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
                 if (config.Version == "v0.3.0-alpha")
                 {
-                    config.HideFilesWhileLoading = true;
+                    config.HideFilesWhileLoading = false;
+                    config.SpecialEffects = true;
                     if (tiles.Length != 0)
                     {
                         config = Config.GetConfig();
@@ -99,6 +110,9 @@ namespace Tiels
                     Util.Reconfigurate();
                 }
             }
+
+            if (!config.SpecialEffects) mainborder.Effect = null;
+
             if (tiles.Length != 0)
             {
                 config = Config.GetConfig();
@@ -228,7 +242,8 @@ namespace Tiels
                 Blur = true,
                 Theme = 1,
                 Color = "#19000000",
-                HideFilesWhileLoading = true,
+                HideFilesWhileLoading = false,
+                SpecialEffects = true,
                 Windows = jwindows
             };
 
