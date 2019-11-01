@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Overlay" Height="108" Width="500" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" MinHeight="28">
     <WindowChrome.WindowChrome>
-        <WindowChrome CornerRadius="0" CaptionHeight="0" GlassFrameThickness="0"/>
+        <WindowChrome x:Name="chromewindow" CornerRadius="0" CaptionHeight="0" GlassFrameThickness="0" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>
     <Window.Resources>
         <ResourceDictionary>
@@ -22,6 +22,7 @@
                 <RowDefinition x:Name="rd"></RowDefinition>
                 <RowDefinition x:Name="trd" Height="28"></RowDefinition>
             </Grid.RowDefinitions>
+            <TextBlock x:Name="loadinginfo" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Loading..." Foreground="White" FontSize="14" Visibility="Collapsed"/>
             <ScrollViewer x:Name="ScrollFilesList" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="80" Margin="0,0,5,0" VerticalAlignment="Top">
                 <Grid x:Name="FilesList" Height="80" ScrollViewer.CanContentScroll="True">
                     <Grid.RowDefinitions>
@@ -47,7 +48,7 @@
                         </Path.Data>
                     </Path>
                 </Grid>
-                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="130,0,0,0"/>
+                <Rectangle x:Name="MoveRectangle" MouseDown="MoveActionStart" MouseUp="MoveActionStop" MouseMove="MoveAction" MouseLeave="MoveActionCancel" Cursor="SizeAll" Fill="#02000000" Margin="105,0,0,0"/>
             </Grid>
         </Grid>
     </Grid>

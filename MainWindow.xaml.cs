@@ -29,6 +29,7 @@ namespace Tiels
         protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
         protected string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels";
         public List<TileWindow> tilesw = new List<TileWindow>();
+        public bool isLoading = true;
         private System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
 
         public MainWindow()
@@ -62,13 +63,34 @@ namespace Tiels
 
         public async void Load()
         {
+            isLoading = true;
+            if (File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json") == "") Util.Reconfigurate();
+            ConfigClass config = Config.GetConfig();
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
+            //Check config version
+            if (App.Version != config.Version)
+            {
+                //Update version and add default values
+                if (config.Version == "v0.3.0-alpha")
+                {
+                    config.HideFilesWhileLoading = true;
+                    config.Version = App.Version;
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
+                else
+                {
+                    Util.Reconfigurate();
+                }
+            }
             string[] tiles = Directory.EnumerateDirectories(path).ToArray();
             if (tiles.Length != 0)
             {
-                //TODO: Config isn't ""
-                ConfigClass config = Config.GetConfig();
+                config = Config.GetConfig();
                 for (int i = 0; i <= tiles.Length - 1; i++)
                 {
                     tiles[i] = tiles[i].Replace(path + "\\", "");
@@ -137,13 +159,14 @@ namespace Tiels
                     Util.Reconfigurate();
                 }
             }
+            isLoading = false;
 
             //Load MainPage
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
         }
 
-        public async void ConfigureFirstRun()
+        public void ConfigureFirstRun()
         {
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
 
@@ -188,10 +211,12 @@ namespace Tiels
             jwindows.Add(jwindow);
             ConfigClass config = new ConfigClass
             {
+                Version = App.Version,
                 FirstRun = true,
                 Blur = true,
                 Theme = 1,
                 Color = "#19000000",
+                HideFilesWhileLoading = true,
                 Windows = jwindows
             };
 

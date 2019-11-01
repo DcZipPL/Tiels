@@ -181,21 +181,10 @@ namespace Tiels.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            ConfigClass config = Config.GetConfig();
             dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
-            if (File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk")))
-            {
-                AutostartCB.IsChecked = true;
-            }
-        }
-
-        private void AutostartCB_Checked(object sender, RoutedEventArgs e)
-        {
-            CreateShortcut(System.Reflection.Assembly.GetEntryAssembly().Location);
-        }
-
-        private void AutostartCB_Unchecked(object sender, RoutedEventArgs e)
-        {
-            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+            AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+            HidewhileloadingCB.IsChecked = config.HideFilesWhileLoading;
         }
 
         private void CreateShortcut(string tpath)
@@ -266,5 +255,39 @@ namespace Tiels.Pages
                 UpdatesBtn.Foreground = Brushes.DarkRed;
             }
         }
+
+        #region Checkboxes
+        private void AutostartCB_Checked(object sender, RoutedEventArgs e)
+        {
+            CreateShortcut(System.Reflection.Assembly.GetEntryAssembly().Location);
+        }
+
+        private void AutostartCB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+        }
+
+        private void HidewhileloadingCB_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.HideFilesWhileLoading = true;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void HidewhileloadingCB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.HideFilesWhileLoading = false;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+        #endregion
     }
 }

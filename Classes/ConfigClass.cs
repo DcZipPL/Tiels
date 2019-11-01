@@ -11,10 +11,12 @@ namespace Tiels
 {
     public class ConfigClass
     {
+        public string Version;
         public bool FirstRun;
         public bool Blur;
         public int Theme;
         public string Color;
+        public bool HideFilesWhileLoading;
         public List<JsonWindow> Windows { get; set; }
     }
 
@@ -51,6 +53,7 @@ namespace Tiels
 
     public class Config
     {
+        private static string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
         public static ConfigClass GetConfig()
         {
             try
@@ -74,7 +77,10 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                //TODO: CREATE BETTER ERROR WINDOW
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.Show();
                 return null;
             }
         }

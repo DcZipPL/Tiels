@@ -217,6 +217,8 @@ namespace Tiels
         {
             try
             {
+                ConfigClass config = Config.GetConfig();
+
                 //Disable Alt-Tab
                 WindowInteropHelper wndHelper = new WindowInteropHelper(this);
 
@@ -228,7 +230,6 @@ namespace Tiels
                 Util.EnableBlur(this);
                 SetBottom(this);
 
-                ConfigClass config = Config.GetConfig();
                 MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
 
                 //Set text color by theme
@@ -239,6 +240,12 @@ namespace Tiels
                 editBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
                 rotateBtn.Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White;
                 editBox.Text = name;
+
+                if (folderNameTB.Text.Length >= 36)
+                {
+                    folderNameTB.Text = folderNameTB.Text.Remove(folderNameTB.Text.Length - (folderNameTB.Text.Length - 36)) + "...";
+                }
+
                 ReadElements();
             }
             catch (Exception ex)
@@ -288,6 +295,12 @@ namespace Tiels
             try
             {
                 isLoading = true;
+                ConfigClass config = Config.GetConfig();
+                if (config.HideFilesWhileLoading == true)
+                {
+                    FilesList.Visibility = Visibility.Hidden;
+                    loadinginfo.Visibility = Visibility.Visible;
+                }
                 //Clear data
                 filedata.Clear();
 
@@ -315,8 +328,6 @@ namespace Tiels
 
                 string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
                 string[] directories = Directory.EnumerateDirectories(path + "\\" + name).ToArray();
-
-                ConfigClass config = Config.GetConfig();
 
                 foreach (var cache in tmp_iconcache)
                 {
@@ -574,6 +585,10 @@ namespace Tiels
                 File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 throw ex;
             }
+            loadinginfo.Visibility = Visibility.Collapsed;
+            FilesList.Visibility = Visibility.Visible;
+            this.Show();
+            this.Visibility = Visibility.Visible;
             isLoading = false;
             tries = 0;
         }
@@ -666,10 +681,10 @@ namespace Tiels
         {
             if (isHidded)
             {
-                //TODO: Fix hide function
                 this.Height = lastHeight;
                 hideBtn.Content = "";
                 isHidded = false;
+                chromewindow.ResizeBorderThickness = new Thickness(6);
             }
             else
             {
@@ -677,6 +692,7 @@ namespace Tiels
                 this.Height = 28;
                 hideBtn.Content = "";
                 isHidded = true;
+                chromewindow.ResizeBorderThickness = new Thickness(0);
             }
         }
 
