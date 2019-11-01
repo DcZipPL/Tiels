@@ -237,5 +237,34 @@ namespace Tiels.Pages
             appearanceWindow.Visibility = Visibility.Collapsed;
             windowsWindow.Visibility = Visibility.Visible;
         }
+
+        private async void ShowUpdates(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //Check updates
+                var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("tiels-updates-check"));
+                var releases = await client.Repository.Release.GetAll("DcZipPL", "Tiels");
+                var latest = releases[0];
+                if (latest.TagName == App.Version)
+                {
+                    Console.WriteLine("No updates found.");
+                }
+                else
+                {
+                    UpdatesBtn.FontWeight = FontWeights.Bold;
+                    UpdatesBtn.Foreground = Brushes.ForestGreen;
+                    Process.Start("https://github.com/DcZipPL/Tiels/releases");
+                }
+                Console.WriteLine(
+                    "The latest release is tagged at {0} and is named {1}",
+                    latest.TagName,
+                    latest.Name);
+            }
+            catch (Exception ex)
+            {
+                UpdatesBtn.Foreground = Brushes.DarkRed;
+            }
+        }
     }
 }

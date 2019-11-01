@@ -18,6 +18,12 @@ namespace Tiels
         public List<JsonWindow> Windows { get; set; }
     }
 
+    public class IconClass
+    {
+        public int Id;
+        public string Icon;
+    }
+
     public class FileUpdateClass
     {
         public SoftFileData[] Data;

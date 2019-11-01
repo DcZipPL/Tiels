@@ -25,12 +25,12 @@
                 <ToggleButton x:Name="WindowsBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Windows Settings" Padding="10,3" Click="ShowWindows" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="110"/>
                 <ToggleButton x:Name="GeneralBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="General" Padding="10,3" Click="ShowGeneral" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" IsChecked="True"/>
                 <ToggleButton x:Name="AppearanceBtn" Content="Appearance" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Padding="10,3" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Click="AppearanceBtn_Click"/>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE713;" Padding="5" Click="ShowSettings" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+                <Button x:Name="UpdatesBtn" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE896;" Padding="5" Click="ShowUpdates" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
                 <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Reconfigurate" Padding="10,5" Click="Reconf" Margin="10,0,0,10"/>
             </Grid>
             <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#FFDADBDC">
                 <Grid Background="#FFF5F6F7">
-                    <Grid x:Name="generalWindow" Visibility="Collapsed">
+                    <Grid x:Name="generalWindow">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="35"/>
                             <RowDefinition Height="Auto"/>
@@ -49,7 +49,7 @@
                                 <TextBox x:Name="newTileName" FontSize="14"></TextBox>
                                 <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE72A;" FontSize="16" Click="CreateNewTile"/>
                             </Grid>
-                            <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Padding="0" Foreground="#FF630000">Name can't contain (\ / : * ? &lt; &gt; |)</TextBlock>
+                            <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Padding="0,0,0,5" Foreground="#FF630000">Name can't contain (\ / : * ? &lt; &gt; |)</TextBlock>
                         </Grid>
                         <TextBlock FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" FontWeight="Bold" Grid.Row="2">Delete tile</TextBlock>
                         <Grid Grid.Row="3" Background="#FFF5F6F7">
@@ -87,7 +87,7 @@
                         </Grid>
                         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Content="&#xEA35;" Padding="5" Click="BackHome" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
                     </Grid>
-                    <Grid x:Name="windowsWindow">
+                    <Grid x:Name="windowsWindow" Visibility="Collapsed">
                         <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked"/>
                     </Grid>
                 </Grid>
