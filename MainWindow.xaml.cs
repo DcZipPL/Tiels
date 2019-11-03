@@ -78,7 +78,7 @@ namespace Tiels
                 {
                     config.Version = App.Version;
                 }
-                if (config.Version == "v0.3.1-alpha")
+                else if (config.Version == "v0.3.1-alpha")
                 {
                     config.SpecialEffects = true;
                     config.Version = App.Version;
@@ -88,7 +88,7 @@ namespace Tiels
                         Util.Reconfigurate();
                     }
                 }
-                if (config.Version == "v0.3.0-alpha")
+                else if (config.Version == "v0.3.0-alpha")
                 {
                     config.HideFilesWhileLoading = true;
                     config.SpecialEffects = true;
