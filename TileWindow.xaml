@@ -49,8 +49,16 @@
                                         </Grid>
                                     </ControlTemplate>
                                 </ContextMenu.Template>
-                                <MenuItem Header="Open"/>
-                                <MenuItem Header="Open in Comand prompt"/>
+                                <MenuItem Header="Open" Foreground="White">
+                                    <MenuItem.Icon>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" FontSize="16"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Open in Comand prompt" Foreground="White">
+                                    <MenuItem.Icon>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE756;" FontSize="16"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
