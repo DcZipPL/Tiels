@@ -99,7 +99,7 @@ namespace Tiels
             }
             catch
             {
-                return false;
+                return true;
             }
         }
     }
