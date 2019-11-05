@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionaries/ScrollBarDictionary.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Dictionaries/MainDictionary.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
