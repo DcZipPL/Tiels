@@ -876,5 +876,24 @@ namespace Tiels
             rotateBtn.Visibility = Visibility.Collapsed;
             moveableinfo.Visibility = Visibility.Collapsed;
         }
+
+        private void MenuItemOpen_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(path + "\\" + name);
+        }
+
+        private void MenuItemOpenCMD_Click(object sender, RoutedEventArgs e)
+        {
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                WorkingDirectory = path + "\\" + name,
+                WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
+                FileName = "cmd.exe",
+                RedirectStandardInput = false,
+                UseShellExecute = false
+            };
+
+            Process.Start(startInfo);
+        }
     }
 }

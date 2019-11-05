@@ -38,24 +38,13 @@
                     <Button x:Name="hideBtn" HorizontalAlignment="Left" Margin="5,0,0,0" Width="20" FontFamily="Segoe MDL2 Assets" Content="&#xE70E;" Foreground="White" BorderThickness="0" BorderBrush="Black" Background="#00000000" Click="HideTileButton" Visibility="Collapsed"/>
                     <Button x:Name="gotodirectoryBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click" Visibility="Collapsed">
                         <Button.ContextMenu>
-                            <ContextMenu >
-                                <ContextMenu.Template>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <Border Background="#FF2B2B2B" BorderBrush="#FFA0A0A0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" BorderThickness="1">
-                                                <Grid>
-                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
-                                                </Grid>
-                                            </Border>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ContextMenu.Template>
-                                <MenuItem Header="Open" Foreground="White">
+                            <ContextMenu Style="{StaticResource DarkMenu}">
+                                <MenuItem Header="Open" Foreground="White" Click="MenuItemOpen_Click">
                                     <MenuItem.Icon>
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" FontSize="16"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Open in Comand prompt" Foreground="White">
+                                <MenuItem Header="Open in command prompt" Foreground="White" Click="MenuItemOpenCMD_Click">
                                     <MenuItem.Icon>
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE756;" FontSize="16"/>
                                     </MenuItem.Icon>
