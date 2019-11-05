@@ -35,7 +35,25 @@
                 <TextBox x:Name="editBox" Margin="160,4" VerticalAlignment="Center" FontSize="14" Padding="0" VerticalContentAlignment="Center" Visibility="Collapsed" HorizontalContentAlignment="Center"/>
                 <Grid x:Name="ActionButtons">
                     <Button x:Name="hideBtn" HorizontalAlignment="Left" Margin="5,0,0,0" Width="20" FontFamily="Segoe MDL2 Assets" Content="&#xE70E;" Foreground="White" BorderThickness="0" BorderBrush="Black" Background="#00000000" Click="HideTileButton" Visibility="Collapsed"/>
-                    <Button x:Name="gotodirectoryBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click" Visibility="Collapsed"/>
+                    <Button x:Name="gotodirectoryBtn" HorizontalAlignment="Left" Margin="30,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE8B7;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="OpenDirectoryBtn_Click" Visibility="Collapsed">
+                        <Button.ContextMenu>
+                            <ContextMenu >
+                                <ContextMenu.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Border Background="#FF2B2B2B" BorderBrush="#FFA0A0A0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" BorderThickness="1">
+                                                <Grid>
+                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ContextMenu.Template>
+                                <MenuItem Header="Open"/>
+                                <MenuItem Header="Open in Comand prompt"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                     <Button x:Name="rotateBtn" HorizontalAlignment="Left" Margin="55,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE7AD;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="RotateBtn_Click" Visibility="Collapsed"/>
                     <Button x:Name="editBtn" HorizontalAlignment="Left" Margin="80,0,0,0" FontFamily="Segoe MDL2 Assets" Content="&#xE70F;" Width="20" Foreground="White" BorderThickness="0" Background="#00000000" Click="EditBtn_Click" Visibility="Collapsed"/>
                     <Path x:Name="moveableinfo" Fill="White" Stroke="White" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0" Visibility="Collapsed">
