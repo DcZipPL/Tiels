@@ -78,7 +78,7 @@ namespace Tiels
                 {
                     config.Version = App.Version;
                 }
-                if (config.Version == "v0.3.2-alpha")
+                else if (config.Version == "v0.3.2-alpha")
                 {
                     config.Version = App.Version;
                 }
