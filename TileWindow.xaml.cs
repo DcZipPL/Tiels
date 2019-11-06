@@ -522,7 +522,7 @@ namespace Tiels
 
                     icontextmenu.Items.Add(omi);
 
-                    ContextMenuShell?[] cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i])).ToArray();
+                    ContextMenuShell[] cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i])) != null ? ReadRegistryItems(System.IO.Path.GetExtension(elements[i])).ToArray() : null;
 
                     if (cmshell != null)
                         foreach (ContextMenuShell cm in cmshell)
