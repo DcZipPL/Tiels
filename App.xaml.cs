@@ -13,6 +13,6 @@ namespace Tiels
     /// </summary>
     public partial class App : Application
     {
-        public static string Version = "v0.3.3-alpha";
+        public static string Version = "v0.4.0-alpha";
     }
 }
