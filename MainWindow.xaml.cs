@@ -74,6 +74,10 @@ namespace Tiels
             if (App.Version != config.Version)
             {
                 //Update version and add default values
+                if (config.Version == "v0.3.3-alpha")
+                {
+                    config.Version = App.Version;
+                }
                 if (config.Version == "v0.3.2-alpha")
                 {
                     config.Version = App.Version;
