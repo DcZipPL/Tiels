@@ -148,6 +148,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\ConfigClass.cs" />
+    <Compile Include="Classes\ShellContextMenu.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>

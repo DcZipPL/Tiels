@@ -21,6 +21,7 @@ using Tiels.Classes;
 using System.Text.RegularExpressions;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using Peter;
 
 namespace Tiels
 {
@@ -459,6 +460,14 @@ namespace Tiels
                         ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
                     };
                     button.Click += ElementClicked;
+                    button.MouseRightButtonUp += (sender, e) =>
+                    {
+                        ShellContextMenu menu = new ShellContextMenu();
+                        FileInfo[] arrFI = new FileInfo[1];
+                        arrFI[0] = new FileInfo((string)((Button)sender).Tag);
+
+                        menu.ShowContextMenu(arrFI, System.Windows.Forms.Control.MousePosition);
+                    };
 
                     Grid grid = new Grid
                     {
@@ -499,50 +508,6 @@ namespace Tiels
                         };
                         FilesList.RowDefinitions.Add(row);
                     }
-
-                    //Context Menu
-                    TextBlock mitb = new TextBlock(new Run(""))
-                    {
-                        FontSize = 16,
-                        FontFamily = new FontFamily("Segoe MDL2 Assets")
-                    };
-                    MenuItem omi = new MenuItem
-                    {
-                        Header = "Open",
-                        Icon = mitb,
-                        Foreground = Brushes.White,
-                        Tag = elements[i]
-                    };
-                    omi.Click += Mi_Click;
-
-                    ContextMenu icontextmenu = new ContextMenu
-                    {
-                        Style = (Style)Resources["DarkMenu"]
-                    };
-
-                    icontextmenu.Items.Add(omi);
-
-                    List<ContextMenuShell> cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i]));
-
-                    if (cmshell != null)
-                        foreach (ContextMenuShell cm in cmshell)
-                        {
-                            MenuItem mi = new MenuItem
-                            {
-                                Header = StringExtensions.FirstCharToUpper(System.IO.Path.GetFileName(cm.Name)),
-                                Foreground = Brushes.White,
-                                Tag = cm.Command
-                            };
-                            mi.Click += (sender, e) => {
-                                string tag = ((string)((MenuItem)sender).Tag);
-                                Console.WriteLine("/c " + tag);
-                                string command = "/c " + tag;
-                                System.Diagnostics.Process.Start("cmd.exe", command)
-                            };
-                            icontextmenu.Items.Add(mi);
-                        }
-
-                    grid.ContextMenu = icontextmenu;
 
                     //Add content to FileList
                     FilesList.ColumnDefinitions.Add(column);
@@ -684,29 +649,6 @@ namespace Tiels
             this.Visibility = Visibility.Visible;
             isLoading = false;
             tries = 0;
-        }
-
-        private List<ContextMenuShell> ReadRegistryItems(string extension)
-        {
-            if (Registry.ClassesRoot.OpenSubKey(extension, false) == null) return null;
-            object value = Registry.ClassesRoot.OpenSubKey(extension, false).GetValue("");
-            if (value != null)
-            {
-                RegistryKey shellkey = Registry.ClassesRoot.OpenSubKey((string)value, false).OpenSubKey("Shell", false);
-                List<ContextMenuShell> contextMenuValues = new List<ContextMenuShell>();
-                if (shellkey != null)
-                    foreach (string key in shellkey.GetSubKeyNames())
-                    {
-                        ContextMenuShell contextMenuShell = new ContextMenuShell();
-                        contextMenuShell.Name = shellkey.OpenSubKey(key, false).GetValue("") != null ? (string)shellkey.OpenSubKey(key, false).GetValue("")
-                            : (string)shellkey.OpenSubKey(key, false).Name;
-                        contextMenuShell.Command = (string)shellkey.OpenSubKey(key, false).OpenSubKey("Command", false).GetValue("");
-                        contextMenuValues.Add(contextMenuShell);
-                    }
-                else return null;
-                return contextMenuValues;
-            }
-            else return null;
         }
 
         private void Mi_Click(object sender, RoutedEventArgs e)
@@ -987,11 +929,5 @@ namespace Tiels
 
             Process.Start(startInfo);
         }
-    }
-
-    internal class ContextMenuShell
-    {
-        public string Name;
-        public string Command;
     }
 }
