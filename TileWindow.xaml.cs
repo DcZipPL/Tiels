@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using Tiels.Classes;
 using System.Text.RegularExpressions;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Tiels
 {
@@ -257,7 +258,7 @@ namespace Tiels
             }
         }
 
-        private async void TileLoaded(object sender, RoutedEventArgs e)
+        private void TileLoaded(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -499,6 +500,48 @@ namespace Tiels
                         FilesList.RowDefinitions.Add(row);
                     }
 
+                    //Context Menu
+                    TextBlock mitb = new TextBlock(new Run(""))
+                    {
+                        FontSize = 16,
+                        FontFamily = new FontFamily("Segoe MDL2 Assets")
+                    };
+                    MenuItem omi = new MenuItem
+                    {
+                        Header = "Open",
+                        Icon = mitb,
+                        Foreground = Brushes.White,
+                        Tag = elements[i]
+                    };
+                    omi.Click += Mi_Click;
+
+                    ContextMenu icontextmenu = new ContextMenu
+                    {
+                        Style = (Style)Resources["DarkMenu"]
+                    };
+
+                    icontextmenu.Items.Add(omi);
+
+                    ContextMenuShell?[] cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i])).ToArray();
+
+                    if (cmshell != null)
+                        foreach (ContextMenuShell cm in cmshell)
+                        {
+                            MenuItem mi = new MenuItem
+                            {
+                                Header = StringExtensions.FirstCharToUpper(System.IO.Path.GetFileName(cm.Name)),
+                                Foreground = Brushes.White,
+                                Tag = cm.Command
+                            };
+                            mi.Click += (sender, e) => {
+                                Process.Start((string)((MenuItem)sender).Tag);
+                            };
+                            icontextmenu.Items.Add(mi);
+                        }
+
+                    grid.ContextMenu = icontextmenu;
+
+                    //Add content to FileList
                     FilesList.ColumnDefinitions.Add(column);
                     FilesList.Children.Add(grid);
                 }
@@ -640,6 +683,51 @@ namespace Tiels
             tries = 0;
         }
 
+        private List<ContextMenuShell> ReadRegistryItems(string extension)
+        {
+            object value = Registry.ClassesRoot.OpenSubKey(extension, false).GetValue("");
+            if (value != null)
+            {
+                RegistryKey shellkey = Registry.ClassesRoot.OpenSubKey((string)value, false).OpenSubKey("Shell", false);
+                List<ContextMenuShell> contextMenuValues = new List<ContextMenuShell>();
+                if (shellkey != null)
+                    foreach (string key in shellkey.GetSubKeyNames())
+                    {
+                        ContextMenuShell contextMenuShell = new ContextMenuShell();
+                        contextMenuShell.Name = shellkey.OpenSubKey(key, false).GetValue("") != null ? (string)shellkey.OpenSubKey(key, false).GetValue("")
+                            : (string)shellkey.OpenSubKey(key, false).Name;
+                        contextMenuShell.Command = (string)shellkey.OpenSubKey(key, false).OpenSubKey("Command", false).GetValue("");
+                        contextMenuValues.Add(contextMenuShell);
+                    }
+                else return null;
+                return contextMenuValues;
+            }
+            else return null;
+        }
+
+        private void Mi_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start((string)((MenuItem)sender).Tag);
+            }
+            catch (Win32Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.ExceptionString = ex.ToString() + $"\r\n{(string)(((MenuItem)sender).Tag)} can't be opened by default application(s)";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
+                ew.Show();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.Show();
+            }
+        }
+
         private void ResetIconCache()
         {
             foreach (var file in Directory.EnumerateFiles(path))
@@ -663,7 +751,7 @@ namespace Tiels
                 File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.ExceptionString = ex.ToString()+$"\r\nWhile opening: {(string)(((Button)sender).Tag)} program caused an error.\r\nIf this issue appears too often, please add issue to github.";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
+                ew.ExceptionString = ex.ToString()+$"\r\n{(string)(((Button)sender).Tag)} can't be opened by default application(s)";
                 ew.Show();
             }
             catch (Exception ex)
@@ -895,5 +983,11 @@ namespace Tiels
 
             Process.Start(startInfo);
         }
+    }
+
+    internal class ContextMenuShell
+    {
+        public string Name;
+        public string Command;
     }
 }
