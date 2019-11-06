@@ -522,7 +522,7 @@ namespace Tiels
 
                     icontextmenu.Items.Add(omi);
 
-                    ContextMenuShell[] cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i])) != null ? ReadRegistryItems(System.IO.Path.GetExtension(elements[i])).ToArray() : null;
+                    List<ContextMenuShell> cmshell = ReadRegistryItems(System.IO.Path.GetExtension(elements[i]));
 
                     if (cmshell != null)
                         foreach (ContextMenuShell cm in cmshell)
@@ -534,7 +534,10 @@ namespace Tiels
                                 Tag = cm.Command
                             };
                             mi.Click += (sender, e) => {
-                                Process.Start((string)((MenuItem)sender).Tag);
+                                string tag = ((string)((MenuItem)sender).Tag);
+                                Console.WriteLine("/c " + tag);
+                                string command = "/c " + tag;
+                                System.Diagnostics.Process.Start("cmd.exe", command)
                             };
                             icontextmenu.Items.Add(mi);
                         }
@@ -685,6 +688,7 @@ namespace Tiels
 
         private List<ContextMenuShell> ReadRegistryItems(string extension)
         {
+            if (Registry.ClassesRoot.OpenSubKey(extension, false) == null) return null;
             object value = Registry.ClassesRoot.OpenSubKey(extension, false).GetValue("");
             if (value != null)
             {
