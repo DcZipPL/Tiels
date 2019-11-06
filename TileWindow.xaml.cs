@@ -20,6 +20,8 @@ using Newtonsoft.Json;
 using Tiels.Classes;
 using System.Text.RegularExpressions;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using Peter;
 
 namespace Tiels
 {
@@ -257,7 +259,7 @@ namespace Tiels
             }
         }
 
-        private async void TileLoaded(object sender, RoutedEventArgs e)
+        private void TileLoaded(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -458,6 +460,14 @@ namespace Tiels
                         ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
                     };
                     button.Click += ElementClicked;
+                    button.MouseRightButtonUp += (sender, e) =>
+                    {
+                        ShellContextMenu menu = new ShellContextMenu();
+                        FileInfo[] arrFI = new FileInfo[1];
+                        arrFI[0] = new FileInfo((string)((Button)sender).Tag);
+
+                        menu.ShowContextMenu(arrFI, System.Windows.Forms.Control.MousePosition);
+                    };
 
                     Grid grid = new Grid
                     {
@@ -499,6 +509,7 @@ namespace Tiels
                         FilesList.RowDefinitions.Add(row);
                     }
 
+                    //Add content to FileList
                     FilesList.ColumnDefinitions.Add(column);
                     FilesList.Children.Add(grid);
                 }
@@ -640,6 +651,29 @@ namespace Tiels
             tries = 0;
         }
 
+        private void Mi_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start((string)((MenuItem)sender).Tag);
+            }
+            catch (Win32Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.ExceptionString = ex.ToString() + $"\r\n{(string)(((MenuItem)sender).Tag)} can't be opened by default application(s)";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
+                ew.Show();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                ErrorWindow ew = new ErrorWindow();
+                ew.ExceptionReason = ex;
+                ew.Show();
+            }
+        }
+
         private void ResetIconCache()
         {
             foreach (var file in Directory.EnumerateFiles(path))
@@ -663,7 +697,7 @@ namespace Tiels
                 File.WriteAllText(config_path + "\\Error.log", ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.ExceptionString = ex.ToString()+$"\r\nWhile opening: {(string)(((Button)sender).Tag)} program caused an error.\r\nIf this issue appears too often, please add issue to github.";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
+                ew.ExceptionString = ex.ToString()+$"\r\n{(string)(((Button)sender).Tag)} can't be opened by default application(s)";
                 ew.Show();
             }
             catch (Exception ex)
@@ -875,6 +909,25 @@ namespace Tiels
             editBtn.Visibility = Visibility.Collapsed;
             rotateBtn.Visibility = Visibility.Collapsed;
             moveableinfo.Visibility = Visibility.Collapsed;
+        }
+
+        private void MenuItemOpen_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(path + "\\" + name);
+        }
+
+        private void MenuItemOpenCMD_Click(object sender, RoutedEventArgs e)
+        {
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                WorkingDirectory = path + "\\" + name,
+                WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
+                FileName = "cmd.exe",
+                RedirectStandardInput = false,
+                UseShellExecute = false
+            };
+
+            Process.Start(startInfo);
         }
     }
 }
