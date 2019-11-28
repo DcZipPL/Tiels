@@ -36,6 +36,7 @@ namespace Tiels
         private string newname = null;
 
         public int rows = 0;
+        public int collumns = 4;
         private int tries = 0;
         private int lastHeight = 0;
         private static int id = 0;
@@ -121,23 +122,56 @@ namespace Tiels
         public TileWindow()
         {
             InitializeComponent();
+        }
 
-            //dispatcherTimer.Tick += DispatcherTimer_Tick;
-            //dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
-            //dispatcherTimer.Start();
-            //dispatcherTimer.Tick += UpdateTimer_Tick;
-            //dispatcherTimer.Interval = new TimeSpan(10);
-            //dispatcherTimer.Start();
+        private void AddHandler()
+        {
+            //AddHandler(Mouse.PreviewMouseDownOutsideCapturedElementEvent, new MouseButtonEventHandler(HandleClickOutsideOfControl), true);
+            AddHandler(Mouse.PreviewMouseUpOutsideCapturedElementEvent, new MouseButtonEventHandler(HandleClickOutsideOfControl), true);
+            AddHandler(Mouse.PreviewMouseMoveEvent, new MouseEventHandler(HandleMouseOutsideOfControl), true);
+        }
+
+        private void HandleClickOutsideOfControl(object sender, MouseButtonEventArgs e)
+        {
+            //do stuff (eg close drop down)
+            MoveActionStop(this, null);
+            ReleaseMouseCapture();
+        }
+
+        private void HandleMouseOutsideOfControl(object sender, MouseEventArgs e)
+        {
+            //do stuff (eg close drop down)
+            //MoveActionStop(this, null);
+            //ReleaseMouseCapture();
+            if (isMoving)
+            {
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    Left = (Util.GetMousePosition().X + MousePos.X);
+                    Top = (Util.GetMousePosition().Y + MousePos.Y);
+                }
+                else
+                {
+                    if (Util.IsEvenX((int)(Util.GetMousePosition().X + MousePos.X), 4))
+                        Left = (int)(Util.GetMousePosition().X + MousePos.X);
+                    if (Util.IsEvenX((int)(Util.GetMousePosition().Y + MousePos.Y), 4))
+                        Top = (int)(Util.GetMousePosition().Y + MousePos.Y);
+                }
+            }
         }
 
         private void MoveActionStart(object sender, MouseButtonEventArgs e)
         {
             isMoving = true;
+            Mouse.Capture(this,CaptureMode.SubTree);
+            AddHandler();
             MousePos = Util.GetMousePosition();
             MousePos.X = Convert.ToInt32(this.Left) - MousePos.X;
             MousePos.Y = Convert.ToInt32(this.Top) - MousePos.Y;
         }
-        private void MoveActionCancel(object sender, MouseEventArgs e) => MoveActionStop(this, null);
+
+        //TODO: Fix move window bug
+        private void MoveActionCancel(object sender, MouseEventArgs e) { }// => MoveActionStop(this, null);
         private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
             CheckFileUpdates();
@@ -161,13 +195,6 @@ namespace Tiels
                     }
                 }
             }
-        }
-
-        private void UpdateTimer_Tick(object sender, EventArgs e)
-        {
-            //if (isLoading == false)
-                //if (this.Height >= this.Height - 28)
-                    //ScrollFilesList.Height = this.Height - 28;
         }
 
         private void CheckFileUpdates()
@@ -245,6 +272,7 @@ namespace Tiels
                         }
                     }
                 }
+                CheckWindowWidth();
             }
         }
 
@@ -256,6 +284,17 @@ namespace Tiels
                 if (isLoading == false)
                     if (this.Height >= this.Height - 28)
                         ScrollFilesList.Height = this.Height - 28;
+            }
+        }
+
+        private void CheckWindowWidth()
+        {
+            int floor = (int)Math.Floor(this.Width / 120);
+            if (floor != collumns)
+            {
+                collumns = floor;
+                int floor1 = (int)Math.Floor(this.Height / 80);
+                ReadElements(floor,floor1);
             }
         }
 
@@ -338,7 +377,7 @@ namespace Tiels
             }
         }
 
-        private void ReadElements()
+        private void ReadElements(int collumCount = 4, int rowCount = 1)
         {
             try
             {
@@ -355,7 +394,7 @@ namespace Tiels
                 FilesList.Children.Clear();
                 FilesList.ColumnDefinitions.Clear();
                 FilesList.RowDefinitions.Clear();
-                rows = 0;
+                rows = rowCount;
 
                 //Set default values
                 RowDefinition mainrow = new RowDefinition
@@ -364,8 +403,8 @@ namespace Tiels
                 };
                 FilesList.RowDefinitions.Add(mainrow);
                 FilesList.Height = 80;
-                this.MaxHeight = 108;
-                this.Height = 108;
+                this.MaxHeight = rowCount * 80 + 28;
+                this.Height = rowCount * 80 + 28;
 
                 //Creating file with paths to icons
                 if (!File.Exists(path + "\\iconcache.db"))
@@ -385,7 +424,7 @@ namespace Tiels
                 //Pseudo-random icon id
                 int ri = new Random().Next(0, 1000000);
 
-                int j = 3;
+                int j = 0;
                 int n = 0;
                 int m = 0;
                 for (int i = 0; i < elements.Length; i++)
@@ -469,132 +508,136 @@ namespace Tiels
                         menu.ShowContextMenu(arrFI, System.Windows.Forms.Control.MousePosition);
                     };
 
-                    Grid grid = new Grid
-                    {
-                        Width = 110,
-                        Height = 68,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        Margin = new Thickness(0, 4, 10, 4),
-                    };
-                    Grid.SetColumn(grid, m);
-                    grid.Children.Add(button);
-                    m++;
+                    SortGrid(collumCount, i, button, ref j, ref n, ref m);
 
-                    ColumnDefinition column = new ColumnDefinition
-                    {
-                        Width = new GridLength(120, GridUnitType.Pixel)
-                    };
+                    //Grid grid = new Grid
+                    //{
+                    //    Width = 110,
+                    //    Height = 68,
+                    //    VerticalAlignment = VerticalAlignment.Top,
+                    //    HorizontalAlignment = HorizontalAlignment.Left,
+                    //    Margin = new Thickness(0, 4, 10, 4),
+                    //};
+                    //Grid.SetColumn(grid, m);
+                    //grid.Children.Add(button);
+                    //m++;
 
-                    Grid.SetRow(grid, n);
-                    if (i == j)
-                    {
-                        m = 0;
-                        j += 4;
-                        n++;
-                        rows++;
-                    }
-                    if (i == j - 4)
-                    {
-                        //this.MaxHeight += 80;
-                        //this.Height += 80;
-                        //ScrollFilesList.Height += 80;
+                    //ColumnDefinition column = new ColumnDefinition
+                    //{
+                    //    Width = new GridLength(120, GridUnitType.Pixel)
+                    //};
 
-                        FilesList.Height += 80;
+                    //Grid.SetRow(grid, n);
+                    //if (i == j)
+                    //{
+                    //    m = 0;
+                    //    j += 4;
+                    //    n++;
+                    //    rows++;
+                    //}
+                    //if (i == j - 4)
+                    //{
+                    //    //this.MaxHeight += 80;
+                    //    //this.Height += 80;
+                    //    //ScrollFilesList.Height += 80;
 
-                        RowDefinition row = new RowDefinition
-                        {
-                            Height = new GridLength(1, GridUnitType.Star)
-                        };
-                        FilesList.RowDefinitions.Add(row);
-                    }
+                    //    FilesList.Height += 80;
+
+                    //    RowDefinition row = new RowDefinition
+                    //    {
+                    //        Height = new GridLength(1, GridUnitType.Star)
+                    //    };
+                    //    FilesList.RowDefinitions.Add(row);
+                    //}
 
                     //Add content to FileList
-                    FilesList.ColumnDefinitions.Add(column);
-                    FilesList.Children.Add(grid);
+                    //FilesList.ColumnDefinitions.Add(column);
+                    //FilesList.Children.Add(grid);
                 }
-                if (directories.Length != 0)
-                    for (int i = 0; i < directories.Length; i++)
-                    {
-                        TextBlock image = new TextBlock
-                        {
-                            FontSize = 44,
-                            FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                            Width = 44,
-                            Height = 44,
-                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            Margin = new Thickness(0, 1, 0, 19),
-                            Text = ""
-                        };
+                #region Old
+                //if (directories.Length != 0)
+                    //for (int i = 0; i < directories.Length; i++)
+                    //{
+                    //    TextBlock image = new TextBlock
+                    //    {
+                    //        FontSize = 44,
+                    //        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    //        Width = 44,
+                    //        Height = 44,
+                    //        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                    //        HorizontalAlignment = HorizontalAlignment.Center,
+                    //        Margin = new Thickness(0, 1, 0, 19),
+                    //        Text = ""
+                    //    };
 
-                        string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
-                        TextBlock filename = new TextBlock
-                        {
-                            VerticalAlignment = VerticalAlignment.Bottom,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                            Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..."
-                        };
+                    //    string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
+                    //    TextBlock filename = new TextBlock
+                    //    {
+                    //        VerticalAlignment = VerticalAlignment.Bottom,
+                    //        HorizontalAlignment = HorizontalAlignment.Center,
+                    //        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                    //        Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..."
+                    //    };
 
-                        Grid button_content = new Grid();
-                        button_content.Children.Add(image);
-                        button_content.Children.Add(filename);
+                    //    Grid button_content = new Grid();
+                    //    button_content.Children.Add(image);
+                    //    button_content.Children.Add(filename);
 
-                        Button button = new Button
-                        {
-                            Content = button_content,
-                            Background = Brushes.Transparent,
-                            BorderBrush = Brushes.Transparent,
-                            Name = "elementButton_" + i,
-                            Tag = directories[i],
-                            ToolTip = directories[i].Replace(path + "\\" + name + "\\", "") + " - Directory"
-                        };
-                        button.Click += ElementClicked;
+                    //    Button button = new Button
+                    //    {
+                    //        Content = button_content,
+                    //        Background = Brushes.Transparent,
+                    //        BorderBrush = Brushes.Transparent,
+                    //        Name = "elementButton_" + i,
+                    //        Tag = directories[i],
+                    //        ToolTip = directories[i].Replace(path + "\\" + name + "\\", "") + " - Directory"
+                    //    };
+                    //    button.Click += ElementClicked;
 
-                        Grid grid = new Grid
-                        {
-                            Width = 110,
-                            Height = 68,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(0, 4, 10, 4),
-                        };
-                        Grid.SetColumn(grid, m);
-                        grid.Children.Add(button);
-                        m++;
+                    //    Grid grid = new Grid
+                    //    {
+                    //        Width = 110,
+                    //        Height = 68,
+                    //        VerticalAlignment = VerticalAlignment.Top,
+                    //        HorizontalAlignment = HorizontalAlignment.Left,
+                    //        Margin = new Thickness(0, 4, 10, 4),
+                    //    };
+                    //    Grid.SetColumn(grid, m);
+                    //    grid.Children.Add(button);
+                    //    m++;
 
-                        ColumnDefinition column = new ColumnDefinition
-                        {
-                            Width = new GridLength(120, GridUnitType.Pixel)
-                        };
+                    //    ColumnDefinition column = new ColumnDefinition
+                    //    {
+                    //        Width = new GridLength(120, GridUnitType.Pixel)
+                    //    };
 
-                        Grid.SetRow(grid, n);
-                        if (i == j)
-                        {
-                            m = 0;
-                            j += 4;
-                            n++;
-                            rows++;
-                        }
-                        if (i == j - 4)
-                        {
-                            //this.MaxHeight += 80;
-                            //this.Height += 80;
-                            //ScrollFilesList.Height += 80;
+                    //    Grid.SetRow(grid, n);
+                    //    if (i == j)
+                    //    {
+                    //        m = 0;
+                    //        j += 4;
+                    //        n++;
+                    //        rows++;
+                    //    }
+                    //    if (i == j - 4)
+                    //    {
+                    //        //this.MaxHeight += 80;
+                    //        //this.Height += 80;
+                    //        //ScrollFilesList.Height += 80;
 
-                            FilesList.Height += 80;
+                    //        FilesList.Height += 80;
 
-                            RowDefinition row = new RowDefinition
-                            {
-                                Height = new GridLength(1, GridUnitType.Star)
-                            };
-                            FilesList.RowDefinitions.Add(row);
-                        }
+                    //        RowDefinition row = new RowDefinition
+                    //        {
+                    //            Height = new GridLength(1, GridUnitType.Star)
+                    //        };
+                    //        FilesList.RowDefinitions.Add(row);
+                    //    }
 
-                        FilesList.ColumnDefinitions.Add(column);
-                        FilesList.Children.Add(grid);
-                    }
+                    //    FilesList.ColumnDefinitions.Add(column);
+                    //    FilesList.Children.Add(grid);
+                    //}
+                #endregion
                 if (File.Exists(path + "\\" + name + "_fileupdate.json"))
                     File.Delete(path + "\\" + name + "_fileupdate.json");
 
@@ -603,10 +646,9 @@ namespace Tiels
                     Data = filedata.ToArray()
                 };
                 string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
-                Console.WriteLine(json);
                 File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
-                this.MaxHeight += rows * 80;
-                this.Height += rows * 80;
+                this.MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight / 1.025;
+                this.Height = rows * 80 + 28;
                 this.ScrollFilesList.Height += rows * 80;
                 foreach (var window in config.Windows)
                 {
@@ -649,6 +691,54 @@ namespace Tiels
             this.Visibility = Visibility.Visible;
             isLoading = false;
             tries = 0;
+        }
+
+        private void SortGrid(int columnCount, int i, Button button, ref int j, ref int n, ref int m)
+        {
+            //j = columnCount - 1;
+            //n, rows = Current Row
+            Grid grid = new Grid
+            {
+                Width = 110,
+                Height = 68,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 4, 10, 4),
+            };
+            Grid.SetColumn(grid, m);
+            grid.Children.Add(button);
+            m++;
+
+            ColumnDefinition column = new ColumnDefinition
+            {
+                Width = new GridLength(120, GridUnitType.Pixel)
+            };
+
+            Grid.SetRow(grid, n);
+            //if ((i == j && j>3) || i == columnCount)
+            if (i == j + columnCount - 1)
+            {
+                m = 0;
+                j += columnCount;
+                n++;
+                rows++;
+            //}
+            //if (i == j - columnCount)
+            //{
+                //this.MaxHeight += 80;
+                //this.Height += 80;
+                //ScrollFilesList.Height += 80;
+
+                FilesList.Height += 80;
+
+                RowDefinition row = new RowDefinition
+                {
+                    Height = new GridLength(1, GridUnitType.Star)
+                };
+                FilesList.RowDefinitions.Add(row);
+            }
+            FilesList.ColumnDefinitions.Add(column);
+            FilesList.Children.Add(grid);
         }
 
         private void Mi_Click(object sender, RoutedEventArgs e)
@@ -711,26 +801,28 @@ namespace Tiels
 
         private void MoveAction(object sender, MouseEventArgs e)
         {
-            if (isMoving)
-            {
-                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-                {
-                    Left = (Util.GetMousePosition().X + MousePos.X);
-                    Top = (Util.GetMousePosition().Y + MousePos.Y);
-                }
-                else
-                {
-                    if (Util.IsEvenX((int)(Util.GetMousePosition().X + MousePos.X),4))
-                        Left = (int)(Util.GetMousePosition().X + MousePos.X);
-                    if (Util.IsEvenX((int)(Util.GetMousePosition().Y + MousePos.Y),4))
-                        Top = (int)(Util.GetMousePosition().Y + MousePos.Y);
-                }
-            }
+            //if (isMoving)
+            //{
+            //    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            //    {
+            //        Left = (Util.GetMousePosition().X + MousePos.X);
+            //        Top = (Util.GetMousePosition().Y + MousePos.Y);
+            //    }
+            //    else
+            //    {
+            //        if (Util.IsEvenX((int)(Util.GetMousePosition().X + MousePos.X), 4))
+            //            Left = (int)(Util.GetMousePosition().X + MousePos.X);
+            //        if (Util.IsEvenX((int)(Util.GetMousePosition().Y + MousePos.Y), 4))
+            //            Top = (int)(Util.GetMousePosition().Y + MousePos.Y);
+            //    }
+            //}
         }
 
         private void MoveActionStop(object sender, MouseButtonEventArgs e)
         {
             isMoving = false;
+
+            ReleaseMouseCapture();
             //Saving window position
             ConfigClass config = Config.GetConfig();
             foreach (var window in config.Windows)
@@ -928,6 +1020,11 @@ namespace Tiels
             };
 
             Process.Start(startInfo);
+        }
+
+        private void MenuItemOpenDebug_Click(object sender, RoutedEventArgs e)
+        {
+            ReadElements(4);
         }
     }
 }

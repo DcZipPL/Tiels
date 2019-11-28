@@ -64,6 +64,10 @@ namespace Tiels
                 if (json_out != "")
                 {
                     ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
+
+                    if (config == null)
+                        Util.Reconfigurate();
+
                     return config;
                 }
                 else

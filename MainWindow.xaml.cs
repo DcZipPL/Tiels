@@ -37,7 +37,7 @@ namespace Tiels
             InitializeComponent();
 
             //Notify Icon
-            ni.Icon = File.Exists(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\" + "appicon.ico") ? new System.Drawing.Icon(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location)+"\\"+"appicon.ico") : null;
+            ni.Icon = File.Exists(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\Assets\\" + "appicon.ico") ? new System.Drawing.Icon(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location)+ "\\Assets\\" + "appicon.ico") : null;
             ni.Visible = false;
             ni.Click +=
                 delegate (object sender, EventArgs args)

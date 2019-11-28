@@ -64,8 +64,10 @@ namespace Tiels.Classes
         {
             System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
 
+            File.Copy(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old",true);
             foreach (FileInfo file in di.GetFiles())
             {
+                if (file.Name != "Error.log" || file.Name != "config.json.old")
                 file.Delete();
             }
             foreach (DirectoryInfo dir in di.GetDirectories())

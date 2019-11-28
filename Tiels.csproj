@@ -59,7 +59,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\appicon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>939ABBF6A603E30FF9DBC8F95A1513C022D3E8FA</ManifestCertificateThumbprint>
@@ -278,9 +278,9 @@
     <Resource Include="Assets\TielsDirectory.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="appicon.ico">
+    <Content Include="Assets\appicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
     <Content Include="Assets\tutorial_fm.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
