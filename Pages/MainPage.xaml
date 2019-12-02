@@ -22,15 +22,67 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid>
-                <ToggleButton x:Name="WindowsBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Windows Settings" Padding="10,3" Click="ShowWindows" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="110"/>
-                <ToggleButton x:Name="GeneralBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="General" Padding="10,3" Click="ShowGeneral" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" IsChecked="True"/>
-                <ToggleButton x:Name="AppearanceBtn" Content="Appearance" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Padding="10,3" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Click="AppearanceBtn_Click"/>
-                <Button x:Name="UpdatesBtn" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE896;" Padding="5" Click="ShowUpdates" FontFamily="Segoe MDL2 Assets" FontSize="18" ToolTip="Updates"/>
-                <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Reconfigurate" Padding="10,5" Click="Reconf" Margin="10,0,0,10"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Text="Settings:"/>
+                    <ToggleButton x:Name="GeneralBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Content="General" Padding="10,3" Click="ShowGeneral" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" IsChecked="True"/>
+                    <ToggleButton x:Name="AppearanceBtn" Content="Appearance" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Padding="10,3" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Click="AppearanceBtn_Click"/>
+                    <ToggleButton x:Name="WindowsBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Windows Settings" Padding="10,3" Click="ShowWindows" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="110"/>
+                </Grid>
+
+                <Separator Background="#FFDADBDC" Grid.Row="1" VerticalAlignment="Top" Margin="0"/>
+
+                <Grid Grid.Row="1">
+                    <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Text="Management:"/>
+                    <ToggleButton x:Name="TilesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Content="Tiles" Padding="10,3" Click="ShowTiles" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="50"/>
+                    <ToggleButton x:Name="DirectoryPortalBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Directory Portals" Padding="10,3" Click="ShowDirectoryPortals" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
+                    <ToggleButton x:Name="FloatingImageBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Floating Images" Padding="10,3" Click="ShowFloatingImages" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
+                </Grid>
+
+                <Button x:Name="UpdatesBtn" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE896;" Padding="5" Click="ShowUpdates" FontFamily="Segoe MDL2 Assets" FontSize="18" ToolTip="Updates" Grid.Row="2"/>
+                <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Reconfigurate" Padding="10,5" Click="Reconf" Margin="10,0,0,10" Grid.Row="2"/>
             </Grid>
             <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#FFDADBDC">
                 <Grid Background="#FFF5F6F7">
                     <Grid x:Name="generalWindow">
+
+                    </Grid>
+                    <Grid x:Name="appearanceWindow" Visibility="Collapsed">
+                        <Grid Margin="0,41,0,0">
+                            <TextBlock Text="Tiles Background Color" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="14"/>
+                            <Grid Background="White" Height="22" VerticalAlignment="Top" Margin="10,40,10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded" SelectedColorChanged="ColorTile_SelectedColorChanged"/>
+                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE74E;" FontSize="16" Click="SetNewColor"/>
+                            </Grid>
+                            <TextBlock Text="Theme" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,72,0,0" FontSize="14"/>
+                            <Grid Background="White" VerticalAlignment="Top" Margin="12,100,10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="ThemeCombobox" SelectionChanged="ComboBox_SelectionChanged" Loaded="ThemeCombobox_Loaded">
+                                    <ComboBoxItem Content="Light Theme"/>
+                                    <ComboBoxItem Content="Dark Theme"/>
+                                </ComboBox>
+                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE74E;" FontSize="16"/>
+                            </Grid>
+                        </Grid>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Content="&#xEA35;" Padding="5" Click="BackHome" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+                    </Grid>
+                    <Grid x:Name="windowsWindow" Visibility="Collapsed">
+                        <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
+                    </Grid>
+                    <Grid x:Name="tilesWindow" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="35"/>
                             <RowDefinition Height="Auto"/>
@@ -65,37 +117,6 @@
                             </Grid>
                             <TextBlock x:Name="dmoveinfo" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" Padding="0" Foreground="Black" Text="All files after tile deleting are moved to {filepos}"/>
                         </Grid>
-                    </Grid>
-                    <Grid x:Name="appearanceWindow" Visibility="Collapsed">
-                        <Grid Margin="0,41,0,0">
-                            <TextBlock Text="Tiles Background Color" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="14"/>
-                            <Grid Background="White" Height="22" VerticalAlignment="Top" Margin="10,40,10,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition Width="30"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <xctk:ColorPicker x:Name="colorTile" FontSize="14" AvailableColorsSortingMode="HueSaturationBrightness" Loaded="ColorTile_Loaded" SelectedColorChanged="ColorTile_SelectedColorChanged"/>
-                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE74E;" FontSize="16" Click="SetNewColor"/>
-                            </Grid>
-                            <TextBlock Text="Theme" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,72,0,0" FontSize="14"/>
-                            <Grid Background="White" VerticalAlignment="Top" Margin="12,100,10,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition Width="30"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="ThemeCombobox" SelectionChanged="ComboBox_SelectionChanged" Loaded="ThemeCombobox_Loaded">
-                                    <ComboBoxItem Content="Light Theme"/>
-                                    <ComboBoxItem Content="Dark Theme"/>
-                                </ComboBox>
-                                <Button Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE74E;" FontSize="16"/>
-                            </Grid>
-                        </Grid>
-                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Content="&#xEA35;" Padding="5" Click="BackHome" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
-                    </Grid>
-                    <Grid x:Name="windowsWindow" Visibility="Collapsed">
-                        <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="HidewhileloadingCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Hide files while loading" Checked="HidewhileloadingCB_Checked" Unchecked="HidewhileloadingCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
                     </Grid>
                 </Grid>
             </Border>

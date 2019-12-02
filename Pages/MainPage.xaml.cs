@@ -35,7 +35,7 @@ namespace Tiels.Pages
             ConfigClass config = Config.GetConfig();
             dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
             AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
-            HidewhileloadingCB.IsChecked = config.HideFilesWhileLoading;
+            ExperimentalFeaturesCB.IsChecked = config.HideFilesWhileLoading;
             EffectsCB.IsChecked = config.SpecialEffects;
         }
 
@@ -96,18 +96,6 @@ namespace Tiels.Pages
         }
 
         private void Reconf(object sender, RoutedEventArgs e) => Util.Reconfigurate();
-
-        private void ShowSettings(object sender, RoutedEventArgs e)
-        {
-            //MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-            //mw.Visibility = Visibility.Hidden;
-            //mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/SettingsPage.xaml"));
-            //mw.Width = 500;
-            //mw.Height = 800;
-            //mw.Top = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - mw.Height) / 2;
-            //mw.Left = (System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - mw.Width) / 2;
-            //mw.Visibility = Visibility.Visible;
-        }
 
         private void SetNewColor(object sender, RoutedEventArgs e)
         {
@@ -222,32 +210,55 @@ namespace Tiels.Pages
 
         private void ShowGeneral(object sender, RoutedEventArgs e)
         {
+            HideAllPages();
             GeneralBtn.IsChecked = true;
-            AppearanceBtn.IsChecked = false;
-            WindowsBtn.IsChecked = false;
             generalWindow.Visibility = Visibility.Visible;
-            appearanceWindow.Visibility = Visibility.Collapsed;
-            windowsWindow.Visibility = Visibility.Collapsed;
         }
 
         private void AppearanceBtn_Click(object sender, RoutedEventArgs e)
         {
-            GeneralBtn.IsChecked = false;
+            HideAllPages();
             AppearanceBtn.IsChecked = true;
-            WindowsBtn.IsChecked = false;
-            generalWindow.Visibility = Visibility.Collapsed;
             appearanceWindow.Visibility = Visibility.Visible;
-            windowsWindow.Visibility = Visibility.Collapsed;
         }
 
         private void ShowWindows(object sender, RoutedEventArgs e)
         {
+            HideAllPages();
+            WindowsBtn.IsChecked = true;
+            windowsWindow.Visibility = Visibility.Visible;
+        }
+        private void ShowTiles(object sender, RoutedEventArgs e)
+        {
+            HideAllPages();
+            TilesBtn.IsChecked = true;
+            tilesWindow.Visibility = Visibility.Visible;
+        }
+
+        private void ShowDirectoryPortals(object sender, RoutedEventArgs e)
+        {
+            HideAllPages();
+            DirectoryPortalBtn.IsChecked = true;
+        }
+
+        private void ShowFloatingImages(object sender, RoutedEventArgs e)
+        {
+            HideAllPages();
+            FloatingImageBtn.IsChecked = true;
+        }
+
+        private void HideAllPages()
+        {
             GeneralBtn.IsChecked = false;
             AppearanceBtn.IsChecked = false;
-            WindowsBtn.IsChecked = true;
+            WindowsBtn.IsChecked = false;
+            TilesBtn.IsChecked = false;
+            DirectoryPortalBtn.IsChecked = false;
+            FloatingImageBtn.IsChecked = false;
             generalWindow.Visibility = Visibility.Collapsed;
             appearanceWindow.Visibility = Visibility.Collapsed;
-            windowsWindow.Visibility = Visibility.Visible;
+            windowsWindow.Visibility = Visibility.Collapsed;
+            tilesWindow.Visibility = Visibility.Collapsed;
         }
 
         private async void ShowUpdates(object sender, RoutedEventArgs e)
@@ -290,7 +301,7 @@ namespace Tiels.Pages
             File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
         }
 
-        private void HidewhileloadingCB_Checked(object sender, RoutedEventArgs e)
+        private void ExperimentalFeaturesCB_Checked(object sender, RoutedEventArgs e)
         {
             ConfigClass config = Config.GetConfig();
             config.HideFilesWhileLoading = true;
@@ -301,7 +312,7 @@ namespace Tiels.Pages
             }
         }
 
-        private void HidewhileloadingCB_Unchecked(object sender, RoutedEventArgs e)
+        private void ExperimentalFeaturesCB_Unchecked(object sender, RoutedEventArgs e)
         {
             ConfigClass config = Config.GetConfig();
             config.HideFilesWhileLoading = false;

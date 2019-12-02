@@ -509,134 +509,49 @@ namespace Tiels
                     };
 
                     SortGrid(collumCount, i, button, ref j, ref n, ref m);
-
-                    //Grid grid = new Grid
-                    //{
-                    //    Width = 110,
-                    //    Height = 68,
-                    //    VerticalAlignment = VerticalAlignment.Top,
-                    //    HorizontalAlignment = HorizontalAlignment.Left,
-                    //    Margin = new Thickness(0, 4, 10, 4),
-                    //};
-                    //Grid.SetColumn(grid, m);
-                    //grid.Children.Add(button);
-                    //m++;
-
-                    //ColumnDefinition column = new ColumnDefinition
-                    //{
-                    //    Width = new GridLength(120, GridUnitType.Pixel)
-                    //};
-
-                    //Grid.SetRow(grid, n);
-                    //if (i == j)
-                    //{
-                    //    m = 0;
-                    //    j += 4;
-                    //    n++;
-                    //    rows++;
-                    //}
-                    //if (i == j - 4)
-                    //{
-                    //    //this.MaxHeight += 80;
-                    //    //this.Height += 80;
-                    //    //ScrollFilesList.Height += 80;
-
-                    //    FilesList.Height += 80;
-
-                    //    RowDefinition row = new RowDefinition
-                    //    {
-                    //        Height = new GridLength(1, GridUnitType.Star)
-                    //    };
-                    //    FilesList.RowDefinitions.Add(row);
-                    //}
-
-                    //Add content to FileList
-                    //FilesList.ColumnDefinitions.Add(column);
-                    //FilesList.Children.Add(grid);
                 }
                 #region Old
-                //if (directories.Length != 0)
-                    //for (int i = 0; i < directories.Length; i++)
-                    //{
-                    //    TextBlock image = new TextBlock
-                    //    {
-                    //        FontSize = 44,
-                    //        FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                    //        Width = 44,
-                    //        Height = 44,
-                    //        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                    //        HorizontalAlignment = HorizontalAlignment.Center,
-                    //        Margin = new Thickness(0, 1, 0, 19),
-                    //        Text = ""
-                    //    };
+                if (directories.Length != 0)
+                    for (int i = 0; i < directories.Length; i++)
+                    {
+                        TextBlock image = new TextBlock
+                        {
+                            FontSize = 44,
+                            FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                            Width = 44,
+                            Height = 44,
+                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Margin = new Thickness(0, 1, 0, 19),
+                            Text = ""
+                        };
 
-                    //    string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
-                    //    TextBlock filename = new TextBlock
-                    //    {
-                    //        VerticalAlignment = VerticalAlignment.Bottom,
-                    //        HorizontalAlignment = HorizontalAlignment.Center,
-                    //        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                    //        Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..."
-                    //    };
+                        string filetext = directories[i].Replace(path + "\\" + name + "\\", "");
+                        TextBlock filename = new TextBlock
+                        {
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                            Text = filetext.Length <= 14 ? filetext : filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..."
+                        };
 
-                    //    Grid button_content = new Grid();
-                    //    button_content.Children.Add(image);
-                    //    button_content.Children.Add(filename);
+                        Grid button_content = new Grid();
+                        button_content.Children.Add(image);
+                        button_content.Children.Add(filename);
 
-                    //    Button button = new Button
-                    //    {
-                    //        Content = button_content,
-                    //        Background = Brushes.Transparent,
-                    //        BorderBrush = Brushes.Transparent,
-                    //        Name = "elementButton_" + i,
-                    //        Tag = directories[i],
-                    //        ToolTip = directories[i].Replace(path + "\\" + name + "\\", "") + " - Directory"
-                    //    };
-                    //    button.Click += ElementClicked;
+                        Button button = new Button
+                        {
+                            Content = button_content,
+                            Background = Brushes.Transparent,
+                            BorderBrush = Brushes.Transparent,
+                            Name = "elementButton_" + i,
+                            Tag = directories[i],
+                            ToolTip = directories[i].Replace(path + "\\" + name + "\\", "") + " - Directory"
+                        };
+                        button.Click += ElementClicked;
 
-                    //    Grid grid = new Grid
-                    //    {
-                    //        Width = 110,
-                    //        Height = 68,
-                    //        VerticalAlignment = VerticalAlignment.Top,
-                    //        HorizontalAlignment = HorizontalAlignment.Left,
-                    //        Margin = new Thickness(0, 4, 10, 4),
-                    //    };
-                    //    Grid.SetColumn(grid, m);
-                    //    grid.Children.Add(button);
-                    //    m++;
-
-                    //    ColumnDefinition column = new ColumnDefinition
-                    //    {
-                    //        Width = new GridLength(120, GridUnitType.Pixel)
-                    //    };
-
-                    //    Grid.SetRow(grid, n);
-                    //    if (i == j)
-                    //    {
-                    //        m = 0;
-                    //        j += 4;
-                    //        n++;
-                    //        rows++;
-                    //    }
-                    //    if (i == j - 4)
-                    //    {
-                    //        //this.MaxHeight += 80;
-                    //        //this.Height += 80;
-                    //        //ScrollFilesList.Height += 80;
-
-                    //        FilesList.Height += 80;
-
-                    //        RowDefinition row = new RowDefinition
-                    //        {
-                    //            Height = new GridLength(1, GridUnitType.Star)
-                    //        };
-                    //        FilesList.RowDefinitions.Add(row);
-                    //    }
-
-                    //    FilesList.ColumnDefinitions.Add(column);
-                    //    FilesList.Children.Add(grid);
-                    //}
+                        SortGrid(collumCount, i, button, ref j, ref n, ref m);
+                    }
                 #endregion
                 if (File.Exists(path + "\\" + name + "_fileupdate.json"))
                     File.Delete(path + "\\" + name + "_fileupdate.json");
@@ -715,19 +630,13 @@ namespace Tiels
             };
 
             Grid.SetRow(grid, n);
-            //if ((i == j && j>3) || i == columnCount)
+
             if (i == j + columnCount - 1)
             {
                 m = 0;
                 j += columnCount;
                 n++;
                 rows++;
-            //}
-            //if (i == j - columnCount)
-            //{
-                //this.MaxHeight += 80;
-                //this.Height += 80;
-                //ScrollFilesList.Height += 80;
 
                 FilesList.Height += 80;
 
