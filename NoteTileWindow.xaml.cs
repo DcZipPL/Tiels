@@ -32,7 +32,9 @@ namespace Tiels
 
         private bool isMoving = false;
         private bool isLoading = false;
+        private bool isHidded = false;
         public bool isEditMode = false;
+        public int lastHeight = 0;
         private Point MousePos;
 
         #region Window styles

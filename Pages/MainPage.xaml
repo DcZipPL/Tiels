@@ -38,9 +38,9 @@
                 <Grid Grid.Row="1">
                     <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Text="Management:"/>
                     <ToggleButton x:Name="TilesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Content="Tiles" Padding="10,3" Click="ShowTiles" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="50"/>
-                    <ToggleButton x:Name="DirectoryPortalBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Directory Portals" Padding="10,3" Click="ShowDirectoryPortals" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
-                    <ToggleButton x:Name="FloatingImageBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Floating Images" Padding="10,3" Click="ShowFloatingImages" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
-                    <ToggleButton x:Name="NotesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Content="Notes" Padding="10,3" Click="ShowNotes" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="60"/>
+                    <ToggleButton x:Name="DirectoryPortalBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Directory Portals" Padding="10,3" Click="ShowDirectoryPortals" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF6F7686" Width="100" IsEnabled="False"/>
+                    <ToggleButton x:Name="FloatingImageBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Floating Images" Padding="10,3" Click="ShowFloatingImages" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF6F7686" Width="100" IsEnabled="False"/>
+                    <ToggleButton x:Name="NotesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Content="Notes" Padding="10,3" Click="ShowNotes" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF6F7686" Width="60" IsEnabled="False"/>
                 </Grid>
 
                 <Button x:Name="UpdatesBtn" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE896;" Padding="5" Click="ShowUpdates" FontFamily="Segoe MDL2 Assets" FontSize="18" ToolTip="Updates" Grid.Row="2"/>
