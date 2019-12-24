@@ -337,7 +337,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log",ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
             }
         }
 
@@ -586,7 +586,7 @@ namespace Tiels
             }
             catch (FileNotFoundException fnfex)
             {
-                File.WriteAllText(config_path + "\\Error.log", fnfex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + fnfex.ToString());
                 tries++;
                 ResetIconCache();
                 if (tries == 1)
@@ -597,7 +597,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 throw ex;
             }
             loadinginfo.Visibility = Visibility.Collapsed;
@@ -658,7 +658,7 @@ namespace Tiels
             }
             catch (Win32Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString() + $"\r\n{(string)(((MenuItem)sender).Tag)} can't be opened by default application(s)";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
@@ -666,7 +666,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.Show();
@@ -693,7 +693,7 @@ namespace Tiels
             }
             catch (Win32Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString()+$"\r\n{(string)(((Button)sender).Tag)} can't be opened by default application(s)";
@@ -701,7 +701,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.Show();

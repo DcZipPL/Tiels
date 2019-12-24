@@ -83,7 +83,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.Show();

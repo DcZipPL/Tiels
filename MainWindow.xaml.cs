@@ -217,7 +217,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 try
                 {
                     ProcessStartInfo info = new ProcessStartInfo
@@ -229,7 +229,7 @@ namespace Tiels
                 }
                 catch (Exception iex)
                 {
-                    File.WriteAllText(config_path + "\\Error.log", ex.ToString());
+                    File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + iex.ToString());
                     Application.Current.Shutdown();
                 }
             }
