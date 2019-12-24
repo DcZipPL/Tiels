@@ -710,21 +710,7 @@ namespace Tiels
 
         private void MoveAction(object sender, MouseEventArgs e)
         {
-            //if (isMoving)
-            //{
-            //    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            //    {
-            //        Left = (Util.GetMousePosition().X + MousePos.X);
-            //        Top = (Util.GetMousePosition().Y + MousePos.Y);
-            //    }
-            //    else
-            //    {
-            //        if (Util.IsEvenX((int)(Util.GetMousePosition().X + MousePos.X), 4))
-            //            Left = (int)(Util.GetMousePosition().X + MousePos.X);
-            //        if (Util.IsEvenX((int)(Util.GetMousePosition().Y + MousePos.Y), 4))
-            //            Top = (int)(Util.GetMousePosition().Y + MousePos.Y);
-            //    }
-            //}
+
         }
 
         private void MoveActionStop(object sender, MouseButtonEventArgs e)

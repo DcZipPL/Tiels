@@ -27,11 +27,10 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Margin="0,0,0,15">
+                <Grid Grid.Row="0" Margin="0,0,0,10">
                     <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0" Text="Settings:"/>
                     <ToggleButton x:Name="GeneralBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Content="General" Padding="10,3" Click="ShowGeneral" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" IsChecked="True"/>
                     <ToggleButton x:Name="AppearanceBtn" Content="Appearance" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Padding="10,3" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Click="AppearanceBtn_Click"/>
-                    <ToggleButton x:Name="WindowsBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Windows Settings" Padding="10,3" Click="ShowWindows" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="110"/>
                 </Grid>
 
                 <Separator Background="#FFDADBDC" Grid.Row="1" VerticalAlignment="Top" Margin="0"/>
@@ -41,6 +40,7 @@
                     <ToggleButton x:Name="TilesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Content="Tiles" Padding="10,3" Click="ShowTiles" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="50"/>
                     <ToggleButton x:Name="DirectoryPortalBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,60,0,0" Content="Directory Portals" Padding="10,3" Click="ShowDirectoryPortals" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
                     <ToggleButton x:Name="FloatingImageBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,85,0,0" Content="Floating Images" Padding="10,3" Click="ShowFloatingImages" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="100"/>
+                    <ToggleButton x:Name="NotesBtn" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,110,0,0" Content="Notes" Padding="10,3" Click="ShowNotes" Style="{DynamicResource TextButton}" Background="{x:Null}" Foreground="#FF0032B0" Width="60"/>
                 </Grid>
 
                 <Button x:Name="UpdatesBtn" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Content="&#xE896;" Padding="5" Click="ShowUpdates" FontFamily="Segoe MDL2 Assets" FontSize="18" ToolTip="Updates" Grid.Row="2"/>
@@ -49,7 +49,9 @@
             <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="#FFDADBDC">
                 <Grid Background="#FFF5F6F7">
                     <Grid x:Name="generalWindow">
-
+                        <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
                     </Grid>
                     <Grid x:Name="appearanceWindow" Visibility="Collapsed">
                         <Grid Margin="0,41,0,0">
@@ -76,11 +78,6 @@
                             </Grid>
                         </Grid>
                         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" Content="&#xEA35;" Padding="5" Click="BackHome" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
-                    </Grid>
-                    <Grid x:Name="windowsWindow" Visibility="Collapsed">
-                        <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
                     </Grid>
                     <Grid x:Name="tilesWindow" Visibility="Collapsed">
                         <Grid.RowDefinitions>

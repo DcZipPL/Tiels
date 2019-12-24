@@ -222,12 +222,6 @@ namespace Tiels.Pages
             appearanceWindow.Visibility = Visibility.Visible;
         }
 
-        private void ShowWindows(object sender, RoutedEventArgs e)
-        {
-            HideAllPages();
-            WindowsBtn.IsChecked = true;
-            windowsWindow.Visibility = Visibility.Visible;
-        }
         private void ShowTiles(object sender, RoutedEventArgs e)
         {
             HideAllPages();
@@ -247,17 +241,22 @@ namespace Tiels.Pages
             FloatingImageBtn.IsChecked = true;
         }
 
+        private void ShowNotes(object sender, RoutedEventArgs e)
+        {
+            HideAllPages();
+            NotesBtn.IsChecked = true;
+        }
+
         private void HideAllPages()
         {
             GeneralBtn.IsChecked = false;
             AppearanceBtn.IsChecked = false;
-            WindowsBtn.IsChecked = false;
             TilesBtn.IsChecked = false;
             DirectoryPortalBtn.IsChecked = false;
             FloatingImageBtn.IsChecked = false;
+            NotesBtn.IsChecked = false;
             generalWindow.Visibility = Visibility.Collapsed;
             appearanceWindow.Visibility = Visibility.Collapsed;
-            windowsWindow.Visibility = Visibility.Collapsed;
             tilesWindow.Visibility = Visibility.Collapsed;
         }
 

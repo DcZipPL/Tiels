@@ -153,6 +153,9 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NoteTileWindow.xaml.cs">
+      <DependentUpon>NoteTileWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ConfigurePage.xaml.cs">
       <DependentUpon>ConfigurePage.xaml</DependentUpon>
     </Compile>
@@ -192,6 +195,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NoteTileWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ConfigurePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
