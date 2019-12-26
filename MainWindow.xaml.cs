@@ -119,7 +119,7 @@ namespace Tiels
                 }
             }
 
-            if (!config.SpecialEffects) mainborder.Effect = null;
+            if (!config.SpecialEffects) shadoweffect.Effect = null;
 
             if (tiles.Length != 0)
             {

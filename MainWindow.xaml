@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tiels"
-        mc:Ignorable="d"
+        mc:Ignorable="d" SnapsToDevicePixels="True"
         Title="Tile Control Panel" Height="500" Width="900" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" WindowStartupLocation="CenterScreen" Icon="Assets/TileCPicon.png" MinWidth="600" MinHeight="400">
     <WindowChrome.WindowChrome>
         <WindowChrome/>
@@ -12,31 +12,35 @@
     <Grid>
         <Grid Margin="5">
             <Border x:Name="mainborder" BorderBrush="#FF00B9FF" BorderThickness="1">
-                <Border.Effect>
-                    <DropShadowEffect ShadowDepth="0" Opacity="0.5" Direction="15" BlurRadius="10"/>
-                </Border.Effect>
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Border BorderBrush="#FFDADBDC" BorderThickness="0,0,0,1">
-                        <Grid Background="White">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="30"></ColumnDefinition>
-                                <ColumnDefinition Width="30"></ColumnDefinition>
-                                <ColumnDefinition Width="30"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Button x:Name="CloseWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseWindowBtn_Click" Grid.Column="3" Margin="0" FontSize="14"/>
-                            <Button x:Name="TaskbarWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE0E5;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="TaskbarWindowBtn_Click" Grid.Column="2" Margin="0,0,1,0" FontSize="14"/>
-                            <Button x:Name="HideWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE108;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="HideWindowBtn_Click" Grid.Column="1" Margin="0,0,1,0" FontSize="14"/>
-                            <TextBlock Text="Tiels Status:" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16"/>
-                            <TextBlock x:Name="loadingMessage" Text="Loading..." Foreground="Black" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Center" FontSize="16"/>
+                    <Grid x:Name="shadoweffect" Background="Black">
+                        <Grid.Effect>
+                            <DropShadowEffect ShadowDepth="0" Opacity="0.5" Direction="15" BlurRadius="10"/>
+                        </Grid.Effect>
+                    </Grid>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#FFDADBDC" BorderThickness="0,0,0,1">
+                            <Grid Background="White">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                    <ColumnDefinition Width="30"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="CloseWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE10A;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="CloseWindowBtn_Click" Grid.Column="3" Margin="0" FontSize="14"/>
+                                <Button x:Name="TaskbarWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE0E5;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="TaskbarWindowBtn_Click" Grid.Column="2" Margin="0,0,1,0" FontSize="14"/>
+                                <Button x:Name="HideWindowBtn" WindowChrome.IsHitTestVisibleInChrome="True" FontFamily="Segoe MDL2 Assets" Content="&#xE108;" Foreground="Black" BorderThickness="0" Background="#00000000" Click="HideWindowBtn_Click" Grid.Column="1" Margin="0,0,1,0" FontSize="14"/>
+                                <TextBlock Text="Tiels Status:" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16"/>
+                                <TextBlock x:Name="loadingMessage" Text="Loading..." Foreground="Black" HorizontalAlignment="Left" Margin="100,0,0,0" VerticalAlignment="Center" FontSize="16"/>
+                            </Grid>
+                        </Border>
+                        <Grid Grid.Row="1" Background="#FFF5F6F7">
+                            <Frame x:Name="main" NavigationUIVisibility="Hidden"></Frame>
                         </Grid>
-                    </Border>
-                    <Grid Grid.Row="1" Background="#FFF5F6F7">
-                        <Frame x:Name="main" NavigationUIVisibility="Hidden"></Frame>
                     </Grid>
                 </Grid>
             </Border>

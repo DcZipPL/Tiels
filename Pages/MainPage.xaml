@@ -50,8 +50,17 @@
                 <Grid Background="#FFF5F6F7">
                     <Grid x:Name="generalWindow">
                         <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="HideafterstartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,30,0,0" Content="Hide main window after application startup" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
+                        <Path Fill="#FFC3C4C4" Stroke="#FFC3C4C4" StrokeThickness="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="17,29,6,0">
+                            <Path.Data>
+                                <GeometryGroup>
+                                    <LineGeometry StartPoint="0,0" EndPoint="0,10"/>
+                                    <LineGeometry StartPoint="0,10" EndPoint="8,10"/>
+                                </GeometryGroup>
+                            </Path.Data>
+                        </Path>
+                        <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
                     </Grid>
                     <Grid x:Name="appearanceWindow" Visibility="Collapsed">
                         <Grid Margin="0,41,0,0">
