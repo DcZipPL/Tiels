@@ -1,8 +1,7 @@
 # Tiels
 Tiels is Open Source Fences Aternative.
 
-With Tiels you can organize your desktop icons with tiles
-![Files Management](https://raw.githubusercontent.com/DcZipPL/DwOverlay/master/Assets/tutorial_fm.mp4 "Files Management")
+With Tiels you can organize your desktop icons with tiles.
 ## Alpha version is available
 Alpha version of Tiels can be bugged.
 
