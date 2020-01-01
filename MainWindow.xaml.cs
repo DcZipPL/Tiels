@@ -66,6 +66,12 @@ namespace Tiels
             isLoading = true;
             if (File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json") == "") Util.Reconfigurate();
             ConfigClass config = Config.GetConfig();
+            if (config == null)
+            {
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
+                return;
+            }
+
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
 
@@ -76,9 +82,16 @@ namespace Tiels
                 //Update version and add default values
                 try
                 {
-                    if (int.Parse(config.Version.Substring(3, 1)) < 5)
+                    if (int.Parse(config.Version.Substring(3, 1)) < 4)
                     {
-                        Util.Reconfigurate();
+                        if (MessageBox.Show("Config version is too old.\r\nReconfiguration required!\r\nReconfiguration can delete current appearance settings.\r\nProceed?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        {
+                            Util.Reconfigurate();
+                        }
+                        else
+                        {
+                            //this.Close();
+                        }
                     }
                 }
                 catch (Exception ex)

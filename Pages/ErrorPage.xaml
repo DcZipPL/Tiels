@@ -1,0 +1,17 @@
+﻿<Page x:Class="Tiels.Pages.ErrorPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Tiels.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ErrorPage">
+
+    <Grid>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="Red" Text="Critical config error!" Margin="0,0,0,80"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Foreground="Red" Margin="0,40,0,0" TextAlignment="Center">Your config file may is invalid, corrupted or empty.
+        <LineBreak/>Please check your config.json file.<LineBreak/><LineBreak/>When file is broken you can load backup of reconfigurate.</TextBlock>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Reconfigurate (Reconfiguration can delete current appearance settings)" Padding="10,5" Click="Reconf" Margin="0,165,0,0" Grid.Row="2"/>
+    </Grid>
+</Page>
