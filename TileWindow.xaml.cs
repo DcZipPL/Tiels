@@ -37,8 +37,8 @@ namespace Tiels
 
         public int rows = 0;
         public int collumns = 4;
+        public int lastHeight = 0;
         private int tries = 0;
-        private int lastHeight = 0;
         private static int id = 0;
 
         private bool isLoading = false;
@@ -171,7 +171,6 @@ namespace Tiels
             MousePos.Y = Convert.ToInt32(this.Top) - MousePos.Y;
         }
 
-        //TODO: Fix move window bug
         private void MoveActionCancel(object sender, MouseEventArgs e) { }// => MoveActionStop(this, null);
         private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
@@ -186,6 +185,7 @@ namespace Tiels
                     {
                         if (window.Name == name)
                         {
+                            if (!isHidded)
                             window.CollapsedRows = (int)this.Height;
                         }
                     }
@@ -263,6 +263,7 @@ namespace Tiels
                         {
                             if (window.Name == name)
                             {
+                                if (!isHidded)
                                 window.CollapsedRows = (int)this.Height;
                             }
                         }
@@ -576,6 +577,14 @@ namespace Tiels
                             this.Height = window.CollapsedRows;
                             this.ScrollFilesList.Height = window.CollapsedRows;
                         }
+                        if (window.Hidden)
+                        {
+                            this.isHidded = true;
+                            this.Height = 28;
+                            this.lastHeight = window.CollapsedRows;
+                            this.hideBtn.Content = "";
+                            this.chromewindow.ResizeBorderThickness = new Thickness(0);
+                        }
                     }
                 }
                 if (this.Height >= System.Windows.SystemParameters.PrimaryScreenHeight - 20)
@@ -600,6 +609,7 @@ namespace Tiels
                 File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 throw ex;
             }
+
             loadinginfo.Visibility = Visibility.Collapsed;
             FilesList.Visibility = Visibility.Visible;
             this.Show();
@@ -753,6 +763,23 @@ namespace Tiels
                 hideBtn.Content = "";
                 isHidded = false;
                 chromewindow.ResizeBorderThickness = new Thickness(6);
+
+                if (!isLoading)
+                {
+                    ConfigClass config = Config.GetConfig();
+                    foreach (var window in config.Windows)
+                    {
+                        if (window.Name == name)
+                        {
+                            window.Hidden = false;
+                        }
+                    }
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
             }
             else
             {
@@ -761,6 +788,23 @@ namespace Tiels
                 hideBtn.Content = "";
                 isHidded = true;
                 chromewindow.ResizeBorderThickness = new Thickness(0);
+
+                if (!isLoading)
+                {
+                    ConfigClass config = Config.GetConfig();
+                    foreach (var window in config.Windows)
+                    {
+                        if (window.Name == name)
+                        {
+                            window.Hidden = true;
+                        }
+                    }
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
             }
         }
 
