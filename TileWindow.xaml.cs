@@ -163,6 +163,7 @@ namespace Tiels
         private void MoveActionStart(object sender, MouseButtonEventArgs e)
         {
             isMoving = true;
+            Mouse.Capture(this, CaptureMode.Element);
             Mouse.Capture(this,CaptureMode.SubTree);
             AddHandler();
             MousePos = Util.GetMousePosition();
@@ -383,11 +384,10 @@ namespace Tiels
             {
                 isLoading = true;
                 ConfigClass config = Config.GetConfig();
-                if (config.HideFilesWhileLoading == true)
-                {
-                    FilesList.Visibility = Visibility.Hidden;
-                    loadinginfo.Visibility = Visibility.Visible;
-                }
+
+                FilesList.Visibility = Visibility.Hidden;
+                loadinginfo.Visibility = Visibility.Visible;
+
                 //Clear data
                 filedata.Clear();
 
@@ -920,6 +920,12 @@ namespace Tiels
         private void MenuItemOpenDebug_Click(object sender, RoutedEventArgs e)
         {
             ReadElements(4);
+        }
+
+        private void WindowMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            MoveActionStop(this, null);
+            ReleaseMouseCapture();
         }
     }
 }

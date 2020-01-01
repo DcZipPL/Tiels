@@ -35,7 +35,7 @@ namespace Tiels.Pages
             ConfigClass config = Config.GetConfig();
             dmoveinfo.Text = dmoveinfo.Text.Replace("{filepos}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp");
             AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
-            ExperimentalFeaturesCB.IsChecked = config.HideFilesWhileLoading;
+            HideafterstartCB.IsChecked = config.HideAfterStart;
             EffectsCB.IsChecked = config.SpecialEffects;
         }
 
@@ -302,24 +302,12 @@ namespace Tiels.Pages
 
         private void ExperimentalFeaturesCB_Checked(object sender, RoutedEventArgs e)
         {
-            ConfigClass config = Config.GetConfig();
-            config.HideFilesWhileLoading = true;
-            bool result = Config.SetConfig(config);
-            if (result == false)
-            {
-                Util.Reconfigurate();
-            }
+
         }
 
         private void ExperimentalFeaturesCB_Unchecked(object sender, RoutedEventArgs e)
         {
-            ConfigClass config = Config.GetConfig();
-            config.HideFilesWhileLoading = false;
-            bool result = Config.SetConfig(config);
-            if (result == false)
-            {
-                Util.Reconfigurate();
-            }
+
         }
 
         private void EffectsCB_Checked(object sender, RoutedEventArgs e)
@@ -337,6 +325,28 @@ namespace Tiels.Pages
         {
             ConfigClass config = Config.GetConfig();
             config.SpecialEffects = false;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void HideafterstartCB_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.HideAfterStart = true;
+            bool result = Config.SetConfig(config);
+            if (result == false)
+            {
+                Util.Reconfigurate();
+            }
+        }
+
+        private void HideafterstartCB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ConfigClass config = Config.GetConfig();
+            config.HideAfterStart = false;
             bool result = Config.SetConfig(config);
             if (result == false)
             {

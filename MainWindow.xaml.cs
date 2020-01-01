@@ -74,46 +74,14 @@ namespace Tiels
             if (App.Version != config.Version)
             {
                 //Update version and add default values
-                if (config.Version == "v0.3.3-alpha")
+                try
                 {
-                    config.Version = App.Version;
-                }
-                else if (config.Version == "v0.3.2-alpha")
-                {
-                    config.Version = App.Version;
-                }
-                else if (config.Version == "v0.3.1-alpha")
-                {
-                    config.SpecialEffects = true;
-                    config.Version = App.Version;
-                    bool result = Config.SetConfig(config);
-                    if (result == false)
+                    if (int.Parse(config.Version.Substring(3, 1)) < 5)
                     {
                         Util.Reconfigurate();
                     }
                 }
-                else if (config.Version == "v0.3.0-alpha")
-                {
-                    config.HideFilesWhileLoading = true;
-                    config.SpecialEffects = true;
-                    if (tiles.Length != 0)
-                    {
-                        config = Config.GetConfig();
-                        int i = 0;
-                        foreach (var window in config.Windows)
-                        {
-                            window.Id = i;
-                            i++;
-                        }
-                    }
-                    config.Version = App.Version;
-                    bool result = Config.SetConfig(config);
-                    if (result == false)
-                    {
-                        Util.Reconfigurate();
-                    }
-                }
-                else
+                catch (Exception ex)
                 {
                     Util.Reconfigurate();
                 }
@@ -250,7 +218,7 @@ namespace Tiels
                 Blur = true,
                 Theme = 1,
                 Color = "#19000000",
-                HideFilesWhileLoading = true,
+                HideAfterStart = true,
                 SpecialEffects = true,
                 Windows = jwindows
             };

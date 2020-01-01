@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tiels"
         mc:Ignorable="d"
-        Title="Overlay" Height="108" Width="500" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" MinHeight="28" MinWidth="140">
+        Title="Overlay" Height="108" Width="500" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None" Background="Transparent" Loaded="TileLoaded" MinHeight="28" MinWidth="140" MouseUp="WindowMouseUp">
     <WindowChrome.WindowChrome>
         <WindowChrome x:Name="chromewindow" CornerRadius="0" CaptionHeight="0" GlassFrameThickness="0" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>
