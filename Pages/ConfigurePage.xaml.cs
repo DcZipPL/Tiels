@@ -49,7 +49,7 @@ namespace Tiels.Pages
         {
             ErrorWindow ew = new ErrorWindow();
             ew.ExceptionReason = e.ErrorException;
-            ew.Show();
+            ew.ShowDialog();
         }
 
         private void Mel_MediaEnded(object sender, RoutedEventArgs e)

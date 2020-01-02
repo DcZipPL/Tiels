@@ -241,7 +241,7 @@ namespace Tiels
                     {
                         ErrorWindow ew = new ErrorWindow();
                         ew.ExceptionReason = ex;
-                        ew.Show();
+                        ew.ShowDialog();
                     }
                 }
             }
@@ -697,14 +697,14 @@ namespace Tiels
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString() + $"\r\n{(string)(((MenuItem)sender).Tag)} can't be opened by default application(s)";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
-                ew.Show();
+                ew.ShowDialog();
             }
             catch (Exception ex)
             {
                 File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.Show();
+                ew.ShowDialog();
             }
         }
 
@@ -732,14 +732,14 @@ namespace Tiels
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString()+$"\r\n{(string)(((Button)sender).Tag)} can't be opened by default application(s)";
-                ew.Show();
+                ew.ShowDialog();
             }
             catch (Exception ex)
             {
                 File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.Show();
+                ew.ShowDialog();
             }
         }
 

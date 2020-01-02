@@ -88,7 +88,7 @@ namespace Tiels
                 File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
-                ew.Show();
+                ew.ShowDialog();
                 return null;
             }
         }
