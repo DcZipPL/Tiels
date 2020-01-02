@@ -50,7 +50,7 @@
                 <Grid Background="#FFF5F6F7">
                     <Grid x:Name="generalWindow">
                         <CheckBox x:Name="AutostartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Content="Autostart enabled" Checked="AutostartCB_Checked" Unchecked="AutostartCB_Unchecked" Padding="4,0,0,0"/>
-                        <CheckBox x:Name="HideafterstartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,30,0,0" Content="Hide main window after application startup" Checked="HideafterstartCB_Checked" Unchecked="HideafterstartCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="HideafterstartCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,30,0,0" Content="Hide this window after application startup" Checked="HideafterstartCB_Checked" Unchecked="HideafterstartCB_Unchecked" Padding="4,0,0,0" IsEnabled="False"/>
                         <Path Fill="#FFC3C4C4" Stroke="#FFC3C4C4" StrokeThickness="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="17,29,6,0">
                             <Path.Data>
                                 <GeometryGroup>
