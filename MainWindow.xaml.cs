@@ -182,6 +182,12 @@ namespace Tiels
             //Load MainPage
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
+
+            if (config.HideAfterStart)
+            {
+                ni.Visible = true;
+                this.Hide();
+            }
         }
 
         public void ConfigureFirstRun()
