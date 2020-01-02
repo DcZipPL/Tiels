@@ -152,6 +152,8 @@ namespace Tiels
                             {
                                 window.Height = 0;
                             }
+
+                            tile.Width = window.Width;
                         }
                     }
                     //If tile not exists create default values

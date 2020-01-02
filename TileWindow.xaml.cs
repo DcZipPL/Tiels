@@ -291,6 +291,31 @@ namespace Tiels
 
         private void CheckWindowWidth()
         {
+            bool isChanged = false;
+            ConfigClass config = Config.GetConfig();
+            if (isLoading == false)
+            {
+                foreach (var window in config.Windows)
+                {
+                    if (window.Name == name)
+                    {
+                        if (window.Width != (int)this.Width)
+                        {
+                            window.Width = (int)this.Width;
+                            isChanged = true;
+                        }
+                    }
+                }
+                if (isChanged)
+                {
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
+            }
+
             int floor = (int)Math.Floor(this.Width / 120);
             if (floor != collumns)
             {
