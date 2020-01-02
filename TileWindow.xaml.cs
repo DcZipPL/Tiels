@@ -186,7 +186,7 @@ namespace Tiels
                         if (window.Name == name)
                         {
                             if (!isHidded)
-                            window.CollapsedRows = (int)this.Height;
+                            window.Height = (int)this.Height;
                         }
                     }
                     bool result = Config.SetConfig(config);
@@ -264,7 +264,7 @@ namespace Tiels
                             if (window.Name == name)
                             {
                                 if (!isHidded)
-                                window.CollapsedRows = (int)this.Height;
+                                window.Height = (int)this.Height;
                             }
                         }
                         bool result = Config.SetConfig(config);
@@ -571,17 +571,17 @@ namespace Tiels
                     if (window.Name == name)
                     {
                         id = window.Id;
-                        if (window.CollapsedRows > 0)
+                        if (window.Height > 0)
                         {
                             //this.MaxHeight = window.CollapsedRows;
-                            this.Height = window.CollapsedRows;
-                            this.ScrollFilesList.Height = window.CollapsedRows;
+                            this.Height = window.Height;
+                            this.ScrollFilesList.Height = window.Height;
                         }
                         if (window.Hidden)
                         {
                             this.isHidded = true;
                             this.Height = 28;
-                            this.lastHeight = window.CollapsedRows;
+                            this.lastHeight = window.Height;
                             this.hideBtn.Content = "";
                             this.chromewindow.ResizeBorderThickness = new Thickness(0);
                         }
@@ -891,7 +891,7 @@ namespace Tiels
                 {
                     if (window.Name == name)
                     {
-                        window.CollapsedRows++;
+                        window.Height++;
                     }
                 }
                 bool result = Config.SetConfig(config);
@@ -909,9 +909,9 @@ namespace Tiels
             {
                 if (window.Name == name)
                 {
-                    if (window.CollapsedRows > 0)
+                    if (window.Height > 0)
                     {
-                        window.CollapsedRows--;
+                        window.Height--;
                         ScrollFilesList.Height += 80;
                         this.Height += 80;
                     }

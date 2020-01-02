@@ -42,7 +42,8 @@ namespace Tiels
     {
         public int Id;
         public string Name;
-        public int CollapsedRows;
+        public int Height;
+        public int Width;
         public bool Hidden;
         public bool EditBar;
         public WindowPosition Position;

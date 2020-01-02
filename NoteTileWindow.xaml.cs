@@ -120,7 +120,7 @@ namespace Tiels
                         {
                             if (window.Name == name)
                             {
-                                window.CollapsedRows = (int)this.Height;
+                                window.Height = (int)this.Height;
                             }
                         }
                         bool result = Config.SetConfig(config);

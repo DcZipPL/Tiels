@@ -143,14 +143,14 @@ namespace Tiels
                                 Grid.SetRow(tile.ActionGrid, 0);
                                 Grid.SetRow(tile.ScrollFilesList, 1);
                             }
-                            if (window.CollapsedRows > 0)
+                            if (window.Height > 0)
                             {
-                                tile.Height = window.CollapsedRows;
-                                tile.ScrollFilesList.Height = window.CollapsedRows;
+                                tile.Height = window.Height;
+                                tile.ScrollFilesList.Height = window.Height;
                             }
                             else
                             {
-                                window.CollapsedRows = 0;
+                                window.Height = 0;
                             }
                         }
                     }
@@ -160,7 +160,8 @@ namespace Tiels
                         JsonWindow jsonwindow = new JsonWindow();
                         jsonwindow.Name = tiles[i];
                         jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
-                        jsonwindow.CollapsedRows = 0;
+                        jsonwindow.Height = 0;
+                        jsonwindow.Width = 0;
                         jsonwindow.EditBar = false;
                         jsonwindow.Id = i;
                         config.Windows.Add(jsonwindow);
@@ -231,7 +232,7 @@ namespace Tiels
                 Blur = true,
                 Theme = 1,
                 Color = "#19000000",
-                HideAfterStart = true,
+                HideAfterStart = false,
                 SpecialEffects = true,
                 Windows = jwindows
             };
