@@ -14,5 +14,6 @@ namespace Tiels
     public partial class App : Application
     {
         public static string Version = "v0.5.1-alpha";
+        public static Config INSTANCE;
     }
 }

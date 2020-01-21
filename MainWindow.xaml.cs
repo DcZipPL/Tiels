@@ -50,6 +50,7 @@ namespace Tiels
 
         private void TileLoaded(object sender, RoutedEventArgs e)
         {
+            App.INSTANCE = new Config();
             //If exists config and main app directory
             if (!Directory.Exists(path) || !File.Exists(config_path + "\\config.json"))
             {

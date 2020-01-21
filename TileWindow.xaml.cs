@@ -38,6 +38,7 @@ namespace Tiels
         public int rows = 0;
         public int collumns = 4;
         public int lastHeight = 0;
+        public int fixedLastHeight = 0;
         private int tries = 0;
         private static int id = 0;
 
@@ -172,31 +173,35 @@ namespace Tiels
         }
 
         private void MoveActionCancel(object sender, MouseEventArgs e) { }// => MoveActionStop(this, null);
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            CheckFileUpdates();
-            //SetBottom(this);
-            if (isLoading == false)
-            {
-                ConfigClass config = Config.GetConfig();
-                if (config != null)
-                {
-                    foreach (var window in config.Windows)
-                    {
-                        if (window.Name == name)
-                        {
-                            if (!isHidded)
-                            window.Height = (int)this.Height;
-                        }
-                    }
-                    bool result = Config.SetConfig(config);
-                    if (result == false)
-                    {
-                        Util.Reconfigurate();
-                    }
-                }
-            }
-        }
+        //private void DispatcherTimer_Tick(object sender, EventArgs e)
+        //{
+        //    CheckFileUpdates();
+        //    //SetBottom(this);
+        //    if (isLoading == false)
+        //    {
+        //        if (Height != fixedLastHeight)
+        //        {
+        //            fixedLastHeight = lastHeight;
+        //            ConfigClass config = Config.GetConfig();
+        //            if (config != null)
+        //            {
+        //                foreach (var window in config.Windows)
+        //                {
+        //                    if (window.Name == name)
+        //                    {
+        //                        if (!isHidded)
+        //                            window.Height = (int)this.Height;
+        //                    }
+        //                }
+        //                bool result = Config.SetConfig(config);
+        //                if (result == false)
+        //                {
+        //                    Util.Reconfigurate();
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private void CheckFileUpdates()
         {
@@ -256,21 +261,25 @@ namespace Tiels
                 //SetBottom(this);
                 if (isLoading == false)
                 {
-                    ConfigClass config = Config.GetConfig();
-                    if (config != null)
+                    if (Height != fixedLastHeight)
                     {
-                        foreach (var window in config.Windows)
+                        fixedLastHeight = (Int32)this.Height;
+                        ConfigClass config = Config.GetConfig();
+                        if (config != null)
                         {
-                            if (window.Name == name)
+                            foreach (var window in config.Windows)
                             {
-                                if (!isHidded)
-                                window.Height = (int)this.Height;
+                                if (window.Name == name)
+                                {
+                                    if (!isHidded)
+                                        window.Height = (int)this.Height;
+                                }
                             }
-                        }
-                        bool result = Config.SetConfig(config);
-                        if (result == false)
-                        {
-                            Util.Reconfigurate();
+                            bool result = Config.SetConfig(config);
+                            if (result == false)
+                            {
+                                Util.Reconfigurate();
+                            }
                         }
                     }
                 }

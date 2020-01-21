@@ -94,6 +94,8 @@ namespace Tiels
         }
         public static bool SetConfig(ConfigClass config)
         {
+            test++;
+            Console.WriteLine("test+"+test);
             try
             {
                 string json = JsonConvert.SerializeObject(config, Formatting.Indented);
@@ -108,5 +110,7 @@ namespace Tiels
                 return true;
             }
         }
+
+        private static int test = 0;
     }
 }
