@@ -1,0 +1,14 @@
+﻿<Window x:Class="Tiels.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tiels"
+        mc:Ignorable="d"
+        Title="About" Height="200" Width="600">
+    <Grid>
+        <Image Source="Assets/appicon.ico" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="90" Margin="20,0,0,0"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="120,0,0,30" Text="Tiels free desktop organizer" FontSize="22"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="120,30,0,0" Text="https://github.com/DcZipPL/Tiels" FontSize="16"/>
+    </Grid>
+</Window>
