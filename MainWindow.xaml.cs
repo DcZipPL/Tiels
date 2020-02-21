@@ -72,7 +72,14 @@ namespace Tiels
                 main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
                 return;
             }
-
+            else
+            {
+                if (config.HideAfterStart)
+                {
+                    ni.Visible = true;
+                    this.Hide();
+                }
+            }
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
 
@@ -178,17 +185,23 @@ namespace Tiels
                     Util.Reconfigurate();
                 }
             }
-            isLoading = false;
+            bool isTilesLoading = true;
+            while (isTilesLoading)
+            {
+                await Task.Delay(200);
+                isTilesLoading = false;
+                foreach (TileWindow tileWindow in tilesw)
+                {
+                    if (tileWindow.isLoading == true)
+                    {
+                        isTilesLoading = true;
+                    }
+                }
+            }
 
             //Load MainPage
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
-
-            if (config.HideAfterStart)
-            {
-                ni.Visible = true;
-                this.Hide();
-            }
         }
 
         public void ConfigureFirstRun()

@@ -42,8 +42,8 @@ namespace Tiels
         private int tries = 0;
         private static int id = 0;
 
-        private bool isLoading = false;
         private bool isMoving = false;
+        public bool isLoading = false;
         public bool isHidded = false;
         public bool isEditMode = false;
 
@@ -445,11 +445,13 @@ namespace Tiels
                 this.MaxHeight = rowCount * 80 + 28;
                 this.Height = rowCount * 80 + 28;
 
-                //Creating file with paths to icons
-                if (!File.Exists(path + "\\iconcache.db"))
-                    File.WriteAllText(path + "\\iconcache.db", "");
+                //Creating file and directory with paths to icons
+                if (!Directory.Exists(config_path + "\\Cache"))
+                    Directory.CreateDirectory(config_path + "\\Cache");
+                if (!File.Exists(config_path + "\\Cache\\iconcache.db"))
+                    File.WriteAllText(config_path + "\\Cache\\iconcache.db", "");
                 //Read icon paths
-                string[] tmp_iconcache = File.ReadAllLines(path + "\\iconcache.db");
+                string[] tmp_iconcache = File.ReadAllLines(config_path + "\\Cache\\iconcache.db");
                 Dictionary<string, string> iconcache = new Dictionary<string, string>();
 
                 string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
@@ -468,6 +470,7 @@ namespace Tiels
                 int m = 0;
                 for (int i = 0; i < elements.Length; i++)
                 {
+                    //await Task.Delay(5);
                     SoftFileData sfd = new SoftFileData();
                     sfd.Name = elements[i];
                     sfd.Size = (int)new System.IO.FileInfo(elements[i]).Length;
@@ -475,94 +478,104 @@ namespace Tiels
 
                     string num = "";
 
+                    double proportion;
+                    System.Drawing.Bitmap bitmap = null;
+                    System.Drawing.Bitmap bitmap1 = null;
+                    System.Drawing.Bitmap bitmap2 = null;
                     if (!iconcache.ContainsKey(elements[i]))
                     {
-                        IntPtr hIcon = Util.GetJumboIcon(Util.GetIconIndex(elements[i]));
-
-                        // from native to managed
-                        try
+                        if (elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg"))
                         {
-                            using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
+                            try
                             {
-                                // save to file (or show in a picture box)
-                                if (!IsSmallIcon(ico.ToBitmap()))
+                                try
                                 {
-                                    ico.ToBitmap().Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                                    bitmap = new System.Drawing.Bitmap(elements[i]);
+                                }
+                                catch (Exception ex0)
+                                {
+                                    byte[] buffer = new byte[12];
+                                    try
+                                    {
+                                        using (FileStream fs = new FileStream(elements[i], FileMode.Open, FileAccess.Read))
+                                        {
+                                            fs.Read(buffer, 0, buffer.Length);
+                                            fs.Close();
+                                        }
+                                        if (buffer[0] == 82 && buffer[1] == 73 && buffer[2] == 70 && buffer[3] == 70 && buffer[8] == 87 && buffer[9] == 69 && buffer[10] == 66 && buffer[11] == 80)
+                                        {
+                                            //Webp
+                                            Imazen.WebP.SimpleDecoder decoder = new Imazen.WebP.SimpleDecoder();
+                                            bitmap = decoder.DecodeFromBytes(File.ReadAllBytes(elements[i]), new System.IO.FileInfo(elements[i]).Length);
+                                        }
+                                    }
+                                    catch (System.UnauthorizedAccessException ex1)
+                                    {
+                                        File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex0.ToString());
+                                    }
+                                }
+                                bitmap1 = bitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb);//BitmapHandler.CloneImage(ConvertToBitmap((BitmapSource)bitmap));
+                                if (bitmap.Width > bitmap.Height)
+                                {
+                                    proportion = bitmap.Width / 128;
                                 }
                                 else
                                 {
-                                    System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
-                                    System.Drawing.Image img = ico.ToBitmap();
-                                    Util.CropImage(img, cropRect).Save(path + "\\TMP_ICON_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                                    proportion = bitmap.Height / 128;
                                 }
-                                File.AppendAllText(path + "\\iconcache.db", elements[i] + "*" + "\\TMP_ICON_" + ri + i + "\r\n");
-                                num = "\\TMP_ICON_" + ri + i;
+                                if (bitmap1.Height > 128 && bitmap1.Width > 128)
+                                    bitmap2 = new System.Drawing.Bitmap(bitmap1, (int)(bitmap1.Width / proportion), (int)(bitmap1.Height / proportion));
+                                else
+                                    bitmap2 = bitmap1;
+                                bitmap2.Save(config_path + "\\Cache\\thumbnail_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                                File.AppendAllText(config_path + "\\Cache\\iconcache.db", elements[i] + "*" + "\\Cache\\thumbnail_" + ri + i + "\r\n");
+                                num = "\\Cache\\thumbnail_" + ri + i;
+                                bitmap = null;
+                                bitmap1 = null;
+                                bitmap2 = null;
                             }
-                            Util.Shell32.DestroyIcon(hIcon); // don't forget to cleanup
-                        }
-                        catch (Exception ex)
-                        {
+                            catch (Exception ex)
+                            {
 
+                            }
+                            //bitmap2 = null;
+                        }
+                        else
+                        {
+                            IntPtr hIcon = Util.GetJumboIcon(Util.GetIconIndex(elements[i]));
+
+                            // from native to managed
+                            try
+                            {
+                                using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
+                                {
+                                    // save to file (or show in a picture box)
+                                    if (!IsSmallIcon(ico.ToBitmap()))
+                                    {
+                                        ico.ToBitmap().Save(config_path + "\\Cache\\icon_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                                    }
+                                    else
+                                    {
+                                        System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
+                                        System.Drawing.Image img = ico.ToBitmap();
+                                        Util.CropImage(img, cropRect).Save(config_path + "\\Cache\\icon_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
+                                    }
+                                    File.AppendAllText(config_path + "\\Cache\\iconcache.db", elements[i] + "*" + "\\Cache\\icon_" + ri + i + "\r\n");
+                                    num = "\\Cache\\icon_" + ri + i;
+                                }
+                                Util.Shell32.DestroyIcon(hIcon); // don't forget to cleanup
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
                         }
                     }
                     else
                     {
                         num = iconcache[elements[i]];
                     }
-                    double proportion;
-                    System.Drawing.Bitmap bitmap = null;
-                    System.Drawing.Bitmap bitmap1 = null;
-                    System.Drawing.Bitmap bitmap2 = null;
-                    if (elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg"))
-                    {
-                        try
-                        {
-                            try
-                            {
-                                bitmap = new System.Drawing.Bitmap(elements[i]);
-                            }
-                            catch (Exception ex0)
-                            {
-                                byte[] buffer = new byte[12];
-                                try
-                                {
-                                    using (FileStream fs = new FileStream(elements[i], FileMode.Open, FileAccess.Read))
-                                    {
-                                        fs.Read(buffer, 0, buffer.Length);
-                                        fs.Close();
-                                    }
-                                    if (buffer[0] == 82 && buffer[1] == 73 && buffer[2] == 70 && buffer[3] == 70 && buffer[8] == 87 && buffer[9] == 69 && buffer[10] == 66 && buffer[11] == 80)
-                                    {
-                                        //Webp
-                                        Imazen.WebP.SimpleDecoder decoder = new Imazen.WebP.SimpleDecoder();
-                                        bitmap = decoder.DecodeFromBytes(File.ReadAllBytes(elements[i]), new System.IO.FileInfo(elements[i]).Length);
-                                    }
-                                }
-                                catch (System.UnauthorizedAccessException ex1)
-                                {
-                                    File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex0.ToString());
-                                }
-                            }
-                            bitmap1 = bitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb);//BitmapHandler.CloneImage(ConvertToBitmap((BitmapSource)bitmap));
-                            if (bitmap.Width > bitmap.Height)
-                            {
-                                proportion = bitmap.Width / 128;
-                            }
-                            else
-                            {
-                                proportion = bitmap.Height / 128;
-                            }
-                            if (bitmap1.Height > 128 && bitmap1.Width > 128)
-                                bitmap2 = new System.Drawing.Bitmap(bitmap1, (int)(bitmap1.Width / proportion), (int)(bitmap1.Height / proportion));
-                            else
-                                bitmap2 = bitmap1;
-                        }
-                        catch (Exception ex)
-                        {
 
-                        }
-                        //bitmap2 = null;
-                    }
                     //Util.ResizeImage(Util.BitmapFromSource((BitmapSource)bitmap), (int)bitmap.Width <= 128 ? (int)bitmap.Width : ((int)bitmap.Width/10), (int)bitmap.Height <= 128 ? (int)bitmap.Height : (int)bitmap.Height/10);
                     Image image = new Image
                     {
@@ -570,11 +583,9 @@ namespace Tiels
                         Height = 44,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(0, 1, 0, 19),
-                        Source = elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg") ? Util.ImageSourceFromBitmap(bitmap2) : Util.BitmapFromUri(new Uri(path + num)) // ICON
+                        Source = Util.BitmapFromUri(new Uri(config_path + num))
+                        //Source = elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg") ? Util.ImageSourceFromBitmap(bitmap2) : Util.BitmapFromUri(new Uri(path + num)) // ICON
                     };
-                    bitmap = null;
-                    bitmap1 = null;
-                    bitmap2 = null;
                     string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
                     TextBlock filename = new TextBlock
                     {
@@ -702,11 +713,11 @@ namespace Tiels
                     throw fnfex;
 
             }
-            catch (Exception ex)
+            /*catch (Exception ex)
             {
                 File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 throw ex;
-            }
+            }*/
 
             loadinginfo.Visibility = Visibility.Collapsed;
             FilesList.Visibility = Visibility.Visible;
