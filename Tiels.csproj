@@ -27,7 +27,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.5.1.0</ApplicationVersion>
+    <ApplicationVersion>0.5.6.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>false</BootstrapperEnabled>
@@ -154,6 +154,7 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\ConfigClass.cs" />
+    <Compile Include="Classes\FileUpdates.cs" />
     <Compile Include="Classes\ShellContextMenu.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="ErrorWindow.xaml.cs">

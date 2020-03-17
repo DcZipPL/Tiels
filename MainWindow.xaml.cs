@@ -64,6 +64,9 @@ namespace Tiels
 
         public async void Load()
         {
+            FileUpdates fu = new FileUpdates();
+            _ = fu.UpdateEntry();
+
             isLoading = true;
             if (File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json") == "") Util.Reconfigurate();
             ConfigClass config = Config.GetConfig();
@@ -200,6 +203,7 @@ namespace Tiels
             }
 
             //Load MainPage
+            isLoading = false;
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
             loadingMessage.Text = "Tile Loaded Successfully!";
         }

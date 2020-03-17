@@ -1,5 +1,4 @@
-﻿using Shell32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -22,6 +21,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using Peter;
+using System.Security.Permissions;
 
 namespace Tiels
 {
@@ -50,8 +50,8 @@ namespace Tiels
         private Point MousePos;
 
         List<SoftFileData> filedata = new List<SoftFileData>();
-        //System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-        //System.Windows.Threading.DispatcherTimer updateTimer = new System.Windows.Threading.DispatcherTimer();
+
+        protected Dictionary<string, ChangedType> fileupdates = new Dictionary<string, ChangedType>();
 
         #region DLL IMPORTS
 
@@ -172,36 +172,73 @@ namespace Tiels
             MousePos.Y = Convert.ToInt32(this.Top) - MousePos.Y;
         }
 
-        private void MoveActionCancel(object sender, MouseEventArgs e) { }// => MoveActionStop(this, null);
-        //private void DispatcherTimer_Tick(object sender, EventArgs e)
-        //{
-        //    CheckFileUpdates();
-        //    //SetBottom(this);
-        //    if (isLoading == false)
-        //    {
-        //        if (Height != fixedLastHeight)
-        //        {
-        //            fixedLastHeight = lastHeight;
-        //            ConfigClass config = Config.GetConfig();
-        //            if (config != null)
-        //            {
-        //                foreach (var window in config.Windows)
-        //                {
-        //                    if (window.Name == name)
-        //                    {
-        //                        if (!isHidded)
-        //                            window.Height = (int)this.Height;
-        //                    }
-        //                }
-        //                bool result = Config.SetConfig(config);
-        //                if (result == false)
-        //                {
-        //                    Util.Reconfigurate();
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        private void MoveActionCancel(object sender, MouseEventArgs e) { }
+
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        private void WatchFileUpdates()
+        {
+            // Create a new FileSystemWatcher and set its properties.
+            FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.Path = path+"\\"+ name;
+
+            // Watch for changes in LastAccess and LastWrite times, and
+            // the renaming of files or directories.
+            watcher.NotifyFilter = NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.DirectoryName;
+
+            // Only watch text files.
+            //watcher.Filter = "*.*";
+
+            // Add event handlers.
+            watcher.Changed += OnEntryChanged;
+            watcher.Created += OnEntryChanged;
+            watcher.Deleted += OnEntryDeleted;
+            watcher.Renamed += OnEntryRenamed;
+
+            // Begin watching.
+            watcher.EnableRaisingEvents = true;
+
+        }
+
+        // Define the event handlers.
+        private void OnEntryChanged(object source, FileSystemEventArgs e)
+        {
+            // Specify what is done when a file is changed or created.
+            if (e.ChangeType == WatcherChangeTypes.Created)
+            {
+                Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Created");
+                FileUpdates.CreateEntry(e.FullPath + "\t" + FileUpdates.NextID());
+            }
+            else
+            {
+                Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Changed");
+                FileUpdates.ChangeEntry(e.FullPath + "\t" + FileUpdates.NextID());
+            }
+        }
+
+        private void OnEntryRenamed(object source, RenamedEventArgs e)
+        {
+            // Specify what is done when a file is renamed.
+            Console.WriteLine($"File: {e.OldFullPath} renamed to {e.FullPath}");
+            FileUpdates.DeleteEntry(e.OldFullPath + "\t" + FileUpdates.NextID());
+            FileUpdates.CreateEntry(e.FullPath + "\t" + FileUpdates.NextID());
+        }
+
+        private void OnEntryDeleted(object source, FileSystemEventArgs e)
+        {
+            Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Deleted");
+            //fileupdates.Add(e.FullPath, ChangedType.DELETED);
+            FileUpdates.DeleteEntry(e.FullPath + "\t" + FileUpdates.NextID());
+        }
+
+        protected enum ChangedType
+        {
+            CREATED,
+            CHANGED,
+            DELETED
+        }
 
         private void CheckFileUpdates()
         {
@@ -209,30 +246,7 @@ namespace Tiels
             {
                 try
                 {
-                    string json_out = File.ReadAllText(path + "\\" + name + "_fileupdate.json");
-                    SoftFileData[] data = JsonConvert.DeserializeObject<FileUpdateClass>(json_out).Data;
-                    string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
-                    if (elements.Length != data.Length)
-                    {
-                        ReadElements();
-                    }
-                    else
-                    {
-                        for (int i = 0; i < elements.Length; i++)
-                        {
-                            if (data[i].Name == elements[i])
-                            {
-                                if ((int)data[i].Size / 100 != (int)new System.IO.FileInfo(elements[i]).Length / 100)
-                                {
-                                    ReadElements();
-                                }
-                            }
-                            else
-                            {
-                                ReadElements();
-                            }
-                        }
-                    }
+                    //ReadElements();
                 }
                 catch(Exception ex)
                 {
@@ -373,6 +387,7 @@ namespace Tiels
                 collumns = floor;
                 int floor1 = (int)Math.Floor(this.Height / 80);
                 ReadElements(floor, floor1);
+                WatchFileUpdates();
             }
             catch (Exception ex)
             {
