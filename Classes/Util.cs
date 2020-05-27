@@ -15,6 +15,19 @@ using System.Windows.Media.Imaging;
 
 namespace Tiels.Classes
 {
+    public class ErrorHandler
+    {
+        public static void Log(Exception ex)
+        {
+            File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+        }
+
+        public static void Info(string msg)
+        {
+            Console.WriteLine("[Info] "+ msg);
+        }
+    }
+
     public static class StringExtensions
     {
         public static string FirstCharToUpper(this string input) =>
@@ -125,31 +138,45 @@ namespace Tiels.Classes
             }
         }
 
-        public static void Reconfigurate()
+        public static void Reconfigurate(bool soft = false)
         {
-            System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
+            if (soft == false)
+            {
+                System.IO.DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels");
 
-            File.SetAttributes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", FileAttributes.Normal);
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old"))
-                File.SetAttributes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old", FileAttributes.Normal);
-            File.Copy(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old",true);
-            foreach (FileInfo file in di.GetFiles())
-            {
-                File.SetAttributes(file.FullName, FileAttributes.Normal);
-                if (file.Name != "Error.log" || file.Name != "config.json.old")
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                foreach (FileInfo filei in dir.GetFiles())
+                File.SetAttributes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", FileAttributes.Normal);
+                if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old"))
+                    File.SetAttributes(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old", FileAttributes.Normal);
+                foreach (FileInfo file in di.GetFiles())
                 {
-                    filei.Delete();
+                    File.SetAttributes(file.FullName, FileAttributes.Normal);
+                    if (file.Name != "config.json.old")
+                        file.Delete();
+                    if (file.Name != "Error.log")
+                    {
+                        if (!File.Exists(file.FullName + ".old"))
+                            file.CopyTo(file.FullName + ".old");
+                        else
+                        {
+                            File.Delete(file.FullName + ".old");
+                            file.CopyTo(file.FullName + ".old");
+                        }
+                        file.Delete();
+                    }
                 }
-                foreach (DirectoryInfo diri in dir.GetDirectories())
+                File.Copy(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json.old", true);
+                foreach (DirectoryInfo dir in di.GetDirectories())
                 {
-                    diri.Delete(true);
+                    foreach (FileInfo filei in dir.GetFiles())
+                    {
+                        filei.Delete();
+                    }
+                    foreach (DirectoryInfo diri in dir.GetDirectories())
+                    {
+                        diri.Delete(true);
+                    }
+                    dir.Delete(true);
                 }
-                dir.Delete(true);
             }
             Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location);
             System.Windows.Application.Current.Shutdown();

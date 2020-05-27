@@ -9,9 +9,23 @@
       Title="ErrorPage">
 
     <Grid>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="Red" Text="Critical config error!" Margin="0,0,0,80"/>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Foreground="Red" Margin="0,40,0,0" TextAlignment="Center">Your config file may is invalid, corrupted or empty.
-        <LineBreak/>Please check your config.json file.<LineBreak/><LineBreak/>When file is broken you can load backup of reconfigurate.</TextBlock>
-        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Reconfigurate (Reconfiguration can delete current appearance settings)" Padding="10,5" Click="Reconf" Margin="0,165,0,0" Grid.Row="2"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="Black" Text="Critical Error!" Margin="0,0,0,150"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Foreground="Black" Margin="0,0,0,30" TextAlignment="Center">Your config file / cache is maybe invalid or corrupted.
+        <LineBreak/>Please check your <Run Cursor="Hand" TextDecorations="Underline" MouseDown="Config_MouseDown">
+     <Run.Foreground>
+         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+             <GradientStop Color="#FF005DFF" Offset="0"/>
+             <GradientStop Color="#FF00AEFF" Offset="1"/>
+         </LinearGradientBrush>
+     </Run.Foreground>config.json</Run> file or <Run FontWeight="Bold">clear cache.</Run><LineBreak/><LineBreak/>When file is broken you can load backup or reconfigurate.</TextBlock>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Clear Cache" Padding="10,5" Click="ClearCache" Margin="0,100,0,0" Grid.Row="2"/>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Reconfigurate" Padding="10,5" Click="Reconf" Margin="0,175,0,0" Grid.Row="2"/>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" Margin="0,245,0,0" TextAlignment="Center">Reconfiguration will delete current appearance (in. Tiles position) settings and <Run Cursor="Hand" TextDecorations="Underline" MouseDown="Run_MouseDown">
+     <Run.Foreground>
+         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+             <GradientStop Color="#FF005DFF" Offset="0"/>
+             <GradientStop Color="#FF00AEFF" Offset="1"/>
+         </LinearGradientBrush>
+     </Run.Foreground>files from deleted tiles</Run></TextBlock>
     </Grid>
 </Page>

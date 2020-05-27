@@ -95,7 +95,7 @@ namespace Tiels
         public static bool SetConfig(ConfigClass config)
         {
             test++;
-            Console.WriteLine("test+"+test);
+            ErrorHandler.Info(" Configuration saved: +"+test);
             try
             {
                 string json = JsonConvert.SerializeObject(config, Formatting.Indented);

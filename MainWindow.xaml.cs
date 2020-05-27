@@ -26,11 +26,12 @@ namespace Tiels
     /// </summary>
     public partial class MainWindow : Window
     {
-        protected string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
-        protected string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels";
+        public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
         public List<TileWindow> tilesw = new List<TileWindow>();
         public bool isLoading = true;
         private System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
+
+        public FileUpdates fu = new FileUpdates();
 
         public MainWindow()
         {
@@ -52,7 +53,7 @@ namespace Tiels
         {
             App.INSTANCE = new Config();
             //If exists config and main app directory
-            if (!Directory.Exists(path) || !File.Exists(config_path + "\\config.json"))
+            if (!Directory.Exists(path) || !File.Exists(App.config_path + "\\config.json"))
             {
                 ConfigureFirstRun();
             }
@@ -64,15 +65,21 @@ namespace Tiels
 
         public async void Load()
         {
-            FileUpdates fu = new FileUpdates();
-            _ = fu.UpdateEntry();
+            _ = fu.UpdateEntryTask();
 
             isLoading = true;
-            if (File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json") == "") Util.Reconfigurate();
+            if (File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json") == "")
+            {
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
+                loadingMessage.Text = "Tiels Error!";
+                return;
+            }
             ConfigClass config = Config.GetConfig();
             if (config == null)
             {
+                ErrorHandler.Log(new FileLoadException(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json was empty of corrupted."));
                 main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
+                loadingMessage.Text = "Tiels Error!";
                 return;
             }
             else
@@ -86,126 +93,137 @@ namespace Tiels
             main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
 
-            string[] tiles = Directory.EnumerateDirectories(path).ToArray();
-            //Check config version
-            if (App.Version != config.Version)
+            try
             {
-                //Update version and add default values
-                try
+
+                string[] tiles = Directory.EnumerateDirectories(path).ToArray();
+                //Check config version
+                if (App.Version != config.Version)
                 {
-                    if (int.Parse(config.Version.Substring(3, 1)) < 4)
+                    //Update version and add default values
+                    try
                     {
-                        if (MessageBox.Show("Config version is too old.\r\nReconfiguration required!\r\nReconfiguration can delete current appearance settings.\r\nProceed?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        if (int.Parse(config.Version.Substring(3, 1)) < 4)
                         {
-                            Util.Reconfigurate();
-                        }
-                        else
-                        {
-                            //this.Close();
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Util.Reconfigurate();
-                }
-            }
-
-            if (!config.SpecialEffects) shadoweffect.Effect = null;
-
-            if (tiles.Length != 0)
-            {
-                config = Config.GetConfig();
-                for (int i = 0; i <= tiles.Length - 1; i++)
-                {
-                    tiles[i] = tiles[i].Replace(path + "\\", "");
-
-                    //Creating tile
-                    TileWindow tile = new TileWindow();
-                    tile.folderNameTB.Text = tiles[i];
-                    tile.name = tiles[i];
-                    tilesw.Add(tile);
-                    bool windowexist = false;
-
-                    //Search for tile in config
-                    foreach (var window in config.Windows)
-                    {
-                        if (window.Name == tiles[i])
-                        {
-                            //Tile exists?
-                            windowexist = true;
-
-                            //Setting tile rosition
-                            tile.Left = window.Position.X;
-                            tile.Top = window.Position.Y;
-
-                            //Rotating tile
-                            if (!window.EditBar)
+                            if (MessageBox.Show("Config version is too old.\r\nReconfiguration required!\r\nReconfiguration can delete current appearance settings.\r\nProceed?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                             {
-                                tile.rd.Height = new GridLength(1,GridUnitType.Star);
-                                tile.trd.Height = new GridLength(28);
-                                Grid.SetRow(tile.ActionGrid, 1);
-                                Grid.SetRow(tile.ScrollFilesList, 0);
+                                Util.Reconfigurate();
                             }
                             else
                             {
-                                tile.rd.Height = new GridLength(28);
-                                tile.trd.Height = new GridLength(1, GridUnitType.Star);
-                                Grid.SetRow(tile.ActionGrid, 0);
-                                Grid.SetRow(tile.ScrollFilesList, 1);
+                                //this.Close();
                             }
-                            if (window.Height > 0)
-                            {
-                                tile.Height = window.Height;
-                                tile.ScrollFilesList.Height = window.Height;
-                            }
-                            else
-                            {
-                                window.Height = 0;
-                            }
-
-                            tile.Width = window.Width;
                         }
                     }
-                    //If tile not exists create default values
-                    if (!windowexist)
+                    catch (Exception ex)
                     {
-                        JsonWindow jsonwindow = new JsonWindow();
-                        jsonwindow.Name = tiles[i];
-                        jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
-                        jsonwindow.Height = 0;
-                        jsonwindow.Width = 0;
-                        jsonwindow.EditBar = false;
-                        jsonwindow.Id = i;
-                        config.Windows.Add(jsonwindow);
-                    }
-                    tile.Show();
-                }
-                //If Config File not Exists
-                bool result = Config.SetConfig(config);
-                if (result == false)
-                {
-                    Util.Reconfigurate();
-                }
-            }
-            bool isTilesLoading = true;
-            while (isTilesLoading)
-            {
-                await Task.Delay(200);
-                isTilesLoading = false;
-                foreach (TileWindow tileWindow in tilesw)
-                {
-                    if (tileWindow.isLoading == true)
-                    {
-                        isTilesLoading = true;
+                        Util.Reconfigurate();
                     }
                 }
-            }
 
-            //Load MainPage
-            isLoading = false;
-            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
-            loadingMessage.Text = "Tile Loaded Successfully!";
+                if (!config.SpecialEffects) shadoweffect.Effect = null;
+
+                if (tiles.Length != 0)
+                {
+                    config = Config.GetConfig();
+                    for (int i = 0; i <= tiles.Length - 1; i++)
+                    {
+                        tiles[i] = tiles[i].Replace(path + "\\", "");
+
+                        //Creating tile
+                        TileWindow tile = new TileWindow();
+                        tile.folderNameTB.Text = tiles[i];
+                        tile.name = tiles[i];
+                        tilesw.Add(tile);
+                        bool windowexist = false;
+
+                        //Search for tile in config
+                        foreach (var window in config.Windows)
+                        {
+                            if (window.Name == tiles[i])
+                            {
+                                //Tile exists?
+                                windowexist = true;
+
+                                //Setting tile rosition
+                                tile.Left = window.Position.X;
+                                tile.Top = window.Position.Y;
+
+                                //Rotating tile
+                                if (!window.EditBar)
+                                {
+                                    tile.rd.Height = new GridLength(1, GridUnitType.Star);
+                                    tile.trd.Height = new GridLength(28);
+                                    Grid.SetRow(tile.ActionGrid, 1);
+                                    Grid.SetRow(tile.ScrollFilesList, 0);
+                                }
+                                else
+                                {
+                                    tile.rd.Height = new GridLength(28);
+                                    tile.trd.Height = new GridLength(1, GridUnitType.Star);
+                                    Grid.SetRow(tile.ActionGrid, 0);
+                                    Grid.SetRow(tile.ScrollFilesList, 1);
+                                }
+                                if (window.Height > 0)
+                                {
+                                    tile.Height = window.Height;
+                                    tile.ScrollFilesList.Height = window.Height;
+                                }
+                                else
+                                {
+                                    window.Height = 0;
+                                }
+
+                                tile.Width = window.Width;
+                            }
+                        }
+                        //If tile not exists create default values
+                        if (!windowexist)
+                        {
+                            JsonWindow jsonwindow = new JsonWindow();
+                            jsonwindow.Name = tiles[i];
+                            jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
+                            jsonwindow.Height = 0;
+                            jsonwindow.Width = 0;
+                            jsonwindow.EditBar = false;
+                            jsonwindow.Id = i;
+                            config.Windows.Add(jsonwindow);
+                        }
+                        tile.Show();
+                    }
+                    //If Config File not Exists
+                    bool result = Config.SetConfig(config);
+                    if (result == false)
+                    {
+                        Util.Reconfigurate();
+                    }
+                }
+                bool isTilesLoading = true;
+                while (isTilesLoading)
+                {
+                    await Task.Delay(200);
+                    isTilesLoading = false;
+                    foreach (TileWindow tileWindow in tilesw)
+                    {
+                        if (tileWindow.isLoading == true)
+                        {
+                            isTilesLoading = true;
+                        }
+                    }
+                }
+
+                //Load MainPage
+                isLoading = false;
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
+                loadingMessage.Text = "Tile Loaded Successfully!";
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.Log(ex);
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
+                loadingMessage.Text = "Tiels Error!";
+                return;
+            }
         }
 
         public void ConfigureFirstRun()
@@ -214,18 +232,18 @@ namespace Tiels
 
             //Starting Tiels Console that generate Main App Directory and temp
             //Process.Start("TielsConsole.exe","createlostandfound");
-            Console.WriteLine("creating lostandfound directory...");
+            ErrorHandler.Info("Creating lostandfound directory...");
             try
             {
-                if (!Directory.Exists(config_path))
-                    Directory.CreateDirectory(config_path);
-                if (!Directory.Exists(config_path + "\\" + "temp"))
-                    Directory.CreateDirectory(config_path + "\\" + "temp");
-                Console.WriteLine("succesfully created lostandfound directory!");
+                if (!Directory.Exists(App.config_path))
+                    Directory.CreateDirectory(App.config_path);
+                if (!Directory.Exists(App.config_path + "\\" + "temp"))
+                    Directory.CreateDirectory(App.config_path + "\\" + "temp");
+                ErrorHandler.Info("Succesfully created lostandfound directory!");
             }
             catch (Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
                 try
                 {
                     ProcessStartInfo info = new ProcessStartInfo
@@ -233,52 +251,63 @@ namespace Tiels
                         Arguments = "createlostandfounda",
                         Verb = "runas"
                     };
-                    Console.WriteLine(ex.ToString());
+                    ErrorHandler.Info(ex.ToString());
                 }
                 catch (Exception iex)
                 {
-                    File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + iex.ToString());
+                    File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + iex.ToString());
                     Application.Current.Shutdown();
                 }
             }
-            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ConfigurePage.xaml"));
-            loadingMessage.Text = "Configuration.";
 
-            //Creating config and creating example tile
-            WindowPosition pos0 = new WindowPosition();
-            WindowPosition pos1 = new WindowPosition();
-            WindowPosition[] positions = new WindowPosition[] { pos0, pos1 };
-            JsonWindow jwindow = new JsonWindow();
-            List<JsonWindow> jwindows = new List<JsonWindow>();
-            jwindows.Add(jwindow);
-            ConfigClass config = new ConfigClass
+            try
             {
-                Version = App.Version,
-                FirstRun = true,
-                Blur = true,
-                Theme = 1,
-                Color = "#19000000",
-                HideAfterStart = false,
-                SpecialEffects = true,
-                Windows = jwindows
-            };
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ConfigurePage.xaml"));
+                loadingMessage.Text = "Configuration.";
 
-            //Creating directory and config file
-            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
-            if (Directory.Exists(config_path))
-                File.WriteAllText(config_path+"\\config.json", json);
-            Console.WriteLine(json);
-            if (!Directory.Exists(path + "\\Example"))
-                Directory.CreateDirectory(path + "\\Example");
+                //Creating config and creating example tile
+                WindowPosition pos0 = new WindowPosition();
+                WindowPosition pos1 = new WindowPosition();
+                WindowPosition[] positions = new WindowPosition[] { pos0, pos1 };
+                JsonWindow jwindow = new JsonWindow();
+                List<JsonWindow> jwindows = new List<JsonWindow>();
+                jwindows.Add(jwindow);
+                ConfigClass config = new ConfigClass
+                {
+                    Version = App.Version,
+                    FirstRun = true,
+                    Blur = true,
+                    Theme = 1,
+                    Color = "#19000000",
+                    HideAfterStart = false,
+                    SpecialEffects = true,
+                    Windows = jwindows
+                };
 
-            string icoPath = "pack://application:,,,/Tiels;component/Assets/TielsDirectory.ico";
-            StreamResourceInfo icoInfo = System.Windows.Application.GetResourceStream(new Uri(icoPath));
-            byte[] bytes = Util.ReadFully(icoInfo.Stream);
-            File.WriteAllBytes(config_path + "\\directoryicon.ico", bytes);
+                //Creating directory and config file
+                string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+                if (Directory.Exists(App.config_path))
+                    File.WriteAllText(App.config_path + "\\config.json", json);
+                ErrorHandler.Info(json);
+                if (!Directory.Exists(path + "\\Example"))
+                    Directory.CreateDirectory(path + "\\Example");
 
-            //Creating example text file in tile
-            File.WriteAllText(path + "\\Example\\ExampleContent.txt","Example Text.");
-            File.WriteAllText(path + "\\Example\\desktop.ini", "[.ShellClassInfo]\r\nIconResource="+ config_path + "\\directoryicon.ico,0");
+                string icoPath = "pack://application:,,,/Tiels;component/Assets/TielsDirectory.ico";
+                StreamResourceInfo icoInfo = System.Windows.Application.GetResourceStream(new Uri(icoPath));
+                byte[] bytes = Util.ReadFully(icoInfo.Stream);
+                File.WriteAllBytes(App.config_path + "\\directoryicon.ico", bytes);
+
+                //Creating example text file in tile
+                File.WriteAllText(path + "\\Example\\ExampleContent.txt", "Example Text.");
+                File.WriteAllText(path + "\\Example\\desktop.ini", "[.ShellClassInfo]\r\nIconResource=" + App.config_path + "\\directoryicon.ico,0");
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.Log(ex);
+                main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/ErrorPage.xaml"));
+                loadingMessage.Text = "Tiels Error!";
+                return;
+            }
         }
 
         private void CloseWindowBtn_Click(object sender, RoutedEventArgs e)

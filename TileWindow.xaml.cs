@@ -31,7 +31,6 @@ namespace Tiels
     public partial class TileWindow : Window
     {
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Tiles";
-        public string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
         public string name = null;
         private string newname = null;
 
@@ -46,6 +45,9 @@ namespace Tiels
         public bool isLoading = false;
         public bool isHidded = false;
         public bool isEditMode = false;
+
+        public string lastFile = "";
+        public FileInfo fi;
 
         private Point MousePos;
 
@@ -186,7 +188,8 @@ namespace Tiels
             watcher.NotifyFilter = NotifyFilters.LastAccess
                                  | NotifyFilters.LastWrite
                                  | NotifyFilters.FileName
-                                 | NotifyFilters.DirectoryName;
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.Size;
 
             // Only watch text files.
             //watcher.Filter = "*.*";
@@ -206,29 +209,34 @@ namespace Tiels
         private void OnEntryChanged(object source, FileSystemEventArgs e)
         {
             // Specify what is done when a file is changed or created.
-            if (e.ChangeType == WatcherChangeTypes.Created)
+            if (lastFile == "" || lastFile != e.FullPath || (fi.Exists && new FileInfo(e.FullPath).Exists && (new FileInfo(e.FullPath).Length != fi.Length || new FileInfo(e.FullPath).CreationTime != fi.CreationTime || new FileInfo(e.FullPath).LastAccessTime != fi.LastAccessTime)))
             {
-                Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Created");
-                FileUpdates.CreateEntry(e.FullPath + "\t" + FileUpdates.NextID());
-            }
-            else
-            {
-                Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Changed");
-                FileUpdates.ChangeEntry(e.FullPath + "\t" + FileUpdates.NextID());
+                lastFile = e.FullPath;
+                fi = new FileInfo(e.FullPath);
+                if (e.ChangeType == WatcherChangeTypes.Created)
+                {
+                    ErrorHandler.Info($"File: {e.FullPath} {e.ChangeType} -> Created");
+                    FileUpdates.CreateEntry(e.FullPath + "\t" + FileUpdates.NextID());
+                }
+                else
+                {
+                    ErrorHandler.Info($"File: {e.FullPath} {e.ChangeType} -> Changed");
+                    FileUpdates.ChangeEntry(e.FullPath + "\t" + FileUpdates.NextID());
+                }
             }
         }
 
         private void OnEntryRenamed(object source, RenamedEventArgs e)
         {
             // Specify what is done when a file is renamed.
-            Console.WriteLine($"File: {e.OldFullPath} renamed to {e.FullPath}");
+            ErrorHandler.Info($"File: {e.OldFullPath} renamed to {e.FullPath}");
             FileUpdates.DeleteEntry(e.OldFullPath + "\t" + FileUpdates.NextID());
             FileUpdates.CreateEntry(e.FullPath + "\t" + FileUpdates.NextID());
         }
 
         private void OnEntryDeleted(object source, FileSystemEventArgs e)
         {
-            Console.WriteLine($"File: {e.FullPath} {e.ChangeType} -> Deleted");
+            ErrorHandler.Info($"File: {e.FullPath} {e.ChangeType} -> Deleted");
             //fileupdates.Add(e.FullPath, ChangedType.DELETED);
             FileUpdates.DeleteEntry(e.FullPath + "\t" + FileUpdates.NextID());
         }
@@ -242,7 +250,7 @@ namespace Tiels
 
         private void CheckFileUpdates()
         {
-            if (File.Exists(path + "\\" + name + "_fileupdate.json") && Directory.Exists(path+"\\"+name))
+            /*if (File.Exists(path + "\\" + name + "_fileupdate.json") && Directory.Exists(path+"\\"+name))
             {
                 try
                 {
@@ -250,7 +258,7 @@ namespace Tiels
                 }
                 catch(Exception ex)
                 {
-                    File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: "+DateTime.Now+"] "+ex.ToString());
+                    File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: "+DateTime.Now+"] "+ex.ToString());
                     if (tries <= 3)
                     {
                         ReadElements();
@@ -263,7 +271,7 @@ namespace Tiels
                         ew.ShowDialog();
                     }
                 }
-            }
+            }*/
         }
 
         public async Task LateUpdate()
@@ -391,7 +399,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
             }
         }
 
@@ -404,34 +412,7 @@ namespace Tiels
             Util.SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, Util.SWP_NOSIZE | Util.SWP_NOMOVE | Util.SWP_NOACTIVATE);
         }
 
-        public bool IsSmallIcon(System.Drawing.Bitmap img)
-        {
-            int solidPixels = 0;
-            for (int i = 0; i < img.Width; i++)
-            {
-                for (int j = 0; j < img.Height; j++)
-                {
-                    if (i >= 48 && j >= 48)
-                    {
-                        System.Drawing.Color pixel = img.GetPixel(i, j);
-                        if (pixel.A != 0)
-                        {
-                            solidPixels++;
-                        }
-                    }
-                }
-            }
-            if (solidPixels <= 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private async void ReadElements(int collumCount = 4, int rowCount = 1)
+        public async void ReadElements(int collumCount = 4, int rowCount = 1)
         {
             try
             {
@@ -461,12 +442,12 @@ namespace Tiels
                 this.Height = rowCount * 80 + 28;
 
                 //Creating file and directory with paths to icons
-                if (!Directory.Exists(config_path + "\\Cache"))
-                    Directory.CreateDirectory(config_path + "\\Cache");
-                if (!File.Exists(config_path + "\\Cache\\iconcache.db"))
-                    File.WriteAllText(config_path + "\\Cache\\iconcache.db", "");
+                if (!Directory.Exists(App.config_path + "\\Cache"))
+                    Directory.CreateDirectory(App.config_path + "\\Cache");
+                if (!File.Exists(App.config_path + "\\Cache\\iconcache.db"))
+                    File.WriteAllText(App.config_path + "\\Cache\\iconcache.db", "");
                 //Read icon paths
-                string[] tmp_iconcache = File.ReadAllLines(config_path + "\\Cache\\iconcache.db");
+                string[] tmp_iconcache = File.ReadAllLines(App.config_path + "\\Cache\\iconcache.db");
                 Dictionary<string, string> iconcache = new Dictionary<string, string>();
 
                 string[] elements = Directory.EnumerateFiles(path + "\\" + name).ToArray();
@@ -493,98 +474,9 @@ namespace Tiels
 
                     string num = "";
 
-                    double proportion;
-                    System.Drawing.Bitmap bitmap = null;
-                    System.Drawing.Bitmap bitmap1 = null;
-                    System.Drawing.Bitmap bitmap2 = null;
                     if (!iconcache.ContainsKey(elements[i]))
                     {
-                        if (elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg"))
-                        {
-                            try
-                            {
-                                try
-                                {
-                                    bitmap = new System.Drawing.Bitmap(elements[i]);
-                                }
-                                catch (Exception ex0)
-                                {
-                                    byte[] buffer = new byte[12];
-                                    try
-                                    {
-                                        using (FileStream fs = new FileStream(elements[i], FileMode.Open, FileAccess.Read))
-                                        {
-                                            fs.Read(buffer, 0, buffer.Length);
-                                            fs.Close();
-                                        }
-                                        if (buffer[0] == 82 && buffer[1] == 73 && buffer[2] == 70 && buffer[3] == 70 && buffer[8] == 87 && buffer[9] == 69 && buffer[10] == 66 && buffer[11] == 80)
-                                        {
-                                            //Webp
-                                            Imazen.WebP.SimpleDecoder decoder = new Imazen.WebP.SimpleDecoder();
-                                            bitmap = decoder.DecodeFromBytes(File.ReadAllBytes(elements[i]), new System.IO.FileInfo(elements[i]).Length);
-                                        }
-                                    }
-                                    catch (System.UnauthorizedAccessException ex1)
-                                    {
-                                        File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex0.ToString());
-                                    }
-                                }
-                                bitmap1 = bitmap.Clone(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb);//BitmapHandler.CloneImage(ConvertToBitmap((BitmapSource)bitmap));
-                                if (bitmap.Width > bitmap.Height)
-                                {
-                                    proportion = bitmap.Width / 128;
-                                }
-                                else
-                                {
-                                    proportion = bitmap.Height / 128;
-                                }
-                                if (bitmap1.Height > 128 && bitmap1.Width > 128)
-                                    bitmap2 = new System.Drawing.Bitmap(bitmap1, (int)(bitmap1.Width / proportion), (int)(bitmap1.Height / proportion));
-                                else
-                                    bitmap2 = bitmap1;
-                                bitmap2.Save(config_path + "\\Cache\\thumbnail_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
-                                File.AppendAllText(config_path + "\\Cache\\iconcache.db", elements[i] + "*" + "\\Cache\\thumbnail_" + ri + i + "\r\n");
-                                num = "\\Cache\\thumbnail_" + ri + i;
-                                bitmap = null;
-                                bitmap1 = null;
-                                bitmap2 = null;
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                            //bitmap2 = null;
-                        }
-                        else
-                        {
-                            IntPtr hIcon = Util.GetJumboIcon(Util.GetIconIndex(elements[i]));
-
-                            // from native to managed
-                            try
-                            {
-                                using (System.Drawing.Icon ico = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone())
-                                {
-                                    // save to file (or show in a picture box)
-                                    if (!IsSmallIcon(ico.ToBitmap()))
-                                    {
-                                        ico.ToBitmap().Save(config_path + "\\Cache\\icon_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
-                                    }
-                                    else
-                                    {
-                                        System.Drawing.Rectangle cropRect = new System.Drawing.Rectangle(0, 0, 48, 48);
-                                        System.Drawing.Image img = ico.ToBitmap();
-                                        Util.CropImage(img, cropRect).Save(config_path + "\\Cache\\icon_" + ri + i, System.Drawing.Imaging.ImageFormat.Png);
-                                    }
-                                    File.AppendAllText(config_path + "\\Cache\\iconcache.db", elements[i] + "*" + "\\Cache\\icon_" + ri + i + "\r\n");
-                                    num = "\\Cache\\icon_" + ri + i;
-                                }
-                                Util.Shell32.DestroyIcon(hIcon); // don't forget to cleanup
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                        }
+                        num = FileUpdates.GenerateIcons(elements[i], App.config_path,ri,i);
                     }
                     else
                     {
@@ -598,7 +490,7 @@ namespace Tiels
                         Height = 44,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(0, 1, 0, 19),
-                        Source = Util.BitmapFromUri(new Uri(config_path + num))
+                        Source = Util.BitmapFromUri(new Uri(App.config_path + num))
                         //Source = elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg") ? Util.ImageSourceFromBitmap(bitmap2) : Util.BitmapFromUri(new Uri(path + num)) // ICON
                     };
                     string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
@@ -719,7 +611,7 @@ namespace Tiels
             }
             catch (FileNotFoundException fnfex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + fnfex.ToString());
+                File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + fnfex.ToString());
                 tries++;
                 ResetIconCache();
                 if (tries == 1)
@@ -730,7 +622,7 @@ namespace Tiels
             }
             /*catch (Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
                 throw ex;
             }*/
 
@@ -794,7 +686,7 @@ namespace Tiels
             }
             catch (Win32Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString() + $"\r\n{(string)(((MenuItem)sender).Tag)} can't be opened by default application(s)";//$"File {(string)(((Button)sender).Tag)} can't be opened by default application(s).\r\nIf this issue appears too often, please add issue to github.";
@@ -802,7 +694,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ShowDialog();
@@ -829,7 +721,7 @@ namespace Tiels
             }
             catch (Win32Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ExceptionString = ex.ToString()+$"\r\n{(string)(((Button)sender).Tag)} can't be opened by default application(s)";
@@ -837,7 +729,7 @@ namespace Tiels
             }
             catch (Exception ex)
             {
-                File.AppendAllText(config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
+                ErrorHandler.Log(ex);
                 ErrorWindow ew = new ErrorWindow();
                 ew.ExceptionReason = ex;
                 ew.ShowDialog();
@@ -1098,6 +990,17 @@ namespace Tiels
         {
             MoveActionStop(this, null);
             ReleaseMouseCapture();
+        }
+
+        private void Border_Drop(object sender, DragEventArgs e)
+        {
+            foreach (string fileToCopy_path in ((string[])e.Data.GetData(DataFormats.FileDrop)))
+            {
+                //ErrorHandler.Info(path + "\\" + name + " : " + fileToCopy_path);
+                File.Copy(fileToCopy_path, path + "\\" + name + "\\" + System.IO.Path.GetFileName(fileToCopy_path));
+            }
+            //Application.Current.Windows.OfType<MainWindow>().FirstOrDefault().fu.UpdateEntries();
+            ReadElements(collumns,rows);
         }
     }
 }

@@ -15,5 +15,6 @@ namespace Tiels
     {
         public static string Version = "v0.5.4-alpha";
         public static Config INSTANCE;
+        public static string config_path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "Tiels";
     }
 }

@@ -24,7 +24,7 @@
                 <RowDefinition x:Name="trd" Height="28"></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock x:Name="loadinginfo" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Loading..." Foreground="White" FontSize="14" Visibility="Collapsed"/>
-            <Border BorderBrush="#FF1FA800" BorderThickness="0">
+            <Border BorderBrush="#FF1FA800" BorderThickness="0" Drop="Border_Drop" AllowDrop="True">
                 <ScrollViewer x:Name="ScrollFilesList" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="80" Margin="0,0,5,0" VerticalAlignment="Top">
                     <Border BorderBrush="Red" BorderThickness="0">
                         <Grid x:Name="FilesList" Height="80" ScrollViewer.CanContentScroll="True" VerticalAlignment="Top">

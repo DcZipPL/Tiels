@@ -77,9 +77,12 @@ namespace Tiels.Pages
                 if (item.IsSelected)
                 {
                     string itempath = item.Tag + "\\" + item.Content;
-                    string[] files = Directory.EnumerateFiles(itempath).ToArray();
-                    Directory.Move(itempath, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\" + item.Content);
-                    Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\");
+                    if (File.Exists(itempath))
+                    {
+                        string[] files = Directory.EnumerateFiles(itempath).ToArray();
+                        Directory.Move(itempath, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\" + item.Content);
+                        Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\");
+                    }
                     MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
                     foreach (var tile in mw.tilesw)
                     {
@@ -270,7 +273,7 @@ namespace Tiels.Pages
                 var latest = releases[0];
                 if (latest.TagName == App.Version)
                 {
-                    Console.WriteLine("No updates found.");
+                    ErrorHandler.Info("No updates found.");
                 }
                 else
                 {
@@ -279,7 +282,7 @@ namespace Tiels.Pages
                     Process.Start("https://github.com/DcZipPL/Tiels/releases");
                 }
                 Console.WriteLine(
-                    "The latest release is tagged at {0} and is named {1}",
+                    "[Debug] The latest release is tagged at {0} and is named {1}",
                     latest.TagName,
                     latest.Name);
             }

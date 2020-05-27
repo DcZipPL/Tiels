@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,5 +29,30 @@ namespace Tiels.Pages
         }
 
         private void Reconf(object sender, RoutedEventArgs e) => Util.Reconfigurate();
+
+        private void ClearCache(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\Cache"))
+            {
+                System.IO.DirectoryInfo dir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\Cache");
+                foreach (FileInfo file in dir.GetFiles())
+                {
+                    file.Delete();
+                }
+            }
+            Util.Reconfigurate(true);
+        }
+
+        private void Run_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Directory.Exists(@"C:\Users\DcZipPL\AppData\Local\Tiels\temp"))
+                Process.Start(@"C:\Users\DcZipPL\AppData\Local\Tiels\temp");
+        }
+
+        private void Config_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Directory.Exists(@"C:\Users\DcZipPL\AppData\Local\Tiels"))
+                Process.Start(@"C:\Users\DcZipPL\AppData\Local\Tiels");
+        }
     }
 }
