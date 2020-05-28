@@ -46,12 +46,12 @@ namespace Tiels
         public bool isHidded = false;
         public bool isEditMode = false;
 
+        public bool isFullyInitalized = false;
+
         public string lastFile = "";
         public FileInfo fi;
 
         private Point MousePos;
-
-        List<SoftFileData> filedata = new List<SoftFileData>();
 
         protected Dictionary<string, ChangedType> fileupdates = new Dictionary<string, ChangedType>();
 
@@ -297,11 +297,16 @@ namespace Tiels
                                         window.Height = (int)this.Height;
                                 }
                             }
-                            bool result = Config.SetConfig(config);
-                            if (result == false)
+                            if (isFullyInitalized)
                             {
-                                Util.Reconfigurate();
+                                bool result = Config.SetConfig(config);
+                                if (result == false)
+                                {
+                                    ErrorHandler.Error();
+                                }
                             }
+                            else
+                                isFullyInitalized = true;
                         }
                     }
                 }
@@ -342,7 +347,7 @@ namespace Tiels
                     bool result = Config.SetConfig(config);
                     if (result == false)
                     {
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
                     }
                 }
             }
@@ -394,7 +399,7 @@ namespace Tiels
                 int floor = (int)Math.Floor(this.Width / 120);
                 collumns = floor;
                 int floor1 = (int)Math.Floor(this.Height / 80);
-                ReadElements(floor, floor1);
+                _ = ReadElements(floor, floor1);
                 WatchFileUpdates();
             }
             catch (Exception ex)
@@ -412,19 +417,32 @@ namespace Tiels
             Util.SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, Util.SWP_NOSIZE | Util.SWP_NOMOVE | Util.SWP_NOACTIVATE);
         }
 
-        public async void ReadElements(int collumCount = 4, int rowCount = 1)
+        public async Task ReadElements(int collumCount = 4, int rowCount = 1)
         {
             try
             {
                 isLoading = true;
                 ConfigClass config = Config.GetConfig();
+                double tmp_height;
+                double tmp_max_height;
+
+                JsonWindow window = null;
+                foreach (var in_window in config.Windows)
+                {
+                    if (in_window.Name == name)
+                    {
+                        window = in_window;
+                    }
+                }
+                if (window.Hidden)
+                {
+                    isHidded = true;
+                    this.Height = 28;
+                }
 
                 FilesList.Visibility = Visibility.Hidden;
                 loadinginfo.Visibility = Visibility.Visible;
                 await Task.Delay(100);
-
-                //Clear data
-                filedata.Clear();
 
                 FilesList.Children.Clear();
                 FilesList.ColumnDefinitions.Clear();
@@ -438,8 +456,8 @@ namespace Tiels
                 };
                 FilesList.RowDefinitions.Add(mainrow);
                 FilesList.Height = 80;
-                this.MaxHeight = rowCount * 80 + 28;
-                this.Height = rowCount * 80 + 28;
+                tmp_max_height = rowCount * 80 + 28;
+                tmp_height = rowCount * 80 + 28;
 
                 //Creating file and directory with paths to icons
                 if (!Directory.Exists(App.config_path + "\\Cache"))
@@ -458,6 +476,8 @@ namespace Tiels
                     iconcache.Add(cache.Split('*')[0], cache.Split('*')[1]);
                 }
 
+                int skipframe = 0;
+
                 //Pseudo-random icon id
                 int ri = new Random().Next(0, 1000000);
 
@@ -467,10 +487,6 @@ namespace Tiels
                 for (int i = 0; i < elements.Length; i++)
                 {
                     //await Task.Delay(5);
-                    SoftFileData sfd = new SoftFileData();
-                    sfd.Name = elements[i];
-                    sfd.Size = (int)new System.IO.FileInfo(elements[i]).Length;
-                    filedata.Add(sfd);
 
                     string num = "";
 
@@ -527,7 +543,8 @@ namespace Tiels
 
                     SortGrid(collumCount, i, button, ref j, ref n, ref m);
                 }
-                #region Old
+                #region Old (Needs Refactor)
+                //TODO: REFACTOR THIS
                 if (directories.Length != 0)
                     for (int i = 0; i < directories.Length; i++)
                     {
@@ -570,44 +587,33 @@ namespace Tiels
                         SortGrid(collumCount, i, button, ref j, ref n, ref m);
                     }
                 #endregion
-                if (File.Exists(path + "\\" + name + "_fileupdate.json"))
-                    File.Delete(path + "\\" + name + "_fileupdate.json");
-
-                FileUpdateClass fileupdate = new FileUpdateClass
-                {
-                    Data = filedata.ToArray()
-                };
-                string json = JsonConvert.SerializeObject(fileupdate, Formatting.Indented);
-                File.WriteAllText(path + "\\" + name + "_fileupdate.json", json);
-                this.MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight / 1.025;
-                this.Height = rows * 80 + 28;
+                tmp_max_height = System.Windows.SystemParameters.PrimaryScreenHeight / 1.025;
+                tmp_height = rows * 80 + 28;
                 this.ScrollFilesList.Height += rows * 80;
-                foreach (var window in config.Windows)
+
+                id = window.Id;
+                if (window.Height > 0)
                 {
-                    if (window.Name == name)
-                    {
-                        id = window.Id;
-                        if (window.Height > 0)
-                        {
-                            //this.MaxHeight = window.CollapsedRows;
-                            this.Height = window.Height;
-                            this.ScrollFilesList.Height = window.Height;
-                        }
-                        if (window.Hidden)
-                        {
-                            this.isHidded = true;
-                            this.Height = 28;
-                            this.lastHeight = window.Height;
-                            this.hideBtn.Content = "";
-                            this.chromewindow.ResizeBorderThickness = new Thickness(0);
-                        }
-                    }
+                    //tmp_max_height = window.CollapsedRows;
+                    tmp_height = window.Height;
+                    this.ScrollFilesList.Height = window.Height;
                 }
-                if (this.Height >= System.Windows.SystemParameters.PrimaryScreenHeight - 20)
+                if (window.Hidden)
                 {
-                    this.Height = System.Windows.SystemParameters.PrimaryScreenHeight / 2;
+                    tmp_height = 28;
+                    this.lastHeight = window.Height;
+                    this.hideBtn.Content = "";
+                    this.chromewindow.ResizeBorderThickness = new Thickness(0);
+                }
+
+                if (tmp_height >= System.Windows.SystemParameters.PrimaryScreenHeight - 20)
+                {
+                    tmp_height = System.Windows.SystemParameters.PrimaryScreenHeight / 2;
                     this.ScrollFilesList.Height = System.Windows.SystemParameters.PrimaryScreenHeight / 2;
                 }
+
+                this.MaxHeight = tmp_max_height;
+                this.Height = tmp_height;
             }
             catch (FileNotFoundException fnfex)
             {
@@ -758,7 +764,7 @@ namespace Tiels
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -795,7 +801,7 @@ namespace Tiels
                     bool result = Config.SetConfig(config);
                     if (result == false)
                     {
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
                     }
                 }
             }
@@ -820,7 +826,7 @@ namespace Tiels
                     bool result = Config.SetConfig(config);
                     if (result == false)
                     {
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
                     }
                 }
             }
@@ -894,7 +900,7 @@ namespace Tiels
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -915,7 +921,7 @@ namespace Tiels
                 bool result = Config.SetConfig(config);
                 if (result == false)
                 {
-                    Util.Reconfigurate();
+                    ErrorHandler.Error();
                 }
             }
         }
@@ -938,7 +944,7 @@ namespace Tiels
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 

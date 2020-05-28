@@ -98,7 +98,7 @@ namespace Tiels.Pages
                 tilelist.Items.Remove(tmp_item);
         }
 
-        private void Reconf(object sender, RoutedEventArgs e) => Util.Reconfigurate();
+        private void Reconf(object sender, RoutedEventArgs e) => ErrorHandler.Error();
 
         private void SetNewColor(object sender, RoutedEventArgs e)
         {
@@ -114,7 +114,7 @@ namespace Tiels.Pages
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -127,7 +127,7 @@ namespace Tiels.Pages
             }
             else
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -168,7 +168,7 @@ namespace Tiels.Pages
                 bool result = Config.SetConfig(config);
                 if (result == false)
                 {
-                    Util.Reconfigurate();
+                    ErrorHandler.Error();
                 }
                 MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
                 foreach (TileWindow tile in mw.tilesw)
@@ -320,7 +320,7 @@ namespace Tiels.Pages
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -331,7 +331,7 @@ namespace Tiels.Pages
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -342,7 +342,7 @@ namespace Tiels.Pages
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
 
@@ -353,7 +353,7 @@ namespace Tiels.Pages
             bool result = Config.SetConfig(config);
             if (result == false)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
             }
         }
         #endregion

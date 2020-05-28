@@ -10,6 +10,6 @@
       Title="LoadingPage">
     <Grid>
         <Image x:Name="loadingGif" gif:ImageBehavior.AnimatedSource="/Assets/LoadingAnimation.gif" Width="64" Height="64"></Image>
-        <TextBlock Text="Loading / Generating Icons..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="0,115,0,0"/>
+        <TextBlock x:Name="PText" Text="Loading / Generating Icons..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="0,115,0,0"/>
     </Grid>
 </Page>

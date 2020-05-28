@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
+using Tiels.Pages;
 
 namespace Tiels
 {
@@ -29,6 +30,7 @@ namespace Tiels
         public string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"\\Tiles";
         public List<TileWindow> tilesw = new List<TileWindow>();
         public bool isLoading = true;
+        public LoadingPage loadingPage = new LoadingPage();
         private System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
 
         public FileUpdates fu = new FileUpdates();
@@ -90,7 +92,9 @@ namespace Tiels
                     this.Hide();
                 }
             }
-            main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
+            loadingPage.Rename("Loading Config...");
+            this.main.NavigationService.Navigate(loadingPage);
+            //main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/LoadingPage.xaml"));
             await Task.Delay(200);
 
             try
@@ -107,7 +111,7 @@ namespace Tiels
                         {
                             if (MessageBox.Show("Config version is too old.\r\nReconfiguration required!\r\nReconfiguration can delete current appearance settings.\r\nProceed?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                             {
-                                Util.Reconfigurate();
+                                ErrorHandler.Error();
                             }
                             else
                             {
@@ -117,7 +121,7 @@ namespace Tiels
                     }
                     catch (Exception ex)
                     {
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
                     }
                 }
 
@@ -142,6 +146,7 @@ namespace Tiels
                         {
                             if (window.Name == tiles[i])
                             {
+                                loadingPage.Rename("Reading data from " + window.Name + "...");
                                 //Tile exists?
                                 windowexist = true;
 
@@ -180,6 +185,7 @@ namespace Tiels
                         //If tile not exists create default values
                         if (!windowexist)
                         {
+                            loadingPage.Rename("Creating " + tiles[i] + "...");
                             JsonWindow jsonwindow = new JsonWindow();
                             jsonwindow.Name = tiles[i];
                             jsonwindow.Position = new WindowPosition { X = 0, Y = 0 };
@@ -195,9 +201,10 @@ namespace Tiels
                     bool result = Config.SetConfig(config);
                     if (result == false)
                     {
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
                     }
                 }
+                loadingPage.Rename("Loading...");
                 bool isTilesLoading = true;
                 while (isTilesLoading)
                 {

@@ -22,6 +22,11 @@ namespace Tiels.Classes
             File.AppendAllText(App.config_path + "\\Error.log", "\r\n[Error: " + DateTime.Now + "] " + ex.ToString());
         }
 
+        public static void Error()
+        {
+            Util.Reconfigurate();
+        }
+
         public static void Info(string msg)
         {
             Console.WriteLine("[Info] "+ msg);

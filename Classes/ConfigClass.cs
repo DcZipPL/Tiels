@@ -27,17 +27,6 @@ namespace Tiels
         public string Icon;
     }
 
-    public class FileUpdateClass
-    {
-        public SoftFileData[] Data;
-    }
-
-    public class SoftFileData
-    {
-        public string Name;
-        public int Size;
-    }
-
     public class JsonWindow
     {
         public int Id;
@@ -68,19 +57,19 @@ namespace Tiels
                     ConfigClass config = JsonConvert.DeserializeObject<ConfigClass>(json_out);
 
                     if (config == null)
-                        Util.Reconfigurate();
+                        ErrorHandler.Error();
 
                     return config;
                 }
                 else
                 {
-                    Util.Reconfigurate();
+                    ErrorHandler.Error();
                     return null;
                 }
             }
             catch (FileNotFoundException fex)
             {
-                Util.Reconfigurate();
+                ErrorHandler.Error();
                 return null;
             }
             catch (Exception ex)

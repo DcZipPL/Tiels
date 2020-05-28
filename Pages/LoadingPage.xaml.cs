@@ -24,5 +24,10 @@ namespace Tiels.Pages
         {
             InitializeComponent();
         }
+
+        public void Rename(string progress)
+        {
+            PText.Text = progress;
+        }
     }
 }
