@@ -61,6 +61,7 @@
                         </Path>
                         <CheckBox x:Name="ExperimentalFeaturesCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0" Content="Experimental Features" Checked="ExperimentalFeaturesCB_Checked" Unchecked="ExperimentalFeaturesCB_Unchecked" Padding="4,0,0,0" IsEnabled="False"/>
                         <CheckBox x:Name="EffectsCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,70,0,0" Content="Special Effects (Disabling this increase performance)" Checked="EffectsCB_Checked" Unchecked="EffectsCB_Unchecked" Padding="4,0,0,0"/>
+                        <CheckBox x:Name="BlurCB" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,90,0,0" Content="Background blur" Padding="4,0,0,0" IsChecked="True" IsEnabled="False"/>
                     </Grid>
                     <Grid x:Name="appearanceWindow" Visibility="Collapsed">
                         <Grid Margin="0,41,0,0">

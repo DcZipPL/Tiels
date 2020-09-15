@@ -378,7 +378,8 @@ namespace Tiels
                 exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
                 SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
 
-                Util.EnableBlur(this);
+                if (config.Blur == true)
+                    Util.EnableBlur(this);
                 SetBottom(this);
 
                 MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.Color));
