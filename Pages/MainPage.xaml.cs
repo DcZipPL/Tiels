@@ -104,7 +104,8 @@ namespace Tiels.Pages
         {
             ConfigClass config = Config.GetConfig();
 
-            if (colorTile.SelectedColor != null)
+            // TODO: colorTile must be replaced
+            /*if (colorTile.SelectedColor != null)
             {
                 System.Windows.Media.Color color = (System.Windows.Media.Color)colorTile.SelectedColor;
                 System.Drawing.Color newColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
@@ -115,11 +116,13 @@ namespace Tiels.Pages
             if (result == false)
             {
                 ErrorHandler.Error();
-            }
+            }*/
         }
 
-        private void ColorTile_Loaded(object sender, RoutedEventArgs e)
+        // TODO: colorTile must be replaced
+        /*private void ColorTile_Loaded(object sender, RoutedEventArgs e)
         {
+            // TODO: colorTile must be replaced
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\config.json"))
             {
                 ConfigClass config = Config.GetConfig();
@@ -129,11 +132,11 @@ namespace Tiels.Pages
             {
                 ErrorHandler.Error();
             }
-        }
+        }*/
 
         private void BackHome(object sender, RoutedEventArgs e)
         {
-            SetNewColor(null, null);
+            //SetNewColor(null, null);
             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
             mw.Visibility = Visibility.Hidden;
             mw.main.Navigate(new Uri("pack://application:,,,/Tiels;component/Pages/MainPage.xaml"));
@@ -150,14 +153,15 @@ namespace Tiels.Pages
             mw.Visibility = Visibility.Visible;
         }
 
-        private void ColorTile_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        // TODO: colorTile must be replaced
+        /*private void ColorTile_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
             foreach (TileWindow tile in mw.tilesw)
             {
                 tile.MainGrid.Background = new SolidColorBrush((System.Windows.Media.Color)colorTile.SelectedColor);
             }
-        }
+        }*/
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
