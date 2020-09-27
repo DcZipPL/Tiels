@@ -30,16 +30,6 @@ namespace TielsUILib
 
         private void mainNav_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
         {
-            /*ContentDialog d = new ContentDialog()
-            {
-                Title = "New output!",
-                XamlRoot = ((Microsoft.UI.Xaml.Controls.NavigationViewItem)args.SelectedItem).XamlRoot,
-                Content = "Selected: " + (string)((Microsoft.UI.Xaml.Controls.NavigationViewItem)args.SelectedItem).Tag,
-                CloseButtonText = "Continue with debuging"
-            };*/
-
-            //var result = await d.ShowAsync();
-
             string tag = (string)((Microsoft.UI.Xaml.Controls.NavigationViewItem)args.SelectedItem).Tag;
             Type page = null;
             if (tag == "Manage")

@@ -125,6 +125,9 @@
     <Compile Include="AppearancePage.xaml.cs">
       <DependentUpon>AppearancePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConfigClass.cs" />
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="MainControl.xaml.cs">
@@ -150,6 +153,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AppearancePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

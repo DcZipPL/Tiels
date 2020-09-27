@@ -215,7 +215,7 @@ namespace Tiels.Pages
             shortcut.Save();
         }
 
-        private void ShowGeneral(object sender, RoutedEventArgs e)
+        /*private void ShowGeneral(object sender, RoutedEventArgs e)
         {
             HideAllPages();
             GeneralBtn.IsChecked = true;
@@ -265,7 +265,7 @@ namespace Tiels.Pages
             generalWindow.Visibility = Visibility.Collapsed;
             appearanceWindow.Visibility = Visibility.Collapsed;
             tilesWindow.Visibility = Visibility.Collapsed;
-        }
+        }*/
 
         private async void ShowUpdates(object sender, RoutedEventArgs e)
         {
