@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
 using Tiels.Pages;
+using System.Threading;
 
 namespace Tiels
 {
@@ -61,6 +62,8 @@ namespace Tiels
             }
             else
             {
+                //Thread mainThread = new Thread(new ThreadStart(Load));
+                //mainThread.Start(); // Error
                 Load();
             }
         }
@@ -195,13 +198,15 @@ namespace Tiels
                             jsonwindow.Id = i;
                             config.Windows.Add(jsonwindow);
                         }
-                        tile.Show();
-                    }
-                    //If Config File not Exists
-                    bool result = Config.SetConfig(config);
-                    if (result == false)
-                    {
-                        ErrorHandler.Error();
+
+                        //If Config File not Exists
+                        bool result = Config.SetConfig(config);
+                        if (result == false)
+                        {
+                            ErrorHandler.Error();
+                        }
+
+                        _ = asyncShowTile(tile);
                     }
                 }
                 loadingPage.Rename("Loading...");
@@ -231,6 +236,11 @@ namespace Tiels
                 loadingMessage.Text = "Tiels Error!";
                 return;
             }
+        }
+
+        private async Task asyncShowTile(TileWindow tile)
+        {
+            tile.Show();
         }
 
         public void ConfigureFirstRun()

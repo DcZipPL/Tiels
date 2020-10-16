@@ -10,12 +10,12 @@
         <Grid Margin="15,15,15,15" HorizontalAlignment="Stretch">
             <TextBlock Text="Select Tiles"/>
             <ListView
-                x:Name="tileList"
+                x:Name="tileList" x:FieldModifier="Public"
                 BorderThickness="1"
                 BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                 HorizontalAlignment="Stretch" Margin="0,25,0,0" HorizontalContentAlignment="Stretch">
                 <ListViewItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0" Height="40">
-                    <Button HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="40" Click="Button_Click">
+                    <Button x:Name="createTileBtn" x:FieldModifier="Public" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="40">
                         <Grid>
                             <TextBlock Text="Create new Tile" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                             <Grid HorizontalAlignment="Right" Margin="0,0,15,0">

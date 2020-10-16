@@ -8,10 +8,10 @@
     mc:Ignorable="d">
     <Grid>
         <StackPanel Margin="15,15,0,0">
-            <ToggleSwitch Header="Autostart" Margin="0,0,0,5"/>
-            <ToggleSwitch Header="Hide this window after application startup" Margin="0,0,0,5"/>
-            <ToggleSwitch Header="Experimental Features" Margin="0,0,0,5" IsEnabled="False"/>
-            <ToggleSwitch Header="Special Effects (Disabling this increase performance)" Margin="0,0,0,5"/>
+            <ToggleSwitch x:Name="autostart_tg" x:FieldModifier="public" Header="Autostart" Margin="0,0,0,5"/>
+            <ToggleSwitch x:Name="hidestart_tg" x:FieldModifier="public" Header="Hide this window after application startup" Margin="0,0,0,5"/>
+            <ToggleSwitch x:Name="experimental_tg" x:FieldModifier="public" Header="Experimental Features" Margin="0,0,0,5" IsEnabled="False"/>
+            <ToggleSwitch x:Name="effects_tg" x:FieldModifier="public" Header="Special Effects (Disabling this increase performance)" Margin="0,0,0,5"/>
         </StackPanel>
     </Grid>
 </Page>

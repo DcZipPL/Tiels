@@ -500,49 +500,53 @@ namespace Tiels
                         num = iconcache[elements[i]];
                     }
 
-                    //Util.ResizeImage(Util.BitmapFromSource((BitmapSource)bitmap), (int)bitmap.Width <= 128 ? (int)bitmap.Width : ((int)bitmap.Width/10), (int)bitmap.Height <= 128 ? (int)bitmap.Height : (int)bitmap.Height/10);
-                    Image image = new Image
+                    if (File.GetAttributes(elements[i]) != FileAttributes.Hidden)
                     {
-                        Width = 44,
-                        Height = 44,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(0, 1, 0, 19),
-                        Source = Util.BitmapFromUri(new Uri(App.config_path + num))
-                        //Source = elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg") ? Util.ImageSourceFromBitmap(bitmap2) : Util.BitmapFromUri(new Uri(path + num)) // ICON
-                    };
-                    string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
-                    TextBlock filename = new TextBlock
-                    {
-                        VerticalAlignment = VerticalAlignment.Bottom,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
-                        Text = filetext.Length > 14 ? filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..." : filetext
-                    };
+                        // TODO: Look at headers instead of file extension
+                        //Util.ResizeImage(Util.BitmapFromSource((BitmapSource)bitmap), (int)bitmap.Width <= 128 ? (int)bitmap.Width : ((int)bitmap.Width/10), (int)bitmap.Height <= 128 ? (int)bitmap.Height : (int)bitmap.Height/10);
+                        Image image = new Image
+                        {
+                            Width = 44,
+                            Height = 44,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Margin = new Thickness(0, 1, 0, 19),
+                            Source = Util.BitmapFromUri(new Uri(App.config_path + num))
+                            //Source = elements[i].ToLower().Contains(".png") || elements[i].ToLower().Contains(".jpg") || elements[i].ToLower().Contains(".jpeg") ? Util.ImageSourceFromBitmap(bitmap2) : Util.BitmapFromUri(new Uri(path + num)) // ICON
+                        };
+                        string filetext = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", "").Replace(".url", "");
+                        TextBlock filename = new TextBlock
+                        {
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Foreground = config.Theme == 0 ? Brushes.Black : Brushes.White,
+                            Text = filetext.Length > 14 ? filetext.Remove(filetext.Length - (filetext.Length - 14)) + "..." : filetext
+                        };
 
-                    Grid button_content = new Grid();
-                    button_content.Children.Add(image);
-                    button_content.Children.Add(filename);
+                        Grid button_content = new Grid();
+                        button_content.Children.Add(image);
+                        button_content.Children.Add(filename);
 
-                    Button button = new Button
-                    {
-                        Content = button_content,
-                        Background = Brushes.Transparent,
-                        BorderBrush = Brushes.Transparent,
-                        Name = "elementButton_" + i,
-                        Tag = elements[i],
-                        ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
-                    };
-                    button.Click += ElementClicked;
-                    button.MouseRightButtonUp += (sender, e) =>
-                    {
-                        ShellContextMenu menu = new ShellContextMenu();
-                        FileInfo[] arrFI = new FileInfo[1];
-                        arrFI[0] = new FileInfo((string)((Button)sender).Tag);
+                        Button button = new Button
+                        {
+                            Content = button_content,
+                            Background = Brushes.Transparent,
+                            BorderBrush = Brushes.Transparent,
+                            Name = "elementButton_" + i,
+                            Tag = elements[i],
+                            ToolTip = elements[i].Replace(path + "\\" + name + "\\", "").Replace(".lnk", " - Shortcut").Replace(".url", " - Internet Shortcut")
+                        };
+                        button.Click += ElementClicked;
+                        button.MouseRightButtonUp += (sender, e) =>
+                        {
+                            ShellContextMenu menu = new ShellContextMenu();
+                            FileInfo[] arrFI = new FileInfo[1];
+                            arrFI[0] = new FileInfo((string)((Button)sender).Tag);
 
-                        menu.ShowContextMenu(arrFI, System.Windows.Forms.Control.MousePosition);
-                    };
+                            menu.ShowContextMenu(arrFI, System.Windows.Forms.Control.MousePosition);
+                        };
 
-                    SortGrid(collumCount, i, button, ref j, ref n, ref m);
+                        SortGrid(collumCount, i, button, ref j, ref n, ref m);
+                    }
                 }
                 #region Old (Needs Refactor)
                 //TODO: REFACTOR THIS
@@ -595,7 +599,6 @@ namespace Tiels
                 id = window.Id;
                 if (window.Height > 0)
                 {
-                    //tmp_max_height = window.CollapsedRows;
                     tmp_height = window.Height;
                     this.ScrollFilesList.Height = window.Height;
                 }
@@ -627,11 +630,6 @@ namespace Tiels
                     throw fnfex;
 
             }
-            /*catch (Exception ex)
-            {
-                ErrorHandler.Log(ex);
-                throw ex;
-            }*/
 
             loadinginfo.Visibility = Visibility.Collapsed;
             FilesList.Visibility = Visibility.Visible;
@@ -835,7 +833,7 @@ namespace Tiels
 
         private void OpenDirectoryBtn_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(path+"\\"+name);
+            Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe",path +"\\"+name);
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)

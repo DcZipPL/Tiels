@@ -16,6 +16,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using TielsUILib;
+using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace Tiels.Pages
 {
@@ -37,24 +40,154 @@ namespace Tiels.Pages
             AutostartCB.IsChecked = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
             HideafterstartCB.IsChecked = config.HideAfterStart;
             EffectsCB.IsChecked = config.SpecialEffects;
+
+            TielsUILib.MainControl control = ((TielsUILib.MainControl)((Microsoft.Toolkit.Wpf.UI.XamlHost.WindowsXamlHost)host).Child);
+            SettingsPage settings = control.GetSettingsPage();
+
+            settings.autostart_tg.IsOn = File.Exists(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+            settings.autostart_tg.Toggled += (sender, args) =>
+            {
+                if (settings.autostart_tg.IsOn)
+                {
+                    CreateShortcut(System.Reflection.Assembly.GetEntryAssembly().Location);
+                }
+                else
+                {
+                    File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+                }
+            };
+
+            ManagePage manage = control.GetManagePage();
+
+            MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            foreach (var tile in mw.tilesw)
+            {
+                manage.AddTileToList(tile.name, tile.path);
+            }
+
+            // Add create tile event on "createTileBtn" button click
+            manage.createTileBtn.Click += (sender, e) =>
+            {
+                string tileName = "tt";
+                //"/[<>/\\*:\?\|]/g
+                if (!Regex.IsMatch(tileName, @"\<|\>|\\|\/|\*|\?|\||:"))
+                {
+                    Directory.CreateDirectory(path + "\\" + tileName);
+                    string dir = path + "\\" + tileName + "\\desktop.ini";
+                    File.WriteAllText(dir,
+                        "[.ShellClassInfo]\r\n" +
+                        "IconResource=" + Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico,0\r\n" +
+                        "[ViewState]\r\n" +
+                        "Mode =\r\n" +
+                        "Vid =\r\n" +
+                        "FolderType = Generic"
+                        );
+
+                    File.SetAttributes(path + "\\" + tileName + "\\desktop.ini", FileAttributes.Hidden | FileAttributes.Archive | FileAttributes.System | FileAttributes.ReadOnly);
+                    //RefreshIconCache();
+
+                    MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                    foreach (TileWindow tile in mw.tilesw)
+                    {
+                        tile.Close();
+                    }
+                    mw.tilesw.Clear();
+                    tilelist.Items.Clear();
+                    mw.Load();
+                }
+            };
+
+            foreach (object item in manage.tileList.Items)
+            {
+                if (item is ListViewItem)
+                {
+                    // -> button
+                    ((ListViewItem)item).Selected += (sender, e) =>
+                    {
+                        ListViewItem tmp_item = null;
+                        foreach (ListViewItem item in tilelist.Items)
+                        {
+                            if (item.IsSelected)
+                            {
+                                string itempath = item.Tag + "\\" + item.Content;
+                                if (File.Exists(itempath))
+                                {
+                                    string[] files = Directory.EnumerateFiles(itempath).ToArray();
+                                    Directory.Move(itempath, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\" + item.Content);
+                                    Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\");
+                                }
+                                MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                                foreach (var tile in mw.tilesw)
+                                {
+                                    if (tile.name == (string)item.Content)
+                                    {
+                                        tile.Close();
+                                    }
+                                }
+                                tmp_item = item;
+                            }
+                        }
+                        if (tmp_item != null)
+                            tilelist.Items.Remove(tmp_item);
+                    };
+                }
+            }
+        }
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern IntPtr SendMessageTimeout(
+            int windowHandle,
+            int Msg,
+            int wParam,
+            String lParam,
+            SendMessageTimeoutFlags flags,
+            int timeout,
+            out int result);
+        [Flags]
+        enum SendMessageTimeoutFlags : uint
+        {
+            SMTO_NORMAL = 0x0,
+            SMTO_BLOCK = 0x1,
+            SMTO_ABORTIFHUNG = 0x2,
+            SMTO_NOTIMEOUTIFNOTHUNG = 0x8
+        }
+        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern void SHChangeNotify(
+    int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
+        static void RefreshIconCache()
+        {
+
+            // get the the original Shell Icon Size registry string value
+            RegistryKey k = Registry.CurrentUser.OpenSubKey("Control Panel").OpenSubKey("Desktop").OpenSubKey("WindowMetrics", true);
+            Object OriginalIconSize = k.GetValue("Shell Icon Size");
+
+            // set the Shell Icon Size registry string value
+            k.SetValue("Shell Icon Size", (Convert.ToInt32(OriginalIconSize) + 1).ToString());
+            k.Flush(); k.Close();
+
+            // broadcast WM_SETTINGCHANGE to all window handles
+            int res = 0;
+            SendMessageTimeout(0xffff, 0x001A, 0, "", SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, 5000, out res);
+            //SendMessageTimeout(HWD_BROADCAST,WM_SETTINGCHANGE,0,"",SMTO_ABORTIFHUNG,5 seconds, return result to res)
+
+            // set the Shell Icon Size registry string value to original value
+            k = Registry.CurrentUser.OpenSubKey("Control Panel").OpenSubKey("Desktop").OpenSubKey("WindowMetrics", true);
+            k.SetValue("Shell Icon Size", OriginalIconSize);
+            k.Flush(); k.Close();
+
+            SendMessageTimeout(0xffff, 0x001A, 0, "", SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, 5000, out res);
+
+        }
+
+        private void host_ChildChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void CreateNewTile(object sender, RoutedEventArgs e)
         {
-            //"/[<>/\\*:\?\|]/g
-            if (!Regex.IsMatch(newTileName.Text, @"\<|\>|\\|\/|\*|\?|\||:"))
-            {
-                Directory.CreateDirectory(path + "\\" + newTileName.Text);
-                File.WriteAllText(path + "\\"+ newTileName.Text + "\\desktop.ini", "[.ShellClassInfo]\r\nIconResource=" + Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\directoryicon.ico,0");
-                MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-                foreach (TileWindow tile in mw.tilesw)
-                {
-                    tile.Close();
-                }
-                mw.tilesw.Clear();
-                tilelist.Items.Clear();
-                mw.Load();
-            }
+
         }
 
         private void Tilelist_Loaded(object sender, RoutedEventArgs e)
@@ -71,31 +204,7 @@ namespace Tiels.Pages
 
         private void DeleteTile(object sender, RoutedEventArgs e)
         {
-            ListBoxItem tmp_item = null;
-            foreach (ListBoxItem item in tilelist.Items)
-            {
-                if (item.IsSelected)
-                {
-                    string itempath = item.Tag + "\\" + item.Content;
-                    if (File.Exists(itempath))
-                    {
-                        string[] files = Directory.EnumerateFiles(itempath).ToArray();
-                        Directory.Move(itempath, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\" + item.Content);
-                        Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Tiels\\temp\\");
-                    }
-                    MainWindow mw = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-                    foreach (var tile in mw.tilesw)
-                    {
-                        if (tile.name == (string)item.Content)
-                        {
-                            tile.Close();
-                        }
-                    }
-                    tmp_item = item;
-                }
-            }
-            if (tmp_item != null)
-                tilelist.Items.Remove(tmp_item);
+
         }
 
         private void Reconf(object sender, RoutedEventArgs e) => ErrorHandler.Error();
@@ -299,12 +408,12 @@ namespace Tiels.Pages
         #region Checkboxes
         private void AutostartCB_Checked(object sender, RoutedEventArgs e)
         {
-            CreateShortcut(System.Reflection.Assembly.GetEntryAssembly().Location);
+            
         }
 
         private void AutostartCB_Unchecked(object sender, RoutedEventArgs e)
         {
-            File.Delete(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Tiels.lnk"));
+            
         }
 
         private void ExperimentalFeaturesCB_Checked(object sender, RoutedEventArgs e)

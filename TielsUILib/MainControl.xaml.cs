@@ -19,9 +19,40 @@ namespace TielsUILib
 {
     public sealed partial class MainControl : UserControl
     {
+        private ManagePage managePage = new ManagePage();
+        private AppearancePage appearancePage = new AppearancePage();
+        private SettingsPage settingsPage = new SettingsPage();
+
         public string XamlIslandMessage { get; set; }
 
         public string InfoText { get; set; }
+
+        public ManagePage GetManagePage()
+        {
+            return managePage;
+        }
+
+        public AppearancePage GetAppearancePage()
+        {
+            return appearancePage;
+        }
+
+        public SettingsPage GetSettingsPage()
+        {
+            return settingsPage;
+        }
+
+        public Page getCurrentPage()
+        {
+            if (mainNav.SelectedItem == null) return null;
+            string tag = (string)((Microsoft.UI.Xaml.Controls.NavigationViewItem)mainNav.SelectedItem).Tag;
+            if (tag == "Manage")
+                return managePage;
+            else if (tag == "Appearance")
+                return appearancePage;
+            else
+                return settingsPage;
+        }
 
         public MainControl()
         {
@@ -31,14 +62,14 @@ namespace TielsUILib
         private void mainNav_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
         {
             string tag = (string)((Microsoft.UI.Xaml.Controls.NavigationViewItem)args.SelectedItem).Tag;
-            Type page = null;
+            Page page;
             if (tag == "Manage")
-                page = new ManagePage().GetType();
+                page = managePage;
             else if (tag == "Appearance")
-                page = new AppearancePage().GetType();
+                page = appearancePage;
             else
-                page = new AppearancePage().GetType();
-            contentFrame.Navigate(page);
+                page = settingsPage;
+            contentFrame.Content = page; // TODO: use .Navigate()
         }
     }
 }

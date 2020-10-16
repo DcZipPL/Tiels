@@ -11,7 +11,7 @@
     d:DesignWidth="800">
 
     <Grid>
-        <muxc:NavigationView x:Name="mainNav" SelectionChanged="mainNav_SelectionChanged">
+        <muxc:NavigationView x:Name="mainNav" x:FieldModifier="public" SelectionChanged="mainNav_SelectionChanged">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Icon="Manage" Content="Manage" Tag="Manage" />
                 <muxc:NavigationViewItem Content="Appearance" Tag="Appearance">
@@ -20,7 +20,7 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
-            <Frame x:Name="contentFrame"/>
+            <Frame x:Name="contentFrame" x:FieldModifier="public"/>
         </muxc:NavigationView>
     </Grid>
 </UserControl>
