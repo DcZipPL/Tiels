@@ -5,7 +5,11 @@ With Tiels you can organize your desktop icons with tiles.
 ## Alpha version is available
 Alpha version of Tiels can be bugged.
 
-Requirements:
+Requirements after 0.8v:
+- Windows 10, Version > 1903
+- .NET Core 3.1
+
+Requirements before 0.8v:
 - Windows 10, Version > 1806
 - .NET Framework 4.8
 
