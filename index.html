@@ -1,350 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script defer src="https://dczippl.tk/fontawesome-web/js/all.js"></script> <!--load all styles -->
-    <meta charset='utf-8'>
-    <title>Tiels</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <meta name="og:description" content="Free and Open Source desktop organization program."/>
+	<script defer src="https://dczippl.tk/fontawesome-web/js/all.js"></script> <!--load all styles -->
+	<meta charset='utf-8'>
+	<title>Tiels</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<meta name="og:description" content="Free and Open Source desktop organization program."/>
 	<meta name="og:title" content="<datitle>Tiels</datitle>"/>
-    <meta name="og:site_name" content="dczippl.github.io"/>
-    <style>
-        @charset "utf-8";
-        /* CSS Document */
+	<meta name="og:site_name" content="dczippl.github.io"/>
+	<link rel="stylesheet" href="./TielsSource/default_styles.css">
+	<link rel="icon" type="image/png" href="./TielsSource/icon.png">
+	<style>
+		.gradiented {
+			/* The image used */
+			background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+			background-size: 400% 400%;
+			animation: gradient 15s ease infinite;
 
-        body
-        {
-            font-family: Segoe, 'Segoe UI', 'DejaVu Sans', 'Trebuchet MS', Verdana, 'sans-serif';
-            margin: 0px;
-        }
+			/* Set a specific height */
+			min-height: 200px;
 
-        .selectedbtn
-        {
-            border-bottom:solid 2px #007ac1 !important;
-        }
+			/* Create the parallax scrolling effect /
+			background-attachment: fixed;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;*/
+		}
 
-        .btn-group
-        {
-            margin-left:calc(50% - 230px);
-        }
+		@keyframes gradient {
+			0% {
+				background-position: 0% 50%;
+			}
+			50% {
+				background-position: 100% 50%;
+			}
+			100% {
+				background-position: 0% 50%;
+			}
+		}
 
-        .btn-group .button {
-            background-color: #FFFFFF00; /* Green */
-            border: none;
-            color: #000000;
-            padding: 15px 28px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 15px;
-            cursor: pointer;
-            border-bottom:solid 0px #007ac1;
-        }
+		.download-button {
+			background-color: transparent;
+			border: 2px solid white;
+			color: white;
+			padding: 16px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			transition-duration: 0.4s;
+			cursor: pointer;
+		}
 
-        .btn-group .button:hover {
-            background-color: #EEEEEE;
-            border-bottom:solid 2px #03a9f4;
-            color: #444444;
-        }
-
-        .btn-group .button:active {
-            background-color: #DDDDDD;
-            border-bottom:solid 2px #67daff;
-            color: #444444;
-        }
-
-        .downloadbutton {
-        background-color: white;
-        border: none;
-        color: black;
-        padding: 16px 32px;
-        text-align: center;
-        font-size: 16px;
-        margin: 4px 2px;
-        opacity: 0.6;
-        transition: 0.3s;
-        display: inline-block;
-        text-decoration: none;
-        cursor: pointer;
-        border-radius: 24px;
-        }
-
-        .downloadbutton:hover {opacity: 1}
-
-        .ppanel
-        {
-            /*overflow:hidden;*/
-            display: block;
-            /*margin-left: auto;
-            margin-right: auto;*/
-            /*border: 1px dotted #FF0004;*/
-            /*height: 320px;*/
-            width: 1080px;
-        }
-
-        .centerimg
-        {
-            /*overflow:hidden;*/
-            display: block;
-            /*margin-left: auto;
-            margin-right: auto;*/
-            width: 525px;
-            height: 300px;
-            /*border: 1px dotted #FF0004;*/
-        }
-
-        .bluebackground
-        {
-            background: #0059ff; /* For browsers that do not support gradients */
-            background: linear-gradient(to bottom right, #00b6ff, #0059ff); /* Standard syntax (must be last) */
-            background-size: 100vw 100vh;
-        }
-
-        /*Effects*/
-        .shadow
-        {
-            background: linear-gradient(lightgrey, transparent);
-        }
-
-        .shadowin
-        {
-            background: linear-gradient(transparent, lightgrey);
-        }
-        .shadowleft
-        {
-            background: linear-gradient(to right, transparent, lightgrey);
-        }
-        .hidden
-        {
-            visibility: hidden;
-        }
-
-        .collapsed
-        {
-            display: none;
-        }
-
-        .blur
-        {
-            filter: blur(5px);
-        }
-
-        .round
-        {
-            border-radius: 35px;
-        }
-
-        .lightround
-        {
-            border-radius: 25px;
-        }
-
-        .usefont
-        {
-            font-family: Segoe, 'Segoe UI', 'DejaVu Sans', 'Trebuchet MS', Verdana, 'sans-serif';
-        }
-
-        /*Navbar*/
-        .navbutton
-        {
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            min-width: 100px;
-            min-height: 40px;
-            color: black;
-        }
-
-        .navaction
-        {
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            min-height: 40px;
-            color: black;
-        }
-
-        .navaction:link
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navaction:visited
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navaction:hover
-        {
-            cursor: pointer;
-            color: grey;
-            text-decoration: none;
-        }
-
-        .navaction-original
-        {
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            color: black;
-        }
-
-        .navaction-original:link
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navaction-original:visited
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navaction-original:hover
-        {
-            cursor: pointer;
-            color: grey;
-            text-decoration: none;
-        }
-
-        .navbutton:link
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navbutton:visited
-        {
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-        }
-
-        .navbutton:hover
-        {
-            cursor: pointer;
-            color: grey;
-            text-decoration: none;
-        }
-
-        .navbutton:active
-        {
-            color: lightgrey;
-        }
-
-        /*Other*/
-        /*the container must be positioned relative:*/
-        .custom-select {
-        position: relative;
-        font-family: Arial;
-        }
-        .custom-select select {
-        display: none; /*hide original SELECT element:*/
-        }
-        .select-selected {
-        background-color: white;
-        }
-        /*style the arrow inside the select element:*/
-        .select-selected:after {
-        position: absolute;
-        content: "";
-        top: 14px;
-        right: 10px;
-        width: 0;
-        height: 0;
-        border: 6px solid transparent;
-        border-color: #000 transparent transparent transparent;
-        }
-        /*point the arrow upwards when the select box is open (active):*/
-        .select-selected.select-arrow-active:after {
-        border-color: transparent transparent #000 transparent;
-        top: 7px;
-        }
-        /*style the items (options), including the selected item:*/
-        .select-items div,.select-selected {
-        color: #000000;
-        padding: 8px 16px;
-        border: 1px solid transparent;
-        /*border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;*/
-        cursor: pointer;
-        user-select: none;
-        }
-        /*style items (options):*/
-        .select-items {
-        position: absolute;
-        background-color: #EDEDED;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 99;
-        }
-        /*hide the items when the select box is closed:*/
-        .select-hide {
-        display: none;
-        }
-        .select-items div:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        }
-            
-        .overlay
-        {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0,0,0,0.1);
-        z-index: 2;
-        }
-        
-        .parallax {
-        /* The image used */
-        background-image: url("Paralax.jpg");
-
-        /* Set a specific height */
-        min-height: 800px; 
-
-        /* Create the parallax scrolling effect */
-        background-attachment: fixed;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        }
-        .caption{
-            position: absolute;
-            left: 0;
-            top: 33%;
-            width: 100%;
-            text-align: center;
-            color: #fff;
-        }
-        nav.row.header{
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-        }
-    </style>
+		.download-button:hover {
+			background-color: white;
+			color: black;
+		}
+	</style>
 </head>
 <body>
-    <div class="box">
+	<div class="box">
 		<div class="row header">
 			<nav class="row header">
 				<div style="background-color: white; height: 50px;border-bottom:solid 2px #CCC; box-sizing: border-box;">
 					<div class="btn-group">
-						<button class="button selectedbtn" onClick="window.location='#about'">Tiels</button><button class="button" onClick="window.location='#download'">Download</button><button class="button" onClick="window.location='#compatibility'">Compatibility</button>
+						<button class="button selectedbtn" onClick="window.location='#about'">Tiels</button>
+						<button class="button" onClick="window.location='#download'">Download</button>
 						<button class="button" onClick="window.location='https://github.com/DcZipPL'" style="float: right; font-size: 22px; padding-top: 11px; padding-bottom: 11px;"><span style="font-size: 16px">Github</span>  <i class="fab fa-github"></i></button>
 					</div>
-					<img src="logo.png" style="top:0px; left:10px; position: absolute; height: 48px;"/>
+					<img src="./TielsSource/icon.png" style="top:5px; left:10px; position: absolute; height: 40px;"/>
 					<p style="clear:both"><p>
 					<!--<button onClick="ChangeSettingState()" class="navaction" style="width: 40px; float: right;"><i class="fas fa-cog"></i></button>-->
 				</div>
@@ -352,25 +77,85 @@
 		</div>
 		<div class="row content" style="height: calc(100vh - 40px);">
 			<div id="output">
-                <div style="text-align: center;">
-                    <!--In Web-->
-                    <div class="parallax">
-                        <h1 class="caption">Free and Open Source desktop organization program</h1>
-                    </div>
-                    <div style="height:1000px;background-color:#252830;color:white;">
-                        Scroll Up and Down this page to see the parallax scrolling effect.
-                        This div is just here to enable scrolling.
-                        Tip: Try to remove the background-attachment property to remove the scrolling effect.
-                        </div>
-                    <i class="fas fa-user"></i> <!-- uses solid style -->
-                    <i class="far fa-user"></i> <!-- uses regular style -->
-                    <i class="fal fa-user"></i> <!-- uses light style -->
-                    <!--brand icon-->
-                    <i class="fab fa-github-square"></i> <!-- uses brands style -->
+				<div style="text-align: center;">
+					<!--In Web-->
+					<div class="gradiented">
+						<h1 class="caption">Free and Open Source desktop organization program</h1>
+					</div>
+					<div style="background-color:#252830;color:white;">
+						<!-- Feature item -->
+						<div class="feature-card">
+							<!-- Image -->
+							<img src="./TielsSource/application_img_roll.png" class="feature-image">
+
+							<!-- Right side -->
+							<div style="
+								/* Take the remaining width */
+								flex: 1; text-align: left;
+							">
+								<b>Orgianize your desktop.</b><br>
+								<p>With Tiels you can change your ugly and uncatorized desktop. Icons in Tiels can be left clicked, right clicked and sorted*.
+								<br> Roll and unroll tiels whenever you want.</p>* "Sort" feature not implemented yet!
+							</div>
+						</div>
+						<div class="feature-card">
+							<!-- Image -->
+							<img src="./TielsSource/application_img_customize.png" class="feature-image">
+
+							<!-- Right side -->
+							<div style="
+								/* Take the remaining width */
+								flex: 1; text-align: left;
+							">
+								<b>Customize Tiels!</b><br>
+								<p>You can change background colors of your tiels, toggle blur and change text color. In feature updates you can set image as background.</p>
+							</div>
+						</div>
+					</div>
+					<div style="background-color:#1d1f24;color:white;padding: 16px 0px 64px 0px;">
+						<div>
+							<h2>Downloads:</h2>
+							Only anavialble for Windows 10 64bit <i class="fab fa-windows"></i>
+						</div>
+						<button class="download-button" onClick="window.location='https://github.com/DcZipPL/Tiels/releases'"><i class="far fa-arrow-alt-to-bottom"></i> Download from GitHub</button>
+						<button class="download-button" onClick="window.location='https://github.com/DcZipPL/Tiels/releases/download/v0.6.0-beta/Tiels_0-6-0.zip'"><i class="far fa-file-archive"></i> Direct Download: <autogen>0.6.0v</autogen></button>
+					</div>
 					<!--In Web-->
 				</div>
 			</div>
 		</div>
 	</div>
+	<div id="cookieMessage" style="
+		background-color:#17181b;
+		color:white;
+		
+		/* Banner is displayed at the bottom */
+		bottom: 0;
+		left: 0;
+		position: fixed;
+		width: 100%;
+
+		/* Center the content */
+		align-items: center;
+		display: flex;
+		justify-content: center;
+	">
+    <!-- Tells visitors that the website uses cookie -->
+    <div style="
+        /* Take available width */
+        flex: 1;
+    ">
+        <p style="margin-left: 10px;">This website doesn't use cookies. You can discard this message. I guess you haven't even read that message.</p>
+    </div>
+
+    <!-- Close button -->
+    <button style="padding: 3px; padding-left: 6px; padding-right: 6px; margin: 10px;" onclick="hideUselessMessage()">Discard</button>
+</div>
+
+<script>
+	function hideUselessMessage(){
+		document.getElementById("cookieMessage").remove();
+	}
+</script>
 </body>
 </html>

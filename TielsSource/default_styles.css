@@ -1,0 +1,327 @@
+@charset "utf-8";
+/* CSS Document */
+
+.caption{
+	position: absolute;
+	left: 0;
+	top: 100px;
+	width: 100%;
+	text-align: center;
+	color: #fff;
+}
+nav.row.header{
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+}
+
+body
+{
+	font-family: Segoe, 'Segoe UI', 'DejaVu Sans', 'Trebuchet MS', Verdana, 'sans-serif';
+	margin: 0px;
+	background-color:#252830;
+}
+
+.feature-card{
+	display: flex;
+
+	/* OPTIONAL: Reverse the order of image and content */
+	flex-direction: row-reverse;
+}
+
+@media only screen and (min-width: 1215px) {
+	.feature-card {
+		margin: 16px auto;
+		width: 1200px;
+	}
+	.feature-image {
+		width: 512px;
+	}
+}
+
+@media only screen and (max-width: 1215px) {
+	.feature-card {
+		margin: 16px 16px;
+	}
+	.feature-image {
+		width: 496px;
+	}
+}
+
+.selectedbtn
+{
+	border-bottom:solid 2px #007ac1 !important;
+}
+
+.btn-group
+{
+	margin-left:calc(50% - 105px);
+}
+
+.btn-group .button {
+	background-color: #FFFFFF00; /* Green */
+	border: none;
+	color: #000000;
+	padding: 15px 28px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 15px;
+	cursor: pointer;
+	border-bottom:solid 0px #007ac1;
+}
+
+.btn-group .button:hover {
+	background-color: #EEEEEE;
+	border-bottom:solid 2px #03a9f4;
+	color: #444444;
+}
+
+.btn-group .button:active {
+	background-color: #DDDDDD;
+	border-bottom:solid 2px #67daff;
+	color: #444444;
+}
+
+.downloadbutton {
+background-color: white;
+border: none;
+color: black;
+padding: 16px 32px;
+text-align: center;
+font-size: 16px;
+margin: 4px 2px;
+opacity: 0.6;
+transition: 0.3s;
+display: inline-block;
+text-decoration: none;
+cursor: pointer;
+border-radius: 24px;
+}
+
+.downloadbutton:hover {opacity: 1}
+
+.ppanel
+{
+	/*overflow:hidden;*/
+	display: block;
+	/*margin-left: auto;
+	margin-right: auto;*/
+	/*border: 1px dotted #FF0004;*/
+	/*height: 320px;*/
+	width: 1080px;
+}
+
+.bluebackground
+{
+	background: #0059ff; /* For browsers that do not support gradients */
+	background: linear-gradient(to bottom right, #00b6ff, #0059ff); /* Standard syntax (must be last) */
+	background-size: 100vw 100vh;
+}
+
+/*Effects*/
+.shadow
+{
+	background: linear-gradient(lightgrey, transparent);
+}
+
+.shadowin
+{
+	background: linear-gradient(transparent, lightgrey);
+}
+.shadowleft
+{
+	background: linear-gradient(to right, transparent, lightgrey);
+}
+.hidden
+{
+	visibility: hidden;
+}
+
+.collapsed
+{
+	display: none;
+}
+
+.blur
+{
+	filter: blur(5px);
+}
+
+.round
+{
+	border-radius: 35px;
+}
+
+.lightround
+{
+	border-radius: 25px;
+}
+
+.usefont
+{
+	font-family: Segoe, 'Segoe UI', 'DejaVu Sans', 'Trebuchet MS', Verdana, 'sans-serif';
+}
+
+/*Navbar*/
+.navbutton
+{
+	cursor: pointer;
+	border: none;
+	background-color: transparent;
+	min-width: 100px;
+	min-height: 40px;
+	color: black;
+}
+
+.navaction
+{
+	cursor: pointer;
+	border: none;
+	background-color: transparent;
+	min-height: 40px;
+	color: black;
+}
+
+.navaction:link
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navaction:visited
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navaction:hover
+{
+	cursor: pointer;
+	color: grey;
+	text-decoration: none;
+}
+
+.navaction-original
+{
+	cursor: pointer;
+	border: none;
+	background-color: transparent;
+	color: black;
+}
+
+.navaction-original:link
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navaction-original:visited
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navaction-original:hover
+{
+	cursor: pointer;
+	color: grey;
+	text-decoration: none;
+}
+
+.navbutton:link
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navbutton:visited
+{
+	cursor: pointer;
+	color: black;
+	text-decoration: none;
+}
+
+.navbutton:hover
+{
+	cursor: pointer;
+	color: grey;
+	text-decoration: none;
+}
+
+.navbutton:active
+{
+	color: lightgrey;
+}
+
+/*Other*/
+/*the container must be positioned relative:*/
+.custom-select {
+position: relative;
+font-family: Arial;
+}
+.custom-select select {
+display: none; /*hide original SELECT element:*/
+}
+.select-selected {
+background-color: white;
+}
+/*style the arrow inside the select element:*/
+.select-selected:after {
+position: absolute;
+content: "";
+top: 14px;
+right: 10px;
+width: 0;
+height: 0;
+border: 6px solid transparent;
+border-color: #000 transparent transparent transparent;
+}
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+border-color: transparent transparent #000 transparent;
+top: 7px;
+}
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+color: #000000;
+padding: 8px 16px;
+border: 1px solid transparent;
+/*border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;*/
+cursor: pointer;
+user-select: none;
+}
+/*style items (options):*/
+.select-items {
+position: absolute;
+background-color: #EDEDED;
+top: 100%;
+left: 0;
+right: 0;
+z-index: 99;
+}
+/*hide the items when the select box is closed:*/
+.select-hide {
+display: none;
+}
+.select-items div:hover {
+background-color: rgba(0, 0, 0, 0.1);
+}
+	
+.overlay
+{
+position: fixed;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0,0,0,0.1);
+z-index: 2;
+}
