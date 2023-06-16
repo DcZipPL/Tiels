@@ -1,5 +1,6 @@
 # **REWRITE IS IN PROGRESS**
 Project is under rewrite in Avalonia UI instead of WPF.
+- The basic features of rewrite are working. I'm planning alpha release of Tiels II in 2023!
 
 # Tiels
 Tiels is Open Source Fences Aternative.
